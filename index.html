@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nagar</title>
+</head>
+
+<body>
+  <div id="root">
+    <!-- Static Splash Screen to prevent white flash -->
+    <style>
+      html,
+      body {
+        background-color: #854836;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      #root-splash {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: #854836;
+        z-index: 99999;
+        margin: 0;
+        padding: 0;
+      }
+
+      .logo-box {
+        position: relative;
+        animation: splash-zoom 0.8s ease-out;
+      }
+
+      .logo-img {
+        width: 160px;
+        height: 160px;
+        object-fit: contain;
+        animation: splash-bounce 2s infinite ease-in-out;
+      }
+
+      .loader-bar {
+        margin-top: 32px;
+        width: 160px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+
+      .loader-progress {
+        width: 50%;
+        height: 100%;
+        background: #FFB22C;
+        animation: splash-progress 1.5s ease-in-out infinite;
+      }
+
+      @keyframes splash-progress {
+        0% {
+          transform: translateX(-100%);
+        }
+
+        100% {
+          transform: translateX(200%);
+        }
+      }
+
+      @keyframes splash-zoom {
+        0% {
+          opacity: 0;
+          transform: scale(0.7) rotate(-5deg);
+        }
+
+        100% {
+          opacity: 1;
+          transform: scale(1) rotate(0deg);
+        }
+      }
+
+      @keyframes splash-bounce {
+
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+
+        50% {
+          transform: translateY(-15px);
+        }
+      }
+    </style>
+    <div id="root-splash">
+      <div class="logo-box">
+        <img src="src/assets/nagar-logo-removebg.png" alt="Nagar" class="logo-img">
+      </div>
+      <div class="loader-bar">
+        <div class="loader-progress"></div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>
