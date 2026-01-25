@@ -29,6 +29,17 @@ app.get("/", (req, res) => {
   res.send("Nagar ERP API is running");
 });
 
+// 1. Serve the static files from the React build folder
+// This assumes your React build goes into a folder named 'dist' or 'build'
+const buildPath = path.join(__dirname, "../../dist");
+app.use(express.static(buildPath));
+
+// 2. Handle any requests that don't match the ones above (Catch-all)
+// This is essential for React Router to work correctly
+app.get("*", (req, res) => {
+  res.sendFile(path.join(buildPath, "index.html"));
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

@@ -7,9 +7,13 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // Ensure the db directory exists or just put it in root
-const dbPath =
-  process.env.DATABASE_PATH || path.resolve(__dirname, "../nagar.db");
+const dbPath = process.env.DATABASE_PATH
+  ? process.env.DATABASE_PATH
+  : path.resolve(__dirname, "../nagar.db");
+
 console.log(`Initializing database at: ${dbPath}`);
+
+// Note: Ensure the directory for DATABASE_PATH exists if you set it to /data/nagar.db
 const db = new Database(dbPath);
 
 // Database Encryption Configuration

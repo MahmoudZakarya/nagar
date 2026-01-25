@@ -1,0 +1,8 @@
+[phases.setup]
+nixPkgs = ["...", "python3", "gcc", "make"]
+
+[phases.build]
+cmds = ["npm install", "vite build && tsc -p tsconfig.server.json"]
+
+[start]
+cmd = "node dist-server/index.js"

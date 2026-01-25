@@ -8,7 +8,8 @@
     "dev:api": "ts-node -P tsconfig.server.json server/index.ts",
     "dev:server": "vite",
     "dev:electron": "wait-on tcp:5173 && wait-on tcp:3000 && tsc -p electron && electron .",
-    "build": "tsc && vite build && electron-builder"
+    "build": "tsc && vite build && electron-builder",
+    "start": "node dist-server/index.js"
   },
   "keywords": [],
   "author": "",
