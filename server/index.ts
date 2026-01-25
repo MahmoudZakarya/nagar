@@ -36,7 +36,7 @@ app.use(express.static(buildPath));
 
 // 2. Handle any requests that don't match the ones above (Catch-all)
 // This is essential for React Router to work correctly
-app.get("*", (req, res) => {
+app.get("(.*)", (req, res) => {
   res.sendFile(path.join(buildPath, "index.html"));
 });
 
