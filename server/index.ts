@@ -35,7 +35,7 @@ const buildPath = path.join(__dirname, "../dist");
 app.use(express.static(buildPath));
 
 // 2. Handle any requests that don't match the ones above (Catch-all)
-app.get("/:any*", (req, res) => {
+app.get("/*splat", (req, res) => {
   res.sendFile(path.join(buildPath, "index.html"));
 });
 
