@@ -1,9 +1,9 @@
 [phases.setup]
-# We use Node 20 or 22 because Electron 40/Node 24 is too new for the DB driver right now
-nixPkgs = ["nodejs-20_x", "python3", "gcc", "make", "pkg-config"]
+# Changed 'make' to 'gnumake' and 'gcc' to 'gcc-unwrapped' for better compatibility
+nixPkgs = ["nodejs-20_x", "python3", "gcc-unwrapped", "gnumake", "pkg-config"]
 
 [phases.build]
-# We explicitly skip 'electron-builder' here
+# We explicitly skip 'electron-builder' here to avoid the errors you saw earlier
 cmds = [
   "npm install", 
   "vite build", 
