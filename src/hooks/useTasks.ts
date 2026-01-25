@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import API_URL from "../config/api";
 
 export interface Subtask {
   id: number;
@@ -46,7 +47,7 @@ export const useTasks = () => {
   const fetchTasks = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/api/tasks");
+      const response = await fetch(`${API_URL}/api/tasks`);
       if (!response.ok) {
         throw new Error("Failed to fetch tasks");
       }
@@ -61,16 +62,13 @@ export const useTasks = () => {
 
   const updateSubtask = async (subtaskId: number, isCompleted: boolean) => {
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/subtasks/${subtaskId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ is_completed: isCompleted ? 1 : 0 }),
+      const response = await fetch(`${API_URL}/api/subtasks/${subtaskId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({ is_completed: isCompleted ? 1 : 0 }),
+      });
       if (!response.ok) {
         throw new Error("Failed to update subtask");
       }
@@ -83,7 +81,7 @@ export const useTasks = () => {
 
   const addTask = async (task: any, performed_by_id?: number) => {
     try {
-      const response = await fetch("http://localhost:3000/api/tasks", {
+      const response = await fetch(`${API_URL}/api/tasks`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -101,7 +99,7 @@ export const useTasks = () => {
 
   const deleteTask = async (id: number, performed_by_id?: number) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/tasks/${id}`, {
+      const response = await fetch(`${API_URL}/api/tasks/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import API_URL from "../config/api";
 
 export interface Transaction {
   id: number;
@@ -25,7 +26,7 @@ export const useSafe = () => {
   const fetchSafeData = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/api/safe");
+      const response = await fetch(`${API_URL}/api/safe`);
       if (!response.ok) {
         throw new Error("Failed to fetch safe data");
       }
@@ -43,7 +44,7 @@ export const useSafe = () => {
     transaction: Omit<Transaction, "id" | "date">,
   ) => {
     try {
-      const response = await fetch("http://localhost:3000/api/transaction", {
+      const response = await fetch(`${API_URL}/api/transaction`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

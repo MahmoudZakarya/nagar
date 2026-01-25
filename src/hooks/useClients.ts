@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import API_URL from "../config/api";
 
 export interface Client {
   id: number;
@@ -21,7 +22,7 @@ export const useClients = () => {
   const fetchClients = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/api/clients");
+      const response = await fetch(`${API_URL}/api/clients`);
       if (!response.ok) {
         throw new Error("Failed to fetch clients");
       }
@@ -36,7 +37,7 @@ export const useClients = () => {
 
   const addClient = async (client: Omit<Client, "id" | "created_at">) => {
     try {
-      const response = await fetch("http://localhost:3000/api/clients", {
+      const response = await fetch(`${API_URL}/api/clients`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,7 +55,7 @@ export const useClients = () => {
 
   const updateClient = async (id: number, client: Partial<Client>) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/clients/${id}`, {
+      const response = await fetch(`${API_URL}/api/clients/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

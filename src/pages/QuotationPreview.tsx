@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuotations, Quotation } from '../hooks/useQuotations';
 import { useClients } from '../hooks/useClients';
+import API_URL from '../config/api';
 import logo from '../assets/nagar-logo-removebg.png';
 import bgPattern from '../assets/nagar-background-asset.png';
 import { Printer, ArrowRight, Edit, Save } from 'lucide-react';
@@ -154,7 +155,7 @@ const QuotationPreview = () => {
                   <td className="py-2 px-2 align-top">
                      {item.image_path && (
                        <img 
-                         src={`http://localhost:3000${item.image_path}`} 
+                         src={`${API_URL}${item.image_path}`} 
                          alt="" 
                          className="w-42 h-36 object-contain rounded"
                        />

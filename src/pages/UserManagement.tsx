@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { UserPlus, Shield, User, Trash2, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-hot-toast';
+import API_URL from '../config/api';
 
 interface DBUser {
   id: number;
@@ -26,7 +27,7 @@ const UserManagement = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/users');
+      const response = await fetch(`${API_URL}/api/users`);
       const data = await response.json();
       setUsers(data);
     } catch (error) {
@@ -42,7 +43,7 @@ const UserManagement = () => {
     if (!newUsername || !newPassword) return;
 
     try {
-      const response = await fetch('http://localhost:3000/api/auth/register', {
+      const response = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -70,7 +71,7 @@ const UserManagement = () => {
 
   const handleUpdateRole = async (userId: number, role: string) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/users/${userId}/role`, {
+      const response = await fetch(`${API_URL}/api/users/${userId}/role`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role }),

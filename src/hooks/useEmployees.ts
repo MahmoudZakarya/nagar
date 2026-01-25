@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import API_URL from "../config/api";
 
 export interface Employee {
   id: number;
@@ -57,7 +58,7 @@ export const useEmployees = () => {
   const fetchEmployees = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/api/employees");
+      const response = await fetch(`${API_URL}/api/employees`);
       if (!response.ok) throw new Error("Failed to fetch employees");
       const data = await response.json();
       setEmployees(data);
@@ -70,7 +71,7 @@ export const useEmployees = () => {
 
   const addEmployee = async (employee: Partial<Employee>) => {
     try {
-      const response = await fetch("http://localhost:3000/api/employees", {
+      const response = await fetch(`${API_URL}/api/employees`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(employee),
@@ -84,14 +85,11 @@ export const useEmployees = () => {
 
   const updateEmployee = async (id: number, updates: Partial<Employee>) => {
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/employees/${id}`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updates),
-        },
-      );
+      const response = await fetch(`${API_URL}/api/employees/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
+      });
       if (!response.ok) throw new Error("Failed to update employee");
       await fetchEmployees();
     } catch (err: any) {
@@ -101,12 +99,9 @@ export const useEmployees = () => {
 
   const deleteEmployee = async (id: number) => {
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/employees/${id}`,
-        {
-          method: "DELETE",
-        },
-      );
+      const response = await fetch(`${API_URL}/api/employees/${id}`, {
+        method: "DELETE",
+      });
       if (!response.ok) throw new Error("Failed to delete employee");
       await fetchEmployees();
     } catch (err: any) {
@@ -132,9 +127,7 @@ export const useAttendance = (employeeId?: number) => {
   const fetchHistory = async (id: number) => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `http://localhost:3000/api/attendance/${id}`,
-      );
+      const response = await fetch(`${API_URL}/api/attendance/${id}`);
       const data = await response.json();
       setHistory(data);
     } catch (err) {
@@ -145,7 +138,7 @@ export const useAttendance = (employeeId?: number) => {
   };
 
   const checkIn = async (employee_id: number, check_in: string) => {
-    await fetch("http://localhost:3000/api/attendance/check-in", {
+    await fetch(`${API_URL}/api/attendance/check-in`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -161,7 +154,7 @@ export const useAttendance = (employeeId?: number) => {
     check_out: string,
     unpaid_break_minutes: number,
   ) => {
-    await fetch(`http://localhost:3000/api/attendance/${id}/check-out`, {
+    await fetch(`${API_URL}/api/attendance/${id}/check-out`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ check_out, unpaid_break_minutes }),
@@ -175,7 +168,7 @@ export const useAttendance = (employeeId?: number) => {
     period_end: string,
     performed_by_id?: number,
   ) => {
-    await fetch("http://localhost:3000/api/payroll/pay", {
+    await fetch(`${API_URL}/api/payroll/pay`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -189,7 +182,7 @@ export const useAttendance = (employeeId?: number) => {
   };
 
   const logManualAttendance = async (data: any) => {
-    await fetch("http://localhost:3000/api/attendance/manual", {
+    await fetch(`${API_URL}/api/attendance/manual`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -214,7 +207,7 @@ export const useLeaves = (employeeId?: number) => {
   const fetchLeaves = async (id: number) => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:3000/api/leaves/${id}`);
+      const response = await fetch(`${API_URL}/api/leaves/${id}`);
       const data = await response.json();
       setLeaves(data);
     } catch (err) {
@@ -225,7 +218,7 @@ export const useLeaves = (employeeId?: number) => {
   };
 
   const addLeave = async (leave: Partial<Leave>) => {
-    await fetch("http://localhost:3000/api/leaves", {
+    await fetch(`${API_URL}/api/leaves`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(leave),
@@ -233,7 +226,7 @@ export const useLeaves = (employeeId?: number) => {
   };
 
   const removeLeave = async (id: number) => {
-    await fetch(`http://localhost:3000/api/leaves/${id}`, {
+    await fetch(`${API_URL}/api/leaves/${id}`, {
       method: "DELETE",
     });
   };
@@ -248,9 +241,7 @@ export const useDeductions = (employeeId?: number) => {
   const fetchDeductions = async (id: number) => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `http://localhost:3000/api/deductions/${id}`,
-      );
+      const response = await fetch(`${API_URL}/api/deductions/${id}`);
       const data = await response.json();
       setDeductions(data);
     } catch (err) {
@@ -261,7 +252,7 @@ export const useDeductions = (employeeId?: number) => {
   };
 
   const addDeduction = async (deduction: Partial<Deduction>) => {
-    await fetch("http://localhost:3000/api/deductions", {
+    await fetch(`${API_URL}/api/deductions`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(deduction),
@@ -269,7 +260,7 @@ export const useDeductions = (employeeId?: number) => {
   };
 
   const removeDeduction = async (id: number) => {
-    await fetch(`http://localhost:3000/api/deductions/${id}`, {
+    await fetch(`${API_URL}/api/deductions/${id}`, {
       method: "DELETE",
     });
   };

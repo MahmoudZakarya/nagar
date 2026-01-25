@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuotations, QuotationItem } from '../hooks/useQuotations';
+import API_URL from '../config/api';
 import { useClients } from '../hooks/useClients';
 import { Plus, Trash2, Save, Eye, Upload, ChevronUp, ChevronDown } from 'lucide-react';
 
@@ -222,7 +223,7 @@ const QuotationEditor = () => {
                   <div className="relative w-16 h-16 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center overflow-hidden cursor-pointer group">
                     {item.image_path ? (
                       <img
-                        src={`http://localhost:3000${item.image_path}`}
+                        src={`${API_URL}${item.image_path}`}
                         alt="preview"
                         className="w-full h-full object-cover"
                       />

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import API_URL from "../config/api";
 
 export interface Purchase {
   id: number;
@@ -25,7 +26,7 @@ export const usePurchases = () => {
   const fetchPurchases = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/api/purchases");
+      const response = await fetch(`${API_URL}/api/purchases`);
       if (!response.ok) {
         throw new Error("Failed to fetch purchases");
       }
@@ -43,7 +44,7 @@ export const usePurchases = () => {
     performed_by_id?: number,
   ) => {
     try {
-      const response = await fetch("http://localhost:3000/api/purchases", {
+      const response = await fetch(`${API_URL}/api/purchases`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -65,19 +66,16 @@ export const usePurchases = () => {
     performed_by_id?: number,
   ) => {
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/purchases/${id}/payment`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            payment_amount: paymentAmount,
-            performed_by_id,
-          }),
+      const response = await fetch(`${API_URL}/api/purchases/${id}/payment`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          payment_amount: paymentAmount,
+          performed_by_id,
+        }),
+      });
       if (!response.ok) {
         throw new Error("Failed to update purchase payment");
       }
@@ -89,16 +87,13 @@ export const usePurchases = () => {
 
   const deletePurchase = async (id: number, performed_by_id?: number) => {
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/purchases/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ performed_by_id }),
+      const response = await fetch(`${API_URL}/api/purchases/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({ performed_by_id }),
+      });
       if (!response.ok) throw new Error("Failed to delete purchase");
       await fetchPurchases();
     } catch (err: any) {

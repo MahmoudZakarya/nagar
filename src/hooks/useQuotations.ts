@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import API_URL from "../config/api";
 
 export interface QuotationItem {
   id?: number;
@@ -33,7 +34,7 @@ export const useQuotations = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:3000/api/quotations/client/${clientId}`,
+        `${API_URL}/api/quotations/client/${clientId}`,
       );
       if (!response.ok) throw new Error("Failed to fetch quotations");
       return (await response.json()) as Quotation[];
@@ -48,9 +49,7 @@ export const useQuotations = () => {
   const getQuotationById = useCallback(async (id: number) => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/quotations/${id}`,
-      );
+      const response = await fetch(`${API_URL}/api/quotations/${id}`);
       if (!response.ok) throw new Error("Failed to fetch quotation");
       return (await response.json()) as Quotation;
     } catch (err: any) {
@@ -66,7 +65,7 @@ export const useQuotations = () => {
   ) => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:3000/api/quotations", {
+      const response = await fetch(`${API_URL}/api/quotations`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(quotation),
@@ -84,14 +83,11 @@ export const useQuotations = () => {
   const updateQuotation = async (id: number, quotation: Partial<Quotation>) => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/quotations/${id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(quotation),
-        },
-      );
+      const response = await fetch(`${API_URL}/api/quotations/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(quotation),
+      });
       if (!response.ok) throw new Error("Failed to update quotation");
     } catch (err: any) {
       setError(err.message);
@@ -106,13 +102,10 @@ export const useQuotations = () => {
     formData.append("image", file);
 
     try {
-      const response = await fetch(
-        "http://localhost:3000/api/quotations/upload",
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
+      const response = await fetch(`${API_URL}/api/quotations/upload`, {
+        method: "POST",
+        body: formData,
+      });
       if (!response.ok) throw new Error("Failed to upload image");
       const data = await response.json();
       return data.filePath;

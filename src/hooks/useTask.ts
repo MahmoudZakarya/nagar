@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import API_URL from "../config/api";
 import { Task, Subtask } from "./useTasks";
 
 export interface Payment {
@@ -28,7 +29,7 @@ export const useTask = (id: string | undefined) => {
   const fetchTask = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:3000/api/tasks/${id}`);
+      const response = await fetch(`${API_URL}/api/tasks/${id}`);
       if (!response.ok) {
         throw new Error("Failed to fetch task");
       }
@@ -43,9 +44,7 @@ export const useTask = (id: string | undefined) => {
 
   const fetchPayments = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/tasks/${id}/payments`,
-      );
+      const response = await fetch(`${API_URL}/api/tasks/${id}/payments`);
       if (!response.ok) throw new Error("Failed to fetch payments");
       const data = await response.json();
       setPayments(data);
@@ -61,14 +60,11 @@ export const useTask = (id: string | undefined) => {
     performed_by_id?: number,
   ) => {
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/tasks/${id}/payments`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount, note, payment_date, performed_by_id }),
-        },
-      );
+      const response = await fetch(`${API_URL}/api/tasks/${id}/payments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount, note, payment_date, performed_by_id }),
+      });
       if (!response.ok) throw new Error("Failed to add payment");
       await fetchTask();
       await fetchPayments();
@@ -80,14 +76,11 @@ export const useTask = (id: string | undefined) => {
 
   const addSubtask = async (description: string) => {
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/tasks/${id}/subtasks`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ description }),
-        },
-      );
+      const response = await fetch(`${API_URL}/api/tasks/${id}/subtasks`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description }),
+      });
       if (!response.ok) throw new Error("Failed to add subtask");
       await fetchTask();
     } catch (err: any) {
@@ -97,14 +90,11 @@ export const useTask = (id: string | undefined) => {
 
   const updateStatus = async (status: string) => {
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/tasks/${id}/status`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status }),
-        },
-      );
+      const response = await fetch(`${API_URL}/api/tasks/${id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
       if (!response.ok) throw new Error("Failed to update status");
       await fetchTask();
     } catch (err: any) {
@@ -121,14 +111,11 @@ export const useTask = (id: string | undefined) => {
     performed_by_id?: number;
   }) => {
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/tasks/${id}/financials`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        },
-      );
+      const response = await fetch(`${API_URL}/api/tasks/${id}/financials`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
       if (!response.ok) throw new Error("Failed to update financials");
       await fetchTask();
     } catch (err: any) {
@@ -142,7 +129,7 @@ export const useTask = (id: string | undefined) => {
     delivery_due_date: string;
   }) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/tasks/${id}`, {
+      const response = await fetch(`${API_URL}/api/tasks/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
