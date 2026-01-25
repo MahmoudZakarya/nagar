@@ -2,6 +2,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Users, Hammer, Landmark , ShoppingCart, LogOut, Search, X, BriefcaseBusiness, Contact } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
+import logo from '../assets/nagar-logo-removebg.png';
+
 
 const Sidebar = ({ onClose, isCollapsed }: { onClose?: () => void, isCollapsed?: boolean }) => {
   const location = useLocation();
@@ -23,7 +25,7 @@ const Sidebar = ({ onClose, isCollapsed }: { onClose?: () => void, isCollapsed?:
     { name: 'المشاريع', path: '/tasks', icon: Hammer },
     { name: 'الخزنة', path: '/safe', icon: Landmark  },
     { name: 'المشتريات', path: '/purchases', icon: ShoppingCart },
-    { name: 'الموظفين', path: '/employees', icon: BriefcaseBusiness},
+    // { name: 'الموظفين', path: '/employees', icon: BriefcaseBusiness},
   ];
 
   if (user?.role === 'admin' || user?.role === 'manager') {
@@ -34,7 +36,7 @@ const Sidebar = ({ onClose, isCollapsed }: { onClose?: () => void, isCollapsed?:
     <aside className={`${isCollapsed ? 'w-20' : 'w-64'} bg-[#854836] text-white flex flex-col h-full shadow-lg transition-all duration-300`}>
       <div className="p-6 border-b border-[#A05A45] flex items-center justify-between">
         <div className="flex items-center justify-center flex-1">
-          <img src="src/assets/nagar-logo-removebg.png" alt="شعار نجار" className={`h-16 w-auto transition-all duration-300 ${isCollapsed ? 'scale-0 opacity-0 h-0' : ''}`} />
+          <img src={logo} alt="شعار نجار" className={`h-16 w-auto transition-all duration-300 ${isCollapsed ? 'scale-0 opacity-0 h-0' : ''}`} />
         </div>
         <button 
           onClick={onClose}

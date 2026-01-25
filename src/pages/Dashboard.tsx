@@ -11,6 +11,8 @@ import {
   Clock,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import logo from '../assets/nagar-logo-removebg.png';
+
 
 const EGP = () => <span className="text-[0.65em] font-normal mr-1">جنية</span>;
 
@@ -43,7 +45,7 @@ const Dashboard = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="flex items-center gap-4 md:gap-6">
           <div className="bg-[#854836] p-3 md:p-4 rounded-2xl md:rounded-3xl shadow-xl flex-shrink-0">
-            <img src="src/assets/nagar-logo-removebg.png" alt="شعار نجار" className="h-10 md:h-16 w-auto" />
+            <img src={logo} alt="شعار نجار" className="h-10 md:h-16 w-auto" />
           </div>
           <div>
             <h1 className="text-2xl md:text-4xl font-bold text-[#854836] tracking-tight">نظرة عامة</h1>
