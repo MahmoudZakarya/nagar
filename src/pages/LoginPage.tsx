@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import logo from '../assets/nagar-logo-removebg.png';
 import { useAuth } from '../context/AuthContext';
 import { Hammer, Lock, User, AlertCircle, ArrowRight } from 'lucide-react';
 
@@ -28,7 +29,7 @@ const LoginPage = () => {
         {/* Logo Section */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-[#854836] rounded-3xl shadow-xl mb-6 transform -rotate-6">
-            <Hammer className="w-10 h-10 text-[#FFB22C]" />
+            <img src={logo} alt="Nagar Logic" className="h-28 object-contain" />
           </div>
           <h1 className="text-4xl font-bold text-[#854836] tracking-tight">نظام نجار</h1>
           <p className="text-gray-500 mt-2 font-medium">نظام إدارة ورشة نجار</p>
