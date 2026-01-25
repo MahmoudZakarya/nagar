@@ -1,11 +1,11 @@
 [phases.setup]
-nixPkgs = ["nodejs-20_x", "python3", "gcc-unwrapped", "gnumake", "pkg-config"]
+nixPkgs = ["nodejs_20", "python311", "gcc", "gnumake", "pkg-config"]
 
 [phases.build]
 cmds = [
   "npm install",
   "vite build --outDir dist", 
-  "tsc -p tsconfig.server.json --outDir dist-server"
+  "tsc -p tsconfig.server.json" # outDir is already handled by tsconfig
 ]
 
 [start]

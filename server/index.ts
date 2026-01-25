@@ -31,7 +31,7 @@ app.get("/", (req, res) => {
 
 // 1. Serve the static files from the React build folder
 // This assumes your React build goes into a folder named 'dist' or 'build'
-const buildPath = path.join(__dirname, "../../dist");
+const buildPath = path.join(__dirname, "../dist");
 app.use(express.static(buildPath));
 
 // 2. Handle any requests that don't match the ones above (Catch-all)
