@@ -1,13 +1,11 @@
 [phases.setup]
-# Changed 'make' to 'gnumake' and 'gcc' to 'gcc-unwrapped' for better compatibility
 nixPkgs = ["nodejs-20_x", "python3", "gcc-unwrapped", "gnumake", "pkg-config"]
 
 [phases.build]
-# We explicitly skip 'electron-builder' here to avoid the errors you saw earlier
 cmds = [
-  "npm install", 
-  "vite build", 
-  "tsc -p tsconfig.server.json"
+  "npm install",
+  "vite build --outDir dist", 
+  "tsc -p tsconfig.server.json --outDir dist-server"
 ]
 
 [start]
