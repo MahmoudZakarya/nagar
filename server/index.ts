@@ -25,9 +25,9 @@ try {
 app.use("/api", apiRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
-app.get("/", (req, res) => {
-  res.send("Nagar ERP API is running");
-});
+// app.get("/", (req, res) => {
+//   res.send("Nagar ERP API is running");
+// });
 
 // 1. Serve the static files from the React build folder
 // This assumes your React build goes into a folder named 'dist' or 'build'
