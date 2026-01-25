@@ -1,8 +1,14 @@
 [phases.setup]
-nixPkgs = ["...", "python3", "gcc", "make"]
+# We use Node 20 or 22 because Electron 40/Node 24 is too new for the DB driver right now
+nixPkgs = ["nodejs-20_x", "python3", "gcc", "make", "pkg-config"]
 
 [phases.build]
-cmds = ["npm install", "vite build && tsc -p tsconfig.server.json"]
+# We explicitly skip 'electron-builder' here
+cmds = [
+  "npm install", 
+  "vite build", 
+  "tsc -p tsconfig.server.json"
+]
 
 [start]
 cmd = "node dist-server/index.js"
