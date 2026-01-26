@@ -51,7 +51,7 @@ const TaskDetails = () => {
 
   if (loading) return (
     <div className="h-screen flex items-center justify-center">
-      <div className="w-10 h-10 border-4 border-[#854836]/20 border-t-[#854836] rounded-full animate-spin"></div>
+      <div className="w-10 h-10 border-4 border-brand-main/20 border-t-brand-main rounded-full animate-spin"></div>
     </div>
   );
   
@@ -136,8 +136,8 @@ const TaskDetails = () => {
           >
             <ArrowRight className="w-5 h-5 text-gray-500" />
           </button>
-          <div className="flex items-center gap-2 text-sm font-bold text-gray-400">
-            <Link to="/tasks" className="hover:text-[#854836]">المشاريع</Link>
+          <div className="flex items-center gap-2 text-sm font-bold text-gray-700">
+            <Link to="/tasks" className="hover:text-brand-main">المشاريع</Link>
             <ChevronRight className="w-4 h-4 rotate-180" />
             <span className="text-gray-900">تفاصيل المشروع #{id}</span>
           </div>
@@ -146,7 +146,7 @@ const TaskDetails = () => {
         {user?.role === 'admin' && (
            <button 
              onClick={openEditModal}
-             className="flex items-center gap-2 px-6 py-3 bg-[#FFB22C] text-[#854836] font-bold rounded-2xl shadow-sm hover:shadow-md transition"
+             className="flex items-center gap-2 px-6 py-3 bg-brand-secondary text-brand-main font-bold rounded-2xl shadow-sm hover:shadow-md transition"
            >
               <Edit className="w-4 h-4" />
               <span>تعديل المشروع</span>
@@ -163,12 +163,12 @@ const TaskDetails = () => {
                 <h1 className="text-4xl font-bold text-gray-900 mb-2">{task?.title ?? 'مشروع غير معروف'}</h1>
                 <div className="flex items-center gap-4 text-gray-500 font-medium">
                   <div className="flex items-center gap-2">
-                    <User className="w-4 h-4 text-[#FFB22C]" />
+                    <User className="w-4 h-4 text-brand-secondary" />
                     <span className="font-bold">{task?.client_name ?? '-'}</span>
                   </div>
                   <div className="w-1.5 h-1.5 bg-gray-200 rounded-full"></div>
                   <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-[#FFB22C]" />
+                    <Calendar className="w-4 h-4 text-brand-secondary" />
                     <span>أنشئ في {task?.registered_at ? new Date(task.registered_at).toLocaleDateString('ar-EG') : '-'}</span>
                   </div>
                 </div>
@@ -176,7 +176,7 @@ const TaskDetails = () => {
               <select 
                 value={task?.status ?? 'Pending'}
                 onChange={(e) => updateStatus(e.target.value)}
-                className="w-full md:w-auto bg-gray-50 border-none px-6 py-4 rounded-2xl font-bold text-sm focus:ring-2 focus:ring-[#854836]/10 outline-none appearance-none cursor-pointer text-[#854836]"
+                className="w-full md:w-auto bg-gray-50 border-none px-6 py-4 rounded-2xl font-bold text-sm focus:ring-2 focus:ring-brand-main/10 outline-none appearance-none cursor-pointer text-brand-main"
               >
                 {statusOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
               </select>
@@ -184,25 +184,25 @@ const TaskDetails = () => {
 
             <div className="space-y-8">
                <div>
-                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">وصف المشروع</h4>
+                  <h4 className="text-xs font-bold text-gray-600 uppercase tracking-widest mb-3">وصف المشروع</h4>
                   <p className="text-gray-700 leading-relaxed bg-gray-50/50 p-6 rounded-3xl whitespace-pre-wrap font-medium">
                     {task?.description || 'لا يوجد وصف متاح.'}
                   </p>
                </div>
 
                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div className="p-6 bg-gray-50 rounded-3xl group hover:bg-[#854836]/5 transition duration-300">
-                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">موعد التسليم</p>
+                  <div className="p-6 bg-gray-50 rounded-3xl group hover:bg-brand-main/5 transition duration-300">
+                     <p className="text-[10px] font-bold text-gray-700 uppercase tracking-widest mb-1">موعد التسليم</p>
                      <p className="font-bold text-gray-900 text-lg">
                         {task?.delivery_due_date ? new Date(task.delivery_due_date).toLocaleDateString('ar-EG') : 'غير محدد'}
                      </p>
                   </div>
                   <div className="p-6 bg-gray-50 rounded-3xl border-b-4 border-green-500">
-                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">نسبة الإنجاز</p>
+                     <p className="text-[10px] font-bold text-gray-700 uppercase tracking-widest mb-1">نسبة الإنجاز</p>
                      <p className="font-bold text-gray-900 text-lg">{task?.completion_percent ?? 0}%</p>
                   </div>
                   <div className="p-6 bg-gray-50 rounded-3xl">
-                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">هاتف العميل</p>
+                     <p className="text-[10px] font-bold text-gray-700 uppercase tracking-widest mb-1">هاتف العميل</p>
                      <p className="font-bold text-gray-900 text-lg" dir="ltr">{task?.phone_1 ?? '-'}</p>
                   </div>
                </div>
@@ -213,7 +213,7 @@ const TaskDetails = () => {
           <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
              <div className="p-8 border-b border-gray-50 bg-gray-50/20">
                 <h3 className="text-xl font-bold text-gray-900">خطوات العمل</h3>
-                <p className="text-gray-400 text-sm mt-1 font-medium">تتبع مراحل التصنيع والتركيب خطوة بخطوة.</p>
+                <p className="text-gray-700 text-sm mt-1 font-medium">تتبع مراحل التصنيع والتركيب خطوة بخطوة.</p>
              </div>
              
              <div className="p-8 space-y-4">
@@ -223,9 +223,9 @@ const TaskDetails = () => {
                     value={newSubtaskDesc}
                     onChange={(e) => setNewSubtaskDesc(e.target.value)}
                     placeholder="أضف خطوة جديدة (مثال: تقطيع الخشب)..."
-                    className="flex-1 px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                    className="flex-1 px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                    />
-                   <button type="submit" className="bg-[#854836] text-white p-4 rounded-2xl shadow-lg hover:shadow-[#854836]/30 transition transform active:scale-95">
+                   <button type="submit" className="bg-brand-main text-brand-third p-4 rounded-2xl shadow-lg hover:shadow-brand-main/30 transition transform active:scale-95">
                       <Plus className="w-6 h-6" />
                    </button>
                 </form>
@@ -234,7 +234,7 @@ const TaskDetails = () => {
                    {task.subtasks?.map(st => (
                       <div 
                         key={st.id} 
-                        className="group flex items-center justify-between p-5 bg-white border border-gray-100 rounded-3xl hover:border-[#854836]/20 hover:shadow-md transition cursor-pointer"
+                        className="group flex items-center justify-between p-5 bg-white border border-gray-100 rounded-3xl hover:border-brand-main/20 hover:shadow-md transition cursor-pointer"
                         onClick={() => handleToggle(st.id, st.is_completed)}
                       >
                          <div className="flex items-center gap-4">
@@ -257,16 +257,16 @@ const TaskDetails = () => {
 
         {/* Right Column: Financials */}
         <div className="lg:col-span-1 space-y-8">
-           <div className="bg-[#854836] rounded-[2.5rem] shadow-xl p-6 md:p-10 text-white relative overflow-hidden">
+           <div className="bg-brand-main rounded-[2.5rem] shadow-xl p-6 md:p-10 text-brand-third relative overflow-hidden">
               <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-8 opacity-60">
+                <div className="flex items-center gap-2 mb-8 opacity-90">
                    <Wallet className="w-5 h-5" />
                    <span className="text-xs font-bold uppercase tracking-widest">موجز مالي</span>
                 </div>
                 
                 <div className="space-y-8">
                    <div>
-                      <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest mb-1">إجمالي المتفق عليه</p>
+                      <p className="text-white/90 text-[10px] font-bold uppercase tracking-widest mb-1">إجمالي المتفق عليه</p>
                       <p className="text-4xl font-bold">{totalCost?.toLocaleString() ?? '0'}</p>
                       {(task?.extra_costs ?? 0) > 0 && (
                          <p className="text-[10px] text-orange-400 mt-1">شامل {task?.extra_costs?.toLocaleString()}<EGP /> مصاريف إضافية</p>
@@ -275,11 +275,11 @@ const TaskDetails = () => {
                    
                    <div className="grid grid-cols-2 gap-4">
                       <div>
-                         <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest mb-1">إجمالي المدفوع</p>
+                         <p className="text-white/90 text-[10px] font-bold uppercase tracking-widest mb-1">إجمالي المدفوع</p>
                          <p className="text-xl font-bold text-green-400">{task?.deposit_paid?.toLocaleString() ?? '0'}</p>
                       </div>
                       <div>
-                         <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest mb-1">المبلغ المتبقي</p>
+                         <p className="text-white/90 text-[10px] font-bold uppercase tracking-widest mb-1">المبلغ المتبقي</p>
                          <p className="text-xl font-bold text-orange-400">{remaining?.toLocaleString() ?? '0'}</p>
                       </div>
                    </div>
@@ -293,7 +293,7 @@ const TaskDetails = () => {
                    </button>
 
                    <div className="pt-6 border-t border-white/10 flex justify-between items-center">
-                      <span className="text-white/40 text-xs font-bold uppercase tracking-widest">حالة الحساب</span>
+                      <span className="text-white/90 text-xs font-bold uppercase tracking-widest">حالة الحساب</span>
                       <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${
                         task.final_payment_status === 'Settled' ? 'bg-green-500 text-white' : 
                         task.final_payment_status === 'Partial' ? 'bg-orange-500 text-white' : 'bg-white/10 text-white'
@@ -306,20 +306,7 @@ const TaskDetails = () => {
               </div>
            </div>
 
-            {/* Quick Actions / Export */}
-            <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 p-8 space-y-6">
-               <h3 className="text-lg font-bold text-gray-900 border-b pb-4 border-gray-50">إجراءات سريعة</h3>
-               <div className="space-y-3">
-                  <button className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-2xl font-bold text-gray-700 hover:bg-[#FFB22C] hover:text-[#854836] transition duration-300">
-                     <span>إصدار فاتورة</span>
-                     <Save className="w-4 h-4 opacity-50" />
-                  </button>
-                  <button className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-2xl font-bold text-gray-700 hover:bg-red-50 hover:text-red-600 transition duration-300">
-                     <span>أرشفة المشروع</span>
-                     <Trash2 className="w-4 h-4 opacity-50" />
-                  </button>
-               </div>
-            </div>
+         
 
             {/* Payment History */}
             <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 p-8 space-y-6">
@@ -336,18 +323,18 @@ const TaskDetails = () => {
                       <div key={p.id} className="relative pr-6 pb-6 border-r-2 border-gray-50 last:pb-0">
                         <div className="absolute -right-[9px] top-0 w-4 h-4 rounded-full bg-white border-2 border-orange-400"></div>
                         <div className="flex justify-between items-start mb-1">
-                          <span className="text-sm font-bold text-[#854836]">{p.amount.toLocaleString()} <EGP /></span>
+                          <span className="text-m font-bold text-brand-main">{p.amount.toLocaleString()} <EGP /></span>
                           <div className="flex flex-col items-end gap-1">
-                            <span className="text-[10px] font-bold text-gray-400">{new Date(p.payment_date).toLocaleDateString('ar-EG')}</span>
+                            <span className="text-[14px] font-bold text-gray-800">{new Date(p.payment_date).toLocaleDateString('ar-EG')}</span>
                             {p.performed_by_name && (
                               <div className="flex items-center gap-1 px-1.5 py-0.5 bg-gray-50 rounded-lg border border-gray-100">
-                                <User className="w-2.5 h-2.5 text-gray-400" />
-                                <span className="text-[8px] font-black text-gray-500">{p.performed_by_name}</span>
+                                <User className="w-2.5 h-2.5 text-gray-700" />
+                                <span className="text-[8px] font-black text-gray-700">{p.performed_by_name}</span>
                               </div>
                             )}
                           </div>
                         </div>
-                        {p.note && <p className="text-xs text-gray-500 font-medium leading-relaxed">{p.note}</p>}
+                        {p.note && <p className="text-xs text-gray-700 font-medium leading-relaxed">{p.note}</p>}
                       </div>
                     ))
                   ) : (
@@ -364,33 +351,33 @@ const TaskDetails = () => {
           <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setShowPaymentModal(false)}></div>
           <div className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300 max-h-[90vh] flex flex-col">
              <div className="p-8 border-b border-gray-50 flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-[#854836]">تسجيل دفعة نقدية</h2>
+                <h2 className="text-2xl font-bold text-brand-main">تسجيل دفعة نقدية</h2>
                 <button onClick={() => setShowPaymentModal(false)}><X className="w-6 h-6 text-gray-300" /></button>
              </div>
               <form onSubmit={handlePayment} className="p-8 space-y-6">
                 <div>
-                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">المبلغ المدفوع</label>
+                   <label className="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-2 px-1">المبلغ المدفوع</label>
                    <input 
                      type="number" 
                      required
                      value={paymentData.amount}
                      onChange={(e) => setPaymentData({...paymentData, amount: e.target.value})}
-                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold text-2xl text-center"
+                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-2xl text-center"
                      placeholder="0.00"
                    />
                 </div>
                 <div>
-                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">ملاحظة</label>
+                   <label className="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-2 px-1">ملاحظة</label>
                    <textarea 
                      rows={2}
                      value={paymentData.note}
                      onChange={(e) => setPaymentData({...paymentData, note: e.target.value})}
-                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold resize-none"
+                     className="w-full pl-12 pr-4 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 focus:bg-white transition-all duration-300 outline-none"
                      placeholder="أضف ملاحظة للدفعة..."
                    />
                 </div>
                 <div>
-                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">تاريخ الدفعة</label>
+                   <label className="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-2 px-1">تاريخ الدفعة</label>
                    <input 
                      type="date" 
                      required
@@ -411,41 +398,41 @@ const TaskDetails = () => {
           <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setShowEditModal(false)}></div>
           <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300 max-h-[90vh] flex flex-col">
              <div className="p-8 border-b border-gray-50 flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-[#854836]">تعديل بيانات المشروع الماليّة</h2>
+                <h2 className="text-2xl font-bold text-brand-main">تعديل بيانات المشروع الماليّة</h2>
                 <button onClick={() => setShowEditModal(false)}><X className="w-6 h-6 text-gray-300" /></button>
              </div>
              <form onSubmit={handleEditTask} className="p-8 space-y-6 overflow-y-auto">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                    <div className="col-span-2">
-                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">اسم المشروع</label>
+                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-2 px-1">اسم المشروع</label>
                       <input 
                         type="text" 
                         required
                         value={editForm.title}
                         onChange={(e) => setEditForm({...editForm, title: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                          className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                       />
                    </div>
                    <div className="col-span-2">
-                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">الوصف</label>
+                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-2 px-1">الوصف</label>
                       <textarea 
                         rows={3}
                         value={editForm.description}
                         onChange={(e) => setEditForm({...editForm, description: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold resize-none"
+                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold resize-none"
                       />
                    </div>
                    <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">السعر المتفق عليه</label>
+                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-2 px-1">السعر المتفق عليه</label>
                       <input 
                         type="number" 
                         value={editForm.total_agreed_price}
                         onChange={(e) => setEditForm({...editForm, total_agreed_price: parseFloat(e.target.value)})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                          className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                       />
                    </div>
                    <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">تكاليف إضافية</label>
+                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-2 px-1">تكاليف إضافية</label>
                       <input 
                         type="number" 
                         value={editForm.extra_costs}
@@ -454,16 +441,16 @@ const TaskDetails = () => {
                       />
                    </div>
                    <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">موعد التسليم</label>
+                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-2 px-1">موعد التسليم</label>
                       <input 
                         type="date" 
                         value={editForm.delivery_due_date}
                         onChange={(e) => setEditForm({...editForm, delivery_due_date: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold focus:bg-white"
+                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold focus:bg-white"
                       />
                    </div>
                 </div>
-                <button type="submit" className="w-full bg-[#854836] text-white font-bold py-5 rounded-2xl hover:scale-[1.02] transition shadow-lg shadow-[#854836]/20">تحديث البيانات</button>
+                <button type="submit" className="w-full bg-brand-main text-brand-third font-bold py-5 rounded-2xl hover:scale-[1.02] transition shadow-lg shadow-brand-main/20">تحديث البيانات</button>
              </form>
           </div>
         </div>

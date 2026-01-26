@@ -109,7 +109,7 @@ const Employees = () => {
 
   if (loading) return (
     <div className="flex items-center justify-center p-20">
-      <div className="w-10 h-10 border-4 border-[#854836]/20 border-t-[#854836] rounded-full animate-spin"></div>
+      <div className="w-10 h-10 border-4 border-brand-main/20 border-t-brand-main rounded-full animate-spin"></div>
     </div>
   );
 
@@ -117,13 +117,13 @@ const Employees = () => {
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-700 pb-20">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-4xl font-bold text-[#854836] tracking-tight">الموظفين</h1>
+          <h1 className="text-4xl font-bold text-brand-main tracking-tight">الموظفين</h1>
           <p className="text-gray-500 font-medium mt-1">إدارة بيانات العمال، الحضور، والرواتب</p>
         </div>
         
         <button 
           onClick={() => openModal()}
-          className="bg-[#854836] text-white font-bold py-4 px-8 rounded-2xl shadow-xl shadow-[#854836]/20 hover:shadow-[#854836]/30 hover:-translate-y-1 transition-all duration-300 flex items-center gap-3"
+          className="bg-brand-main text-brand-third font-bold py-4 px-8 rounded-2xl shadow-xl shadow-brand-main/20 hover:shadow-brand-main/30 hover:-translate-y-1 transition-all duration-300 flex items-center gap-3"
         >
           <UserPlus className="w-6 h-6" />
           <span>تسجيل موظف جديد</span>
@@ -139,7 +139,7 @@ const Employees = () => {
                   placeholder="بحث عن موظف أو دور..." 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pr-12 pl-4 py-3 bg-white border border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#854836]/10 outline-none font-medium"
+                  className="w-full pr-12 pl-4 py-3 bg-white border border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-brand-main/10 outline-none font-medium"
                 />
             </div>
         </div>
@@ -148,7 +148,7 @@ const Employees = () => {
           {filteredEmployees.map((emp) => (
             <div key={emp.id} className="bg-gray-50/50 border border-gray-100 rounded-[2rem] p-6 hover:shadow-xl transition duration-500 group relative">
               <div className="flex items-start justify-between mb-6">
-                <div className="w-16 h-16 bg-[#854836] rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-[#854836]/20 group-hover:scale-110 transition duration-300">
+                <div className="w-16 h-16 bg-brand-main rounded-2xl flex items-center justify-center text-brand-third text-2xl font-bold shadow-lg shadow-brand-main/20 group-hover:scale-110 transition duration-300">
                   {emp.name.charAt(0)}
                 </div>
                 <div className="flex gap-2">
@@ -162,7 +162,7 @@ const Employees = () => {
               </div>
 
               <h3 className="text-xl font-bold text-gray-900 mb-1">{emp.name}</h3>
-              <p className="text-[#854836] font-bold text-sm mb-6 flex items-center gap-2">
+              <p className="text-brand-main font-bold text-sm mb-6 flex items-center gap-2">
                 <Briefcase className="w-4 h-4" />
                 {emp.role}
               </p>
@@ -184,7 +184,7 @@ const Employees = () => {
 
               <Link 
                 to={`/employees/${emp.id}`}
-                className="mt-8 w-full py-4 bg-white border border-gray-100 rounded-2xl font-bold text-sm text-gray-600 hover:bg-[#854836] hover:text-white hover:border-[#854836] transition-all flex items-center justify-center gap-2"
+                className="mt-8 w-full py-4 bg-white border border-gray-100 rounded-2xl font-bold text-sm text-gray-600 hover:bg-brand-main hover:text-brand-third hover:border-brand-main transition-all flex items-center justify-center gap-2"
               >
                 <span>السجل المالي والحضور</span>
                 <ChevronLeft className="w-4 h-4" />
@@ -200,7 +200,7 @@ const Employees = () => {
           <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={closeModal}></div>
           <div className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300">
              <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
-                <h2 className="text-2xl font-bold text-[#854836]">
+                <h2 className="text-2xl font-bold text-brand-main">
                    {selectedEmployee ? 'تعديل بيانات الموظف' : 'تسجيل موظف جديد'}
                 </h2>
                 <button onClick={closeModal} className="p-2 hover:bg-white rounded-xl transition">
@@ -216,7 +216,7 @@ const Employees = () => {
                         type="text" required
                         value={formData.name}
                         onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                         placeholder="الاسم الثلاثي"
                       />
                    </div>
@@ -226,7 +226,7 @@ const Employees = () => {
                         type="text" maxLength={14}
                         value={formData.national_id}
                         onChange={(e) => setFormData({...formData, national_id: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                       />
                    </div>
                    <div>
@@ -235,7 +235,7 @@ const Employees = () => {
                         type="text"
                         value={formData.address}
                         onChange={(e) => setFormData({...formData, address: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                       />
                    </div>
                    <div>
@@ -244,7 +244,7 @@ const Employees = () => {
                         type="text"
                         value={formData.phone_1}
                         onChange={(e) => setFormData({...formData, phone_1: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                       />
                    </div>
                    <div>
@@ -253,11 +253,11 @@ const Employees = () => {
                         type="text"
                         value={formData.phone_2}
                         onChange={(e) => setFormData({...formData, phone_2: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                       />
                    </div>
                    <div className="col-span-2 border-t border-gray-100 pt-4 mt-2">
-                       <p className="text-xs font-bold text-[#854836] uppercase tracking-widest mb-4">بيانات قريب الطوارئ</p>
+                       <p className="text-xs font-bold text-brand-main uppercase tracking-widest mb-4">بيانات قريب الطوارئ</p>
                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                           <div>
                              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">اسم القريب</label>
@@ -265,7 +265,7 @@ const Employees = () => {
                                type="text"
                                value={formData.relative_name}
                                onChange={(e) => setFormData({...formData, relative_name: e.target.value})}
-                               className="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                               className="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                              />
                           </div>
                           <div>
@@ -274,7 +274,7 @@ const Employees = () => {
                                type="text"
                                value={formData.relative_phone}
                                onChange={(e) => setFormData({...formData, relative_phone: e.target.value})}
-                               className="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                               className="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                              />
                           </div>
                           <div>
@@ -283,7 +283,7 @@ const Employees = () => {
                                type="text"
                                value={formData.relative_relation}
                                onChange={(e) => setFormData({...formData, relative_relation: e.target.value})}
-                               className="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                               className="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                                placeholder="أخ، أب، زوجة..."
                              />
                           </div>
@@ -295,7 +295,7 @@ const Employees = () => {
                         type="number" required
                         value={formData.age}
                         onChange={(e) => setFormData({...formData, age: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                       />
                    </div>
                    <div>
@@ -304,7 +304,7 @@ const Employees = () => {
                         type="text" required
                         value={formData.role}
                         onChange={(e) => setFormData({...formData, role: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                         placeholder="مثال: نجار، مساعد، دهان"
                       />
                    </div>
@@ -314,7 +314,7 @@ const Employees = () => {
                         type="number" required
                         value={formData.hourly_rate}
                         onChange={(e) => setFormData({...formData, hourly_rate: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold text-green-600"
+                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-green-600"
                       />
                    </div>
                    <div>
@@ -323,12 +323,12 @@ const Employees = () => {
                         type="date" required
                         value={formData.start_date}
                         onChange={(e) => setFormData({...formData, start_date: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                       />
                    </div>
                 </div>
 
-                <button type="submit" className="w-full bg-[#854836] text-white font-bold py-5 rounded-2xl shadow-xl shadow-[#854836]/20 hover:bg-[#703a2a] transition duration-300">
+                <button type="submit" className="w-full bg-brand-main text-brand-third font-bold py-5 rounded-2xl shadow-xl shadow-brand-main/20 hover:bg-brand-main/80 transition duration-300">
                    {selectedEmployee ? 'حفظ التعديلات' : 'إتمام التسجيل'}
                 </button>
              </form>

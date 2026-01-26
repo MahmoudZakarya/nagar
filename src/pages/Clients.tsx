@@ -27,7 +27,7 @@ const Clients = () => {
 
   if (loading) return (
     <div className="flex items-center justify-center p-20">
-      <div className="w-10 h-10 border-4 border-[#854836]/20 border-t-[#854836] rounded-full animate-spin"></div>
+      <div className="w-10 h-10 border-4 border-brand-main/20 border-t-brand-main rounded-full animate-spin"></div>
     </div>
   );
   
@@ -75,7 +75,7 @@ const Clients = () => {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-4xl font-bold text-[#854836] tracking-tight">العملاء</h1>
+          <h1 className="text-4xl font-bold text-brand-main tracking-tight">العملاء</h1>
           <p className="text-gray-500 font-medium mt-1">إدارة بيانات العملاء والتواصل</p>
         </div>
         
@@ -87,12 +87,12 @@ const Clients = () => {
                 placeholder="بحث عن عميل..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pr-12 pl-4 py-3 bg-white border-none rounded-2xl shadow-sm focus:ring-2 focus:ring-[#854836]/10 outline-none font-medium"
+                className="w-full pr-12 pl-4 py-3 bg-white border-none rounded-2xl shadow-sm focus:ring-2 focus:ring-brand-main/10 outline-none font-medium"
               />
            </div>
            <button 
              onClick={openAddModal}
-             className="bg-[#854836] text-white font-bold py-3 px-6 rounded-2xl shadow-xl shadow-[#854836]/20 hover:shadow-[#854836]/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center gap-2 whitespace-nowrap"
+             className="bg-brand-main text-brand-third font-bold py-3 px-6 rounded-2xl shadow-xl shadow-brand-main/20 hover:shadow-brand-main/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center gap-2 whitespace-nowrap"
            >
              <Plus className="w-5 h-5" />
              <span>عميل جديد</span>
@@ -115,12 +115,12 @@ const Clients = () => {
             >
               <div className="flex justify-between items-start mb-6">
                 <div className="flex items-center gap-2">
-                   <div className="w-2 h-8 bg-[#FFB22C] rounded-full"></div>
+                   <div className="w-2 h-8 bg-brand-secondary rounded-full"></div>
                    <h3 className="text-xl font-bold text-gray-900">{client.name}</h3>
                 </div>
                 <button 
                   onClick={() => openEditModal(client)}
-                  className="text-gray-300 hover:text-[#854836] transition-colors p-2 hover:bg-gray-50 rounded-xl"
+                  className="text-gray-300 hover:text-brand-main transition-colors p-2 hover:bg-gray-50 rounded-xl"
                 >
                    <Edit2 className="w-5 h-5" />
                 </button>
@@ -157,9 +157,9 @@ const Clients = () => {
                     <span className="text-xs font-bold text-gray-300 uppercase tracking-widest">كود: {client.id}</span>
                  </div>
                  <div className="flex items-center gap-2">
-                     <Link to={`/clients/${client.id}`} className="text-xs font-bold text-[#854836] uppercase tracking-widest hover:underline">الملف الشخصي</Link>
+                     <Link to={`/clients/${client.id}`} className="text-xs font-bold text-brand-main uppercase tracking-widest hover:underline">الملف الشخصي</Link>
                      <span className="text-gray-200">|</span>
-                      <Link to={`/tasks?search=${client.phone_1}`} className="text-xs font-bold text-[#854836] uppercase tracking-widest hover:underline">عرض المشاريع</Link>
+                      <Link to={`/tasks?search=${client.phone_1}`} className="text-xs font-bold text-brand-main uppercase tracking-widest hover:underline">عرض المشاريع</Link>
                   </div>
               </div>
             </div>
@@ -173,7 +173,7 @@ const Clients = () => {
           <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={closeModal}></div>
           <div className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300 max-h-[90vh] flex flex-col">
              <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
-                <h2 className="text-2xl font-bold text-[#854836]">
+                <h2 className="text-2xl font-bold text-brand-main">
                    {isEditMode ? 'تعديل بيانات العميل' : 'إضافة عميل جديد'}
                 </h2>
                 <button onClick={closeModal} className="p-2 hover:bg-white rounded-xl transition">
@@ -189,7 +189,7 @@ const Clients = () => {
                      required
                      value={clientForm.name}
                      onChange={(e) => setClientForm({...clientForm, name: e.target.value})}
-                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                      placeholder="مثال: محمد احمد"
                    />
                 </div>
@@ -202,7 +202,7 @@ const Clients = () => {
                         required
                         value={clientForm.phone_1}
                         onChange={(e) => setClientForm({...clientForm, phone_1: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold italic"
+                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold italic"
                         placeholder="01xxxxxxxxx"
                       />
                    </div>
@@ -212,7 +212,7 @@ const Clients = () => {
                         type="text" 
                         value={clientForm.phone_2}
                         onChange={(e) => setClientForm({...clientForm, phone_2: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold italic"
+                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold italic"
                         placeholder="اختياري"
                       />
                    </div>
@@ -224,7 +224,7 @@ const Clients = () => {
                      rows={3}
                      value={clientForm.address}
                      onChange={(e) => setClientForm({...clientForm, address: e.target.value})}
-                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold resize-none"
+                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold resize-none"
                      placeholder="عنوان العميل بالتفصيل..."
                    />
                 </div>
@@ -232,7 +232,7 @@ const Clients = () => {
                 <div className="pt-4">
                    <button 
                      type="submit"
-                     className="w-full bg-[#854836] text-white font-bold py-5 rounded-2xl shadow-xl shadow-[#854836]/20 hover:shadow-[#854836]/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
+                     className="w-full bg-brand-main text-brand-third font-bold py-5 rounded-2xl shadow-xl shadow-brand-main/20 hover:shadow-brand-main/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
                    >
                      {isEditMode ? 'حفظ التغييرات' : 'حفظ بيانات العميل'}
                    </button>

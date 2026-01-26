@@ -25,6 +25,20 @@ const Safe = () => {
   const { user } = useAuth();
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  // Date Filter State
+  const defaultEndDate = new Date().toISOString().split('T')[0];
+  const defaultStartDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  
+  const [dateFilter, setDateFilter] = useState({
+    start: defaultStartDate,
+    end: defaultEndDate
+  });
+  
+  const [appliedDates, setAppliedDates] = useState({
+    start: defaultStartDate,
+    end: defaultEndDate
+  });
+
   const [newTx, setNewTx] = useState({
     transaction_type: 'Income' as 'Income' | 'Expense',
     amount: '',
@@ -34,7 +48,7 @@ const Safe = () => {
 
   if (loading) return (
     <div className="flex items-center justify-center p-20">
-      <div className="w-10 h-10 border-4 border-[#854836]/20 border-t-[#854836] rounded-full animate-spin"></div>
+      <div className="w-10 h-10 border-4 border-brand-main/20 border-t-brand-main rounded-full animate-spin"></div>
     </div>
   );
 
@@ -53,10 +67,15 @@ const Safe = () => {
     );
   }
   
-  const filteredHistory = history.filter(h => 
-    h.category.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    h.description?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredHistory = history.filter(h => {
+    const matchesSearch = h.category.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          h.description?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const txDate = h.date.split('T')[0];
+    const matchesDate = txDate >= appliedDates.start && txDate <= appliedDates.end;
+    
+    return matchesSearch && matchesDate;
+  });
 
   // Dynamic monthly stats
   const now = new Date();
@@ -84,13 +103,13 @@ const Safe = () => {
       {/* Header & Balance Card */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-4xl font-bold text-[#854836] tracking-tight">الخزينة والمالية</h1>
+          <h1 className="text-4xl font-bold text-brand-main tracking-tight">الخزينة والمالية</h1>
           <p className="text-gray-500 font-medium mt-1">تتبع التدفقات النقدية والمصاريف</p>
         </div>
         
-        <div className="bg-[#854836] p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl shadow-[#854836]/30 flex items-center gap-4 md:gap-8 min-w-0 w-full md:min-w-[350px] relative overflow-hidden group">
+        <div className="bg-brand-main p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl shadow-brand-main/30 flex items-center gap-4 md:gap-8 min-w-0 w-full md:min-w-[350px] relative overflow-hidden group">
           <div className="bg-white/10 p-4 rounded-2xl text-white group-hover:scale-110 transition-transform duration-500 relative z-10">
-            <Wallet className="w-10 h-10 text-[#FFB22C]" />
+            <Wallet className="w-10 h-10 text-brand-secondary" />
           </div>
           <div className="relative z-10">
             <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.2em] mb-1">إجمالي الرصيد الحالي</p>
@@ -106,9 +125,9 @@ const Safe = () => {
         <div className="lg:col-span-1 space-y-6">
            <button 
              onClick={() => setShowAddModal(true)}
-             className="w-full bg-[#FFB22C] text-[#854836] font-bold py-5 rounded-[2rem] shadow-xl shadow-orange-200 hover:shadow-orange-300 hover:-translate-y-1 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3 group"
+             className="w-full bg-brand-secondary text-brand-main font-bold py-5 rounded-[2rem] shadow-xl shadow-brand-secondary/20 hover:shadow-brand-secondary/40 hover:-translate-y-1 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3 group"
            >
-             <div className="bg-[#854836] text-white p-1 rounded-lg group-hover:rotate-90 transition-transform duration-500">
+             <div className="bg-brand-main text-brand-third p-1 rounded-lg group-hover:rotate-90 transition-transform duration-500">
                 <Plus className="w-5 h-5" />
              </div>
              <span>إضافة معاملة يدوية</span>
@@ -116,7 +135,7 @@ const Safe = () => {
 
            <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
               <h3 className="text-lg font-bold text-gray-900 flex items-center gap-3">
-                 <PieChart className="w-5 h-5 text-[#854836]" />
+                 <PieChart className="w-5 h-5 text-brand-main" />
                  ملخص سريع
               </h3>
               <div className="space-y-4">
@@ -136,21 +155,48 @@ const Safe = () => {
         <div className="lg:col-span-3 space-y-6">
            <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
               <div className="p-6 md:p-8 border-b border-gray-50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50/30">
-                 <div className="flex items-center gap-3">
+                 <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-3">
                     <div className="p-2 bg-white rounded-xl shadow-sm">
                        <History className="w-5 h-5 text-gray-400" />
                     </div>
                     <h2 className="text-xl font-bold text-gray-900">سجل المعاملات</h2>
                  </div>
-                 <div className="relative w-full md:w-64">
-                    <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <input 
-                      type="text" 
-                      placeholder="بحث في المعاملات..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pr-10 pl-4 py-2.5 bg-white border border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#854836]/10 outline-none font-medium w-full text-sm"
-                    />
+                  <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-2xl shadow-sm border border-gray-100">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase whitespace-nowrap">من</label>
+                      <input 
+                        type="date" 
+                        value={dateFilter.start}
+                        onChange={(e) => setDateFilter({...dateFilter, start: e.target.value})}
+                        className="bg-transparent border-none outline-none font-bold text-sm text-gray-700"
+                      />
+                      <label className="text-[10px] font-bold text-gray-400 uppercase whitespace-nowrap">إلى</label>
+                      <input 
+                        type="date" 
+                        value={dateFilter.end}
+                        onChange={(e) => setDateFilter({...dateFilter, end: e.target.value})}
+                        className="bg-transparent border-none outline-none font-bold text-sm text-gray-700"
+                      />
+                      <button 
+                        onClick={() => setAppliedDates({...dateFilter})}
+                        className="bg-brand-main text-white px-4 py-1 rounded-xl text-xs font-bold hover:bg-brand-main/90 transition"
+                      >
+                        عرض
+                      </button>
+                    </div>
+                 </div>
+                 
+                  <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
+                    <div className="relative w-full md:w-64">
+                       <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                       <input 
+                         type="text" 
+                         placeholder="بحث في المعاملات..."
+                         value={searchTerm}
+                         onChange={(e) => setSearchTerm(e.target.value)}
+                         className="pr-10 pl-4 py-2.5 bg-white border border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-brand-main/10 outline-none font-medium w-full text-sm"
+                       />
+                    </div>
                  </div>
               </div>
 
@@ -208,7 +254,7 @@ const Safe = () => {
                                  {tx.performed_by_name && (
                                     <div className="flex items-center gap-1.5 px-2 py-0.5 bg-gray-50 rounded-lg border border-gray-100">
                                        <User className="w-2.5 h-2.5 text-gray-400" />
-                                       <span className="text-[9px] font-black text-gray-500">{tx.performed_by_name}</span>
+                                        <span className="text-[9px] font-black text-gray-500">{tx.performed_by_name}</span>
                                     </div>
                                  )}
                               </div>
@@ -227,7 +273,7 @@ const Safe = () => {
           <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setShowAddModal(false)}></div>
           <div className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300 max-h-[90vh] flex flex-col">
              <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
-                <h2 className="text-2xl font-bold text-[#854836]">إضافة معاملة جديدة</h2>
+                <h2 className="text-2xl font-bold text-brand-main">إضافة معاملة جديدة</h2>
                 <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-white rounded-xl transition">
                    <X className="w-6 h-6 text-gray-400" />
                 </button>
@@ -261,7 +307,7 @@ const Safe = () => {
                         required
                         value={newTx.amount}
                         onChange={(e) => setNewTx({...newTx, amount: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold italic text-xl"
+                         className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold italic text-xl"
                         placeholder="0.00"
                       />
                    </div>
@@ -271,7 +317,7 @@ const Safe = () => {
                         required
                         value={newTx.category}
                         onChange={(e) => setNewTx({...newTx, category: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                         className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                       >
                          <option value="">اختر الفئة...</option>
                          <option value="دفعة مقدمة">عربون عميل</option>
@@ -291,7 +337,7 @@ const Safe = () => {
                      rows={3}
                      value={newTx.description}
                      onChange={(e) => setNewTx({...newTx, description: e.target.value})}
-                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold resize-none"
+                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold resize-none"
                      placeholder="تفاصيل المعاملة..."
                    />
                 </div>
@@ -299,7 +345,7 @@ const Safe = () => {
                 <div className="pt-4">
                    <button 
                      type="submit"
-                     className="w-full bg-[#854836] text-white font-bold py-5 rounded-2xl shadow-xl shadow-[#854836]/20 hover:shadow-[#854836]/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3"
+                      className="w-full bg-brand-main text-brand-third font-bold py-5 rounded-2xl shadow-xl shadow-brand-main/20 hover:shadow-brand-main/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3"
                    >
                      <CreditCard className="w-6 h-6" />
                      تسجيل المعاملة في الخزنة

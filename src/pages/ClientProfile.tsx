@@ -51,7 +51,7 @@ const ClientProfile = () => {
           <User className="w-10 h-10 text-gray-300" />
         </div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">العميل غير موجود</h2>
-        <button onClick={() => navigate('/clients')} className="text-[#854836] font-bold hover:underline">العودة لقائمة العملاء</button>
+        <button onClick={() => navigate('/clients')} className="text-brand-main font-bold hover:underline">العودة لقائمة العملاء</button>
       </div>
     );
   }
@@ -78,7 +78,7 @@ const ClientProfile = () => {
           <ArrowLeft className="w-5 h-5 text-gray-500" />
         </button>
         <div className="flex items-center gap-2 text-sm font-bold text-gray-400">
-          <Link to="/clients" className="hover:text-[#854836]">العملاء</Link>
+          <Link to="/clients" className="hover:text-brand-main">العملاء</Link>
           <ChevronRight className="w-4 h-4" />
           <span className="text-gray-900">ملف العميل</span>
         </div>
@@ -88,10 +88,10 @@ const ClientProfile = () => {
         {/* Left: Client Info Card */}
         <div className="lg:col-span-1 space-y-6">
            <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 p-8 text-center relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-br from-[#854836]/5 to-[#FFB22C]/5"></div>
+              <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-br from-brand-main/5 to-brand-secondary/5"></div>
               
               <div className="relative pt-4">
-                 <div className="w-24 h-24 bg-[#854836] rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto mb-6 shadow-xl shadow-[#854836]/20 border-4 border-white">
+                 <div className="w-24 h-24 bg-brand-main rounded-full flex items-center justify-center text-brand-third text-3xl font-bold mx-auto mb-6 shadow-xl shadow-brand-main/20 border-4 border-white">
                     {client.name.charAt(0)}
                  </div>
                  <h1 className="text-2xl font-bold text-gray-900 mb-1">{client.name}</h1>
@@ -99,9 +99,9 @@ const ClientProfile = () => {
               </div>
 
               <div className="mt-10 space-y-4 text-right">
-                 <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl group hover:bg-[#854836]/5 transition duration-300">
+                 <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl group hover:bg-brand-secondary/5 transition duration-300">
                     <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm group-hover:scale-110 transition duration-300">
-                       <Phone className="w-5 h-5 text-[#FFB22C]" />
+                       <Phone className="w-5 h-5 text-yellow-500" />
                     </div>
                     <div>
                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">الهاتف الأساسي</p>
@@ -110,9 +110,9 @@ const ClientProfile = () => {
                  </div>
 
                  {client.phone_2 && (
-                    <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl group hover:bg-[#854836]/5 transition duration-300">
+                    <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl group hover:bg-brand-main/5 transition duration-300">
                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm group-hover:scale-110 transition duration-300">
-                          <Phone className="w-5 h-5 text-[#FFB22C]" />
+                           <Phone className="w-5 h-5 text-brand-secondary" />
                        </div>
                        <div>
                           <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">الهاتف الإضافي</p>
@@ -121,9 +121,9 @@ const ClientProfile = () => {
                     </div>
                  )}
 
-                 <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl group hover:bg-[#854836]/5 transition duration-300">
+                 <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl group hover:bg-brand-main/5 transition duration-300">
                     <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm group-hover:scale-110 transition duration-300">
-                       <MapPin className="w-5 h-5 text-[#FFB22C]" />
+                       <MapPin className="w-5 h-5 text-brand-secondary" />
                     </div>
                     <div>
                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">العنوان</p>
@@ -133,7 +133,7 @@ const ClientProfile = () => {
               </div>
               
               <button 
-                className="w-full mt-8 py-4 border-2 border-dashed border-gray-100 rounded-2xl text-gray-400 font-bold text-sm hover:border-[#854836]/20 hover:text-[#854836] transition flex items-center justify-center gap-2"
+                className="w-full mt-8 py-4 border-2 border-dashed border-gray-100 rounded-2xl text-gray-400 font-bold text-sm hover:border-brand-main/20 hover:text-brand-main transition flex items-center justify-center gap-2"
               >
                  <Edit className="w-4 h-4" />
                  تعديل البيانات
@@ -142,16 +142,16 @@ const ClientProfile = () => {
 
            {/* Quick Stats Grid */}
            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-[#854836] p-6 rounded-[2rem] text-white shadow-lg shadow-[#854836]/20 col-span-2">
-                 <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest mb-1">إجمالي المعاملات</p>
+               <div className="bg-brand-main p-6 rounded-[2rem] text-brand-third shadow-lg shadow-brand-main/20 col-span-2">
+                 <p className="text-white text-[12px] font-bold uppercase tracking-widest mb-1">إجمالي المعاملات</p>
                  <p className="text-3xl font-bold italic">{stats.totalSpent.toLocaleString()}<EGP /></p>
               </div>
               <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
-                 <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">مشاريع منجزة</p>
+                 <p className="text-gray-600 text-[12px] font-bold uppercase tracking-widest mb-1">مشاريع منجزة</p>
                  <p className="text-2xl font-bold text-gray-900">{stats.completed}</p>
               </div>
               <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
-                 <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">مشاريع نشطة</p>
+                 <p className="text-gray-600 text-[12px] font-bold uppercase tracking-widest mb-1">مشاريع نشطة</p>
                  <p className="text-2xl font-bold text-gray-900">{stats.active}</p>
               </div>
            </div>
@@ -164,13 +164,13 @@ const ClientProfile = () => {
                   <div className="flex gap-6">
                      <button 
                        onClick={() => setActiveTab('projects')}
-                       className={`text-xl font-bold transition-colors ${activeTab === 'projects' ? 'text-gray-900 border-b-2 border-[#854836]' : 'text-gray-400 hover:text-gray-600'}`}
+                       className={`text-xl font-bold transition-colors ${activeTab === 'projects' ? 'text-gray-900 border-b-2 border-brand-main' : 'text-gray-400 hover:text-gray-600'}`}
                      >
                        المشاريع
                      </button>
                      <button 
                        onClick={() => setActiveTab('quotations')}
-                       className={`text-xl font-bold transition-colors ${activeTab === 'quotations' ? 'text-gray-900 border-b-2 border-[#854836]' : 'text-gray-400 hover:text-gray-600'}`}
+                       className={`text-xl font-bold transition-colors ${activeTab === 'quotations' ? 'text-gray-900 border-b-2 border-brand-main' : 'text-gray-400 hover:text-gray-600'}`}
                      >
                        عروض الأسعار
                      </button>
@@ -183,13 +183,13 @@ const ClientProfile = () => {
                        placeholder="بحث في المشاريع..."
                        value={searchTerm}
                        onChange={(e) => setSearchTerm(e.target.value)}
-                       className="pr-10 pl-4 py-2.5 bg-white border border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#854836]/10 outline-none font-medium w-full text-sm"
+                       className="pr-10 pl-4 py-2.5 bg-white border border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-brand-main/10 outline-none font-medium w-full text-sm"
                      />
                   </div>
                   ) : (
                     <button
                       onClick={() => navigate('/quotations/new')}
-                      className="flex items-center gap-2 px-4 py-2 bg-[#854836] text-white rounded-xl hover:bg-[#854836]/90 transition"
+                      className="flex items-center gap-2 px-4 py-2 bg-brand-main text-brand-third rounded-xl hover:bg-brand-main/90 transition"
                     >
                       <Plus className="w-4 h-4" />
                       <span>عرض سعر جديد</span>
@@ -216,7 +216,7 @@ const ClientProfile = () => {
                           </div>
                           <div className="flex-1">
                               <div className="flex items-center gap-3 mb-1">
-                                <h3 className="font-bold text-gray-900 text-lg group-hover:text-[#854836] transition">{task.title}</h3>
+                                <h3 className="font-bold text-gray-900 text-lg group-hover:text-brand-main transition">{task.title}</h3>
                                 <span className={`px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-widest ${
                                   task.status === 'Delivered' ? 'bg-green-50 text-green-600' : 
                                   task.status === 'In Progress' ? 'bg-blue-50 text-blue-600' : 'bg-orange-50 text-orange-600'
@@ -247,7 +247,7 @@ const ClientProfile = () => {
                                 {task.final_payment_status === 'Settled' ? 'خالص' : 'متبقي'}
                               </p>
                           </div>
-                          <ChevronRight className="w-6 h-6 text-gray-300 group-hover:text-[#854836] transition transform group-hover:-translate-x-1" />
+                           <ChevronRight className="w-6 h-6 text-gray-300 group-hover:text-brand-main transition transform group-hover:-translate-x-1" />
                         </Link>
                       ))
                     )
@@ -258,7 +258,7 @@ const ClientProfile = () => {
                        quotations.map((quotation) => (
                          <div key={quotation.id} className="p-4 md:p-8 flex items-center justify-between hover:bg-gray-50/50 transition group">
                             <div className="flex items-center gap-4">
-                               <div className="w-12 h-12 bg-[#FFB22C]/10 text-[#FFB22C] rounded-xl flex items-center justify-center">
+                                <div className="w-12 h-12 bg-brand-secondary/10 text-brand-secondary rounded-xl flex items-center justify-center">
                                   <FileText className="w-6 h-6" />
                                </div>
                                <div>

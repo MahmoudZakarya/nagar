@@ -34,6 +34,7 @@ const Tasks = () => {
     }
   }, [searchParams]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(10);
   const [newTask, setNewTask] = useState({
     client_id: '',
     title: '',
@@ -45,7 +46,7 @@ const Tasks = () => {
 
   if (loading) return (
     <div className="flex items-center justify-center p-20">
-      <div className="w-10 h-10 border-4 border-[#854836]/20 border-t-[#854836] rounded-full animate-spin"></div>
+      <div className="w-10 h-10 border-4 border-brand-main/20 border-t-brand-main rounded-full animate-spin"></div>
     </div>
   );
 
@@ -86,6 +87,8 @@ const Tasks = () => {
       return dateA - dateB;
     });
 
+  const displayedTasks = filteredTasks.slice(0, visibleCount);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await addTask({
@@ -114,7 +117,7 @@ const Tasks = () => {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-4xl font-bold text-[#854836] tracking-tight">المشاريع</h1>
+          <h1 className="text-4xl font-bold text-brand-main tracking-tight">المشاريع</h1>
           <p className="text-gray-500 font-medium mt-1">تتبع حالة تصنيع الأثاث والتسليمات</p>
         </div>
         
@@ -126,12 +129,12 @@ const Tasks = () => {
                 placeholder="بحث في المشاريع..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pr-12 pl-4 py-3 bg-white border-none rounded-2xl shadow-sm focus:ring-2 focus:ring-[#854836]/10 outline-none font-medium"
+                className="w-full pr-12 pl-4 py-3 bg-white border-none rounded-2xl shadow-sm focus:ring-2 focus:ring-brand-main/10 outline-none font-medium"
               />
            </div>
            <button 
              onClick={() => setIsModalOpen(true)}
-             className="bg-[#854836] text-white font-bold py-3 px-6 rounded-2xl shadow-xl shadow-[#854836]/20 hover:shadow-[#854836]/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center gap-2 whitespace-nowrap"
+             className="bg-brand-main text-brand-third font-bold py-3 px-6 rounded-2xl shadow-xl shadow-brand-main/20 hover:shadow-brand-main/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center gap-2 whitespace-nowrap"
            >
              <Plus className="w-5 h-5" />
              <span>مشروع جديد</span>
@@ -140,13 +143,13 @@ const Tasks = () => {
       </div>
 
       <div className="space-y-4">
-        {filteredTasks.length === 0 ? (
+        {displayedTasks.length === 0 ? (
           <div className="py-20 text-center bg-white rounded-[2.5rem] shadow-sm border border-gray-100">
             <AlertCircle className="w-16 h-16 text-gray-200 mx-auto mb-4" />
             <p className="text-gray-400 font-bold">لم يتم العثور على مشاريع</p>
           </div>
         ) : (
-          filteredTasks.map((task) => {
+          displayedTasks.map((task) => {
             const status = getStatusInfo(task.status);
             const urgency = getTaskUrgency(task);
             return (
@@ -178,7 +181,7 @@ const Tasks = () => {
                       <h3 className="text-2xl font-bold text-gray-900">{task.title}</h3>
                       <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-500 font-medium">
                          <div className="flex items-center gap-2">
-                           <span className="text-[#854836] font-bold">العميل:</span>
+                           <span className="text-brand-main font-bold">العميل:</span>
                            {task.client_name}
                          </div>
                          <div className="flex items-center gap-2">
@@ -204,7 +207,7 @@ const Tasks = () => {
 
                       <Link 
                         to={`/tasks/${task.id}`}
-                        className="w-full sm:w-auto bg-gray-50 text-[#854836] font-bold py-4 px-8 rounded-2xl hover:bg-[#FFB22C] hover:text-white hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-3 group"
+                         className="w-full sm:w-auto bg-gray-50 text-brand-main font-bold py-4 px-8 rounded-2xl hover:bg-brand-secondary hover:text-brand-third hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-3 group"
                       >
                          <span>إدارة المشروع</span>
                          <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -227,6 +230,18 @@ const Tasks = () => {
             );
           })
         )}
+
+        {filteredTasks.length > visibleCount && (
+          <div className="pt-8 flex justify-center">
+            <button 
+              onClick={() => setVisibleCount(prev => prev + 10)}
+              className="px-12 py-4 bg-white border border-gray-200 rounded-2xl font-bold text-gray-500 hover:bg-gray-50 hover:text-brand-main transition shadow-sm flex items-center gap-2"
+            >
+              <Plus className="w-5 h-5" />
+              <span>عرض المزيد من المشاريع</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Add Task Modal */}
@@ -235,7 +250,7 @@ const Tasks = () => {
           <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setIsModalOpen(false)}></div>
           <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300 max-h-[90vh] flex flex-col">
              <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
-                <h2 className="text-2xl font-bold text-[#854836]">إضافة مشروع جديد</h2>
+                 <h2 className="text-2xl font-bold text-brand-main">إضافة مشروع جديد</h2>
                 <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white rounded-xl transition">
                    <X className="w-6 h-6 text-gray-400" />
                 </button>
@@ -248,7 +263,7 @@ const Tasks = () => {
                      required
                      value={newTask.client_id}
                      onChange={(e) => setNewTask({...newTask, client_id: e.target.value})}
-                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold appearance-none cursor-pointer"
+                      className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold appearance-none cursor-pointer"
                    >
                      <option value="">اختر عميلاً...</option>
                      {clients.map(c => (
@@ -263,7 +278,7 @@ const Tasks = () => {
                      type="text" required
                      value={newTask.title}
                      onChange={(e) => setNewTask({...newTask, title: e.target.value})}
-                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                         className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                      placeholder="مثال: طقم انتريه مودرن"
                    />
                 </div>
@@ -274,7 +289,7 @@ const Tasks = () => {
                      rows={3}
                      value={newTask.description}
                      onChange={(e) => setNewTask({...newTask, description: e.target.value})}
-                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold resize-none"
+                      className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold resize-none"
                      placeholder="تفاصيل المقاسات والخامات..."
                    />
                 </div>
@@ -287,7 +302,7 @@ const Tasks = () => {
                         required
                         value={newTask.total_agreed_price}
                         onChange={(e) => setNewTask({...newTask, total_agreed_price: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold text-green-600"
+                         className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-green-600"
                         placeholder="0"
                       />
                    </div>
@@ -298,7 +313,7 @@ const Tasks = () => {
                         required
                         value={newTask.deposit_paid}
                         onChange={(e) => setNewTask({...newTask, deposit_paid: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold text-orange-600"
+                         className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-orange-600"
                         placeholder="0"
                       />
                    </div>
@@ -309,7 +324,7 @@ const Tasks = () => {
                         required
                         value={newTask.delivery_due_date}
                         onChange={(e) => setNewTask({...newTask, delivery_due_date: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                       />
                    </div>
                 </div>
@@ -324,7 +339,7 @@ const Tasks = () => {
                    </button>
                    <button 
                      type="submit"
-                     className="flex-[2] bg-[#854836] text-white font-bold py-5 rounded-2xl shadow-xl shadow-[#854836]/20 hover:shadow-[#854836]/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
+                      className="flex-[2] bg-brand-main text-brand-third font-bold py-5 rounded-2xl shadow-xl shadow-brand-main/20 hover:shadow-brand-main/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
                    >
                      بدء المشروع وحفظ البيانات
                    </button>

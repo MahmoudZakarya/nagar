@@ -28,10 +28,10 @@ const LoginPage = () => {
       <div className="w-full max-w-md">
         {/* Logo Section */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-[#854836] rounded-3xl shadow-xl mb-6 transform -rotate-6">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-brand-main rounded-3xl shadow-xl mb-6 transform -rotate-6">
             <img src={logo} alt="Nagar Logic" className="h-28 object-contain" />
           </div>
-          <h1 className="text-4xl font-bold text-[#854836] tracking-tight">نظام نجار</h1>
+          <h1 className="text-4xl font-bold text-brand-main tracking-tight">نظام نجار</h1>
           <p className="text-gray-500 mt-2 font-medium">نظام إدارة ورشة نجار</p>
         </div>
 
@@ -73,7 +73,7 @@ const LoginPage = () => {
                     required 
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 focus:bg-white transition-all duration-300 outline-none"
+                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 focus:bg-white transition-all duration-300 outline-none"
                     placeholder="••••••••"
                   />
                 </div>
@@ -83,7 +83,7 @@ const LoginPage = () => {
                 <button 
                   type="submit" 
                   disabled={loading}
-                  className="w-full bg-[#854836] text-white font-bold py-5 rounded-2xl shadow-xl shadow-[#854836]/20 hover:shadow-[#854836]/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3 group"
+                  className="w-full bg-brand-main text-brand-third font-bold py-5 rounded-2xl shadow-xl shadow-brand-main/20 hover:shadow-brand-main/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3 group"
                 >
                   {loading ? (
                      <div className="w-6 h-6 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>

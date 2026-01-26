@@ -33,8 +33,8 @@ const Sidebar = ({ onClose, isCollapsed }: { onClose?: () => void, isCollapsed?:
   }
 
   return (
-    <aside className={`${isCollapsed ? 'w-20' : 'w-64'} bg-[#854836] text-white flex flex-col h-full shadow-lg transition-all duration-300`}>
-      <div className="p-6 border-b border-[#A05A45] flex items-center justify-between">
+    <aside className={`${isCollapsed ? 'w-20' : 'w-64'} bg-brand-main text-brand-third flex flex-col h-full shadow-lg transition-all duration-300`}>
+      <div className="p-6 border-b border-brand-third/10 flex items-center justify-between">
         <div className="flex items-center justify-center flex-1">
           <img src={logo} alt="شعار نجار" className={`h-16 w-auto transition-all duration-300 ${isCollapsed ? 'scale-0 opacity-0 h-0' : ''}`} />
         </div>
@@ -46,15 +46,15 @@ const Sidebar = ({ onClose, isCollapsed }: { onClose?: () => void, isCollapsed?:
         </button>
       </div>
 
-      <div className={`p-4 border-b border-[#A05A45] ${isCollapsed ? 'hidden' : 'block'}`}>
+      <div className={`p-4 border-b border-brand-third/10 ${isCollapsed ? 'hidden' : 'block'}`}>
         <form onSubmit={handleSearch} className="relative">
-          <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-[#FFB22C]/60 w-4 h-4" />
+          <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-secondary/80 w-4 h-4" />
           <input 
             type="text" 
             placeholder="بحث سريع..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pr-9 pl-3 py-2 bg-[#A05A45] border-none rounded-xl text-xs font-bold placeholder-[#FFB22C]/40 outline-none focus:ring-1 focus:ring-[#FFB22C]/50 transition-all"
+            className="w-full pr-9 pl-3 py-2 bg-brand-third/10 border-none rounded-xl text-xs font-bold placeholder-brand-secondary/60 outline-none focus:ring-1 focus:ring-brand-secondary/50 transition-all"
           />
         </form>
       </div>
@@ -68,12 +68,12 @@ const Sidebar = ({ onClose, isCollapsed }: { onClose?: () => void, isCollapsed?:
               onClick={onClose}
               className={`flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3 rounded-xl transition-all duration-200 ${
                 isActive 
-                  ? 'bg-[#FFB22C] text-[#854836] font-bold shadow-lg shadow-black/10' 
-                  : 'hover:bg-[#A05A45] text-white/80 hover:text-white'
+                  ? 'bg-brand-secondary text-brand-main font-bold shadow-lg shadow-black/10' 
+                  : 'hover:bg-brand-third/10 text-brand-third/80 hover:text-brand-third'
               }`}
             >
               <item.icon 
-                className={`flex-shrink-0 ${isActive ? 'text-[#854836]' : 'text-[#FFB22C]'}`} 
+                className={`flex-shrink-0 ${isActive ? 'text-brand-main' : 'text-brand-secondary'}`} 
                 size={isCollapsed ? 22 : 22}
               />
               {!isCollapsed && <span>{item.name}</span>}
@@ -82,9 +82,9 @@ const Sidebar = ({ onClose, isCollapsed }: { onClose?: () => void, isCollapsed?:
         })}
       </nav>
       
-      <div className="p-4 border-t border-[#A05A45]">
+      <div className="p-4 border-t border-brand-third/10">
         <div className={`flex items-center gap-3 px-4 py-3 mb-4 bg-black/10 rounded-2xl border border-white/5 ${isCollapsed ? 'justify-center px-0' : ''}`}>
-           <div className="w-10 h-10 bg-[#FFB22C] rounded-xl flex items-center justify-center text-[#854836] font-black shadow-inner flex-shrink-0">
+           <div className="w-10 h-10 bg-brand-secondary rounded-xl flex items-center justify-center text-brand-main font-black shadow-inner flex-shrink-0">
               {user?.username[0].toUpperCase()}
            </div>
            {!isCollapsed && (
@@ -103,7 +103,7 @@ const Sidebar = ({ onClose, isCollapsed }: { onClose?: () => void, isCollapsed?:
         </button>
       </div>
 
-      <div className="p-4 text-[9px] text-center text-[#dccec9] opacity-20 uppercase tracking-[0.3em] font-black">
+      <div className="p-4 text-[9px] text-center text-brand-third/20 opacity-20 uppercase tracking-[0.3em] font-black">
         الإصدار 1.0.0
       </div>
     </aside>

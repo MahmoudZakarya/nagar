@@ -30,6 +30,20 @@ const Purchases = () => {
   const [paymentAmount, setPaymentAmount] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState<'All' | 'Remaining'>('All');
+  // Date Filter State
+  const defaultEndDate = new Date().toISOString().split('T')[0];
+  const defaultStartDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  
+  const [dateFilter, setDateFilter] = useState({
+    start: defaultStartDate,
+    end: defaultEndDate
+  });
+  
+  const [appliedDates, setAppliedDates] = useState({
+    start: defaultStartDate,
+    end: defaultEndDate
+  });
+
   const [formData, setFormData] = useState({
     supplier_name: '',
     item_name: '',
@@ -42,7 +56,7 @@ const Purchases = () => {
 
   if (loading) return (
     <div className="flex items-center justify-center p-20">
-      <div className="w-10 h-10 border-4 border-[#854836]/20 border-t-[#854836] rounded-full animate-spin"></div>
+      <div className="w-10 h-10 border-4 border-brand-main/20 border-t-brand-main rounded-full animate-spin"></div>
     </div>
   );
 
@@ -50,7 +64,11 @@ const Purchases = () => {
     const matchesSearch = p.item_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          p.supplier_name?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = activeFilter === 'All' || p.amount_remaining > 0;
-    return matchesSearch && matchesFilter;
+    
+    const pDate = p.date.split('T')[0];
+    const matchesDate = pDate >= appliedDates.start && pDate <= appliedDates.end;
+
+    return matchesSearch && matchesFilter && matchesDate;
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -97,7 +115,7 @@ const Purchases = () => {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-4xl font-bold text-[#854836] tracking-tight">المشتريات والخامات</h1>
+          <h1 className="text-4xl font-bold text-brand-main tracking-tight">المشتريات والخامات</h1>
           <p className="text-gray-500 font-medium mt-1">إدارة فواتير الموردين ومخزون الخامات</p>
         </div>
 
@@ -117,7 +135,7 @@ const Purchases = () => {
                <Package className="w-8 h-8" />
             </div>
             <div className="relative z-10">
-               <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">إجمالي الطلبات</p>
+               <p className="text-gray-700 text-[10px] font-bold uppercase tracking-widest mb-1">إجمالي الطلبات</p>
                <p className="text-3xl font-bold text-gray-900">{purchases.length}</p>
             </div>
             <div className="absolute -right-4 -bottom-4 opacity-5 pointer-events-none">
@@ -154,8 +172,10 @@ const Purchases = () => {
 
       <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
         <div className="p-8 border-b border-gray-50 flex flex-col md:flex-row justify-between gap-6 items-center bg-gray-50/20">
-            <div className="relative w-full md:w-96">
-                <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+           
+            <div className="flex flex-col gap-4">
+                <div className="relative w-full md:w-96">
+                <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-700 w-4 h-4" />
                 <input
                   type="text"
                   placeholder="بحث في المشتريات أو الموردين..."
@@ -164,16 +184,46 @@ const Purchases = () => {
                   className="w-full pr-12 pl-4 py-3 bg-white border border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#5E9E54]/10 outline-none font-medium"
                 />
             </div>
-            <div className="flex gap-4">
+                <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-2xl shadow-sm border border-gray-100">
+                  <div className='flex flex-col gap-1'>
+                     <label className="text-[10px] font-bold text-gray-400 uppercase whitespace-nowrap">من</label>
+                  <input 
+                    type="date" 
+                    value={dateFilter.start}
+                    onChange={(e) => setDateFilter({...dateFilter, start: e.target.value})}
+                    className="bg-transparent border-none outline-none font-bold text-sm text-gray-700"
+                  />
+
+                  </div>
+                  <div className='flex flex-col gap-1'>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase whitespace-nowrap">إلى</label>
+                  <input 
+                    type="date" 
+                    value={dateFilter.end}
+                    onChange={(e) => setDateFilter({...dateFilter, end: e.target.value})}
+                    className="bg-transparent border-none outline-none font-bold text-sm text-gray-700"
+                  />
+                  </div>
+                  <button 
+                    onClick={() => setAppliedDates({...dateFilter})}
+                    className="bg-[#5E9E54] text-white px-4 py-1 rounded-xl text-xs font-bold hover:bg-[#4D8245] mr-4 transition shadow-md shadow-green-100"
+                  >
+                    عرض
+                  </button>
+                </div>
+            </div>
+            <div className="flex flex-wrap items-center gap-4">
+               
+
                <button
                 onClick={() => setActiveFilter('All')}
-                className={`px-6 py-2.5 text-xs font-bold uppercase tracking-widest transition rounded-xl ${activeFilter === 'All' ? 'text-[#5E9E54] bg-green-50' : 'text-gray-400 hover:text-gray-600'}`}
+                className={`px-6 py-2.5 text-xs font-bold uppercase tracking-widest transition rounded-xl ${activeFilter === 'All' ? 'text-[#5E9E54] bg-green-50' : 'text-gray-700 hover:text-gray-600'}`}
                >
                 الكل
                </button>
                <button
                 onClick={() => setActiveFilter('Remaining')}
-                className={`px-6 py-2.5 text-xs font-bold uppercase tracking-widest transition rounded-xl ${activeFilter === 'Remaining' ? 'text-red-600 bg-red-50' : 'text-gray-400 hover:text-red-500 hover:bg-red-50'}`}
+                className={`px-6 py-2.5 text-xs font-bold uppercase tracking-widest transition rounded-xl ${activeFilter === 'Remaining' ? 'text-red-600 bg-red-50' : 'text-gray-700 hover:text-red-500 hover:bg-red-50'}`}
                >
                 فواتير متبقية
                </button>
@@ -196,13 +246,13 @@ const Purchases = () => {
             <tbody className="divide-y divide-gray-50">
               {filteredPurchases.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="p-20 text-center text-gray-400 italic">لا توجد سجلات شراء</td>
+                  <td colSpan={6} className="p-20 text-center text-gray-700 italic">لا توجد سجلات شراء</td>
                 </tr>
               ) : (
                 filteredPurchases.map((p) => (
                   <tr key={p.id} className="hover:bg-gray-50/50 transition duration-300 group">
                     <td className="p-4 md:p-8">
-                       <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-1">{new Date(p.date).toLocaleDateString('ar-EG')}</p>
+                       <p className="text-[12px] font-bold text-gray-700 uppercase tracking-widest mb-1">{new Date(p.date).toLocaleDateString('ar-EG')}</p>
                        <p className="font-bold text-gray-900 flex items-center gap-3">
                           <Package className="w-5 h-5 text-gray-200 group-hover:text-[#5E9E54] transition" />
                           {p.item_name}
@@ -210,7 +260,7 @@ const Purchases = () => {
                     </td>
                     <td className="p-4 md:p-8">
                        <div className="flex items-center gap-3 text-gray-600 font-bold">
-                          <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-[#FFB22C] group-hover:text-white transition">
+                          <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-700 group-hover:bg-brand-secondary group-hover:text-brand-main transition">
                              <Truck className="w-4 h-4" />
                           </div>
                           {p.supplier_name || 'مورد عام'}
@@ -218,7 +268,7 @@ const Purchases = () => {
                     </td>
                     <td className="p-4 md:p-8 text-center">
                        <span className="text-gray-900 font-bold text-lg">{p.quantity}</span>
-                       <span className="text-gray-400 text-[10px] block font-bold uppercase mt-1">@ {p.price_per_unit}<EGP /></span>
+                       <span className="text-gray-700 text-[10px] block font-bold uppercase mt-1">@ {p.price_per_unit}<EGP /></span>
                     </td>
                     <td className="p-4 md:p-8 text-left font-bold text-gray-900 text-lg">{p.total_cost.toLocaleString()}<EGP /></td>
                     <td className="p-4 md:p-8 text-left font-bold text-green-600 italic text-lg">{p.amount_paid_now.toLocaleString()}<EGP /></td>
@@ -251,7 +301,7 @@ const Purchases = () => {
                                  deletePurchase(p.id, user?.id);
                                }
                              }}
-                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition"
+                            className="p-2 text-gray-700 hover:text-red-500 hover:bg-red-50 rounded-lg transition"
                             title="حذف الفاتورة"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -285,7 +335,7 @@ const Purchases = () => {
              <form onSubmit={handleSubmit} className="p-10 space-y-8 overflow-y-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                    <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 px-1">اسم الصنف / الخامة</label>
+                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-3 px-1">اسم الصنف / الخامة</label>
                       <input 
                         type="text" required 
                         className="w-full px-6 py-5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#5E9E54]/10 outline-none font-bold"
@@ -295,7 +345,7 @@ const Purchases = () => {
                       />
                    </div>
                    <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 px-1">اسم المورد</label>
+                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-3 px-1">اسم المورد</label>
                       <input 
                         type="text" 
                         className="w-full px-6 py-5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#5E9E54]/10 outline-none font-bold"
@@ -308,7 +358,7 @@ const Purchases = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 p-6 md:p-8 bg-gray-50 rounded-[2rem]">
                    <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 text-center">الكمية</label>
+                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-3 text-center">الكمية</label>
                       <input 
                         type="number" 
                         className="w-full px-4 py-4 rounded-2xl border-none bg-white shadow-inner focus:ring-2 focus:ring-[#5E9E54]/10 transition text-center font-bold text-lg"
@@ -317,7 +367,7 @@ const Purchases = () => {
                       />
                    </div>
                    <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 text-center">سعر الوحدة</label>
+                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-3 text-center">سعر الوحدة</label>
                       <input 
                         type="number"
                         className="w-full px-4 py-4 rounded-2xl border-none bg-white shadow-inner focus:ring-2 focus:ring-[#5E9E54]/10 transition text-center font-bold text-lg"
@@ -326,7 +376,7 @@ const Purchases = () => {
                       />
                    </div>
                    <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 text-center">الخصم</label>
+                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-3 text-center">الخصم</label>
                       <input 
                         type="number"
                         className="w-full px-4 py-4 rounded-2xl border-none bg-white shadow-inner focus:ring-2 focus:ring-[#5E9E54]/10 transition text-center font-bold text-lg"
@@ -339,7 +389,7 @@ const Purchases = () => {
                 <div className="flex flex-col md:flex-row items-center justify-between gap-10 py-6">
                    <div className="flex items-center gap-8">
                       <div>
-                         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">صافي التكلفة</p>
+                         <p className="text-[10px] font-bold text-gray-700 uppercase tracking-widest mb-1">صافي التكلفة</p>
                          <p className="text-4xl font-bold text-gray-900 italic tracking-tighter">{formData.total_cost.toLocaleString()}<EGP /></p>
                       </div>
                       <ArrowLeft className="w-6 h-6 text-gray-200 mt-4" />
@@ -377,20 +427,20 @@ const Purchases = () => {
           <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setShowPaymentModal(false)}></div>
           <div className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300">
              <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
-                <h2 className="text-2xl font-bold text-[#854836]">سداد مديونية</h2>
-                <button onClick={() => setShowPaymentModal(false)}><X className="w-6 h-6 text-gray-300" /></button>
+                <h2 className="text-2xl font-bold text-brand-main">سداد مديونية</h2>
+                <button onClick={() => setShowPaymentModal(false)}><X className="w-6 h-6 text-gray-700" /></button>
              </div>
              <form onSubmit={handlePaymentSubmit} className="p-8 space-y-6">
                 <div>
-                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 px-1">المتبقي: {selectedPurchase?.amount_remaining.toLocaleString()}<EGP /></p>
-                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">المبلغ المراد دفعه</label>
+                   <p className="text-[10px] font-bold text-gray-700 uppercase tracking-widest mb-1 px-1">المتبقي: {selectedPurchase?.amount_remaining.toLocaleString()}<EGP /></p>
+                   <label className="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-2 px-1">المبلغ المراد دفعه</label>
                    <input 
                      type="number" 
                      required
                      max={selectedPurchase?.amount_remaining}
                      value={paymentAmount}
                      onChange={(e) => setPaymentAmount(e.target.value)}
-                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold text-2xl text-center"
+                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-2xl text-center"
                      placeholder="0.00"
                    />
                 </div>

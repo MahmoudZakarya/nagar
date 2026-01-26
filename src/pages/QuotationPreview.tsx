@@ -85,7 +85,7 @@ const QuotationPreview = () => {
           <button
             onClick={handleSavePDF}
             disabled={isExporting}
-            className="flex items-center gap-2 px-6 py-2 bg-[#FFB22C] text-black font-bold rounded-lg hover:bg-[#FFB22C]/90 transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 px-6 py-2 bg-brand-secondary text-brand-main font-bold rounded-lg hover:bg-brand-secondary/90 transition-colors disabled:opacity-50"
           >
             {isExporting ? (
               <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
@@ -96,7 +96,7 @@ const QuotationPreview = () => {
           </button>
           <button
             onClick={() => window.print()}
-            className="flex items-center gap-2 px-6 py-2 bg-[#854836] text-white rounded-lg hover:bg-[#854836]/90 transition-colors"
+            className="flex items-center gap-2 px-6 py-2 bg-brand-main text-brand-third rounded-lg hover:bg-brand-main/90 transition-colors"
           >
             <Printer className="w-4 h-4" />
             <span>طباعة / PDF</span>
@@ -108,7 +108,7 @@ const QuotationPreview = () => {
       <div id="quotation-container" className="bg-white mx-auto flex flex-col relative print:w-full print:max-w-none print:m-0 print:flex print:flex-col print:h-auto print:shadow-none min-h-[290mm] print:min-h-[337mm]">
         
         {/* Header */}
-        <div className="relative h-48 bg-[#854836] overflow-hidden flex justify-between items-center px-12 print:px-8">
+        <div className="relative h-48 bg-brand-main overflow-hidden flex justify-between items-center px-12 print:px-8">
            <div className="absolute inset-0 opacity-90" style={{ backgroundImage: `url(${bgPattern})`, backgroundSize: 'cover' }}></div>
            
            <div className="relative z-10 text-white">
@@ -127,8 +127,8 @@ const QuotationPreview = () => {
 
         {/* Client Info */}
         <div className="px-12 py-6 print:px-8">
-          <div className="bg-gray-50 border-r-4 border-[#854836] p-4 rounded-lg print:bg-white print:border-gray-300">
-            <h3 className="text-[#854836] font-bold text-sm mb-1">إلى السيد / السيدة:</h3>
+          <div className="bg-gray-50 border-r-4 border-brand-main p-4 rounded-lg print:bg-white print:border-gray-300">
+            <h3 className="text-brand-main font-bold text-sm mb-1">إلى السيد / السيدة:</h3>
             <p className="text-xl font-bold text-gray-800">{client?.name || '...'}</p>
             {client?.address && <p className="text-sm text-gray-600 mt-1">{client.address}</p>}
           </div>
@@ -138,14 +138,14 @@ const QuotationPreview = () => {
         <div className="px-12 flex-1 print:flex-1 print:px-8 mb-8 overflow-visible flex flex-col">
           <table className="w-full border-separate table-fixed overflow-visible" style={{ borderSpacing: '0 8px' }}>
             <thead>
-              <tr className="bg-[#854836] text-white">
-                <th className="py-3 px-3 text-right w-[5%] border-b border-[#854836] rounded-r-lg">#</th>
-                <th className="py-3 px-3 text-right w-[20%] border-b border-[#854836]">صورة</th>
-                <th className="py-3 px-3 text-right w-auto border-b border-[#854836]">البند</th>
-                <th className="py-3 px-3 text-center w-[10%] border-b border-[#854836]">الكمية</th>
-                <th className="py-3 px-3 text-center w-[10%] border-b border-[#854836]">سعر المتر</th>
-                <th className="py-3 px-3 text-center w-[10%] border-b border-[#854836]">سعر الوحدة</th>
-                <th className="py-3 px-3 text-center w-[15%] border-b border-[#854836] rounded-l-lg">الإجمالي</th>
+              <tr className="bg-brand-main text-brand-third">
+                <th className="py-3 px-3 text-right w-[5%] border-b border-brand-main rounded-r-lg">#</th>
+                <th className="py-3 px-3 text-right w-[20%] border-b border-brand-main">صورة</th>
+                <th className="py-3 px-3 text-right w-auto border-b border-brand-main">البند</th>
+                <th className="py-3 px-3 text-center w-[10%] border-b border-brand-main">الكمية</th>
+                <th className="py-3 px-3 text-center w-[10%] border-b border-brand-main">سعر المتر</th>
+                <th className="py-3 px-3 text-center w-[10%] border-b border-brand-main">سعر الوحدة</th>
+                <th className="py-3 px-3 text-center w-[15%] border-b border-brand-main rounded-l-lg">الإجمالي</th>
               </tr>
             </thead>
             <tbody>
@@ -168,16 +168,16 @@ const QuotationPreview = () => {
                    <td className="py-4 px-3 text-center font-bold text-gray-700 align-top">{item.quantity}</td>
                    <td className="py-4 px-3 text-center text-gray-700 align-top">{item.meter_price > 0 ? item.meter_price.toLocaleString() : '-'}</td>
                    <td className="py-4 px-3 text-center text-gray-700 align-top">{item.unit_price > 0 ? item.unit_price.toLocaleString() : '-'}</td>
-                   <td className="py-4 px-3 text-center font-bold text-[#854836] align-top rounded-l-lg">
+                   <td className="py-4 px-3 text-center font-bold text-brand-main align-top rounded-l-lg">
                      {item.row_total.toLocaleString()}
                    </td>
                 </tr>
               ))}
               
               {/* Totals integrated at the end of body */}
-              <tr className="break-inside-avoid border-t-2 border-[#854836]">
+              <tr className="break-inside-avoid border-t-2 border-brand-main">
                   <td colSpan={6} className="py-3 px-4 text-left font-bold text-gray-600">المجموع:</td>
-                  <td className="py-3 px-3 text-center font-bold text-lg text-[#854836]">
+                  <td className="py-3 px-3 text-center font-bold text-lg text-brand-main">
                     {quotation.total_amount.toLocaleString()}
                   </td>
               </tr>
@@ -189,7 +189,7 @@ const QuotationPreview = () => {
                    </td>
                 </tr>
               )}
-              <tr className="break-inside-avoid bg-[#854836] text-white">
+              <tr className="break-inside-avoid bg-brand-main text-brand-third">
                  <td colSpan={6} className="py-4 px-4 text-left font-bold text-xl rounded-r-lg">الإجمالي النهائي:</td>
                  <td className="py-4 px-3 text-center font-bold text-2xl rounded-l-lg">
                    {(quotation.total_amount - (quotation.discount || 0)).toLocaleString()} <span className="text-sm font-normal mr-1">جنية</span>
@@ -200,7 +200,7 @@ const QuotationPreview = () => {
             <tfoot>
                <tr>
                   <td colSpan={7}>
-                     <div className="pt-8 pb-4 mt-2 border-t border-gray-200 flex justify-between items-center text-xs text-[#854836] font-medium print:mt-2">
+                     <div className="pt-8 pb-4 mt-2 border-t border-gray-200 flex justify-between items-center text-xs text-brand-main font-medium print:mt-2">
                         <div className="flex gap-4">
                           <span className="font-bold">النجار للأعمال الهندسية</span>
                           <span>|</span>
@@ -272,16 +272,14 @@ const QuotationPreview = () => {
             border-bottom: 1px solid #eee !important;
           }
 
-          .bg-[#854836] {
-            background-color: #854836 !important;
+          .bg-\[\#854836\] {
+            background-color: var(--main-color) !important;
             -webkit-print-color-adjust: exact;
-            color: white !important;
+            color: var(--third-color) !important;
           }
 
-
-
-          .text-[#854836] {
-            color: #854836 !important;
+          .text-\[\#854836\] {
+            color: var(--main-color) !important;
             -webkit-print-color-adjust: exact;
           }
 
@@ -295,7 +293,13 @@ const QuotationPreview = () => {
             page-break-inside: avoid !important;
           }
           
-          ::-webkit-scrollbar { display: none; }
+          * {
+            -ms-overflow-style: none !important;
+            scrollbar-width: none !important;
+          }
+          *::-webkit-scrollbar {
+            display: none !important;
+          }
         }
       `}</style>
     </div>

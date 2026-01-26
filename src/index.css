@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+:root {
+  --main-color: #000000;
+  --secondary-color: #faa70d;
+  --third-color: #ffffff;
+}
+
+@theme {
+  --color-brand-main: var(--main-color);
+  --color-brand-secondary: var(--secondary-color);
+  --color-brand-third: var(--third-color);
+}
+
 @font-face {
   font-family: "Cairo";
   src: url("./assets/Cairo-VariableFont_slnt,wght.ttf") format("truetype");
@@ -9,7 +21,6 @@
 
 body {
   background-color: #f7f7f7;
-  background-image: url("./assets/nagar-background-asset.png");
   background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
@@ -27,6 +38,13 @@ body {
     background-color: white !important;
     backdrop-filter: none !important;
   }
+  * {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+  }
+  *::-webkit-scrollbar {
+    display: none !important;
+  }
 }
 
 /* Global Custom Scrollbar */
@@ -40,7 +58,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #854836;
+  background-color: var(--main-color);
   border-radius: 20px;
   border: 4px solid transparent;
   background-clip: content-box;
@@ -48,11 +66,11 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #6b3a2b;
+  background-color: var(--secondary-color);
 }
 
 /* Firefox Support */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #854836 transparent;
+  scrollbar-color: var(--main-color) transparent;
 }

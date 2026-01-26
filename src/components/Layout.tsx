@@ -31,7 +31,7 @@ const Layout = () => {
         {/* Desktop Collapse Toggle */}
         <button
           onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-          className="hidden lg:flex absolute top-8 -left-3 w-6 h-6 bg-[#854836] text-white rounded-full items-center justify-center border-2 border-white shadow-md hover:bg-[#A05A45] transition-colors z-50"
+          className="hidden lg:flex absolute top-8 -left-3 w-6 h-6 bg-brand-main text-brand-third rounded-full items-center justify-center border-2 border-brand-third shadow-md hover:bg-brand-main/80 transition-colors z-50"
         >
           {isSidebarCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
         </button>
@@ -42,7 +42,7 @@ const Layout = () => {
         <header className="bg-white shadow-sm px-4 py-3 border-b flex items-center justify-between lg:justify-end sticky top-0 z-30 print:hidden">
           <button 
             onClick={() => setIsSidebarOpen(true)}
-            className="p-2 hover:bg-gray-100 rounded-xl lg:hidden text-[#854836]"
+            className="p-2 hover:bg-gray-100 rounded-xl lg:hidden text-brand-main"
           >
             <Menu className="w-6 h-6" />
           </button>

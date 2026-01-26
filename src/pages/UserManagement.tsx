@@ -92,15 +92,15 @@ const UserManagement = () => {
     <div className="p-8 animate-in fade-in duration-500 overflow-y-auto max-h-[calc(100vh-64px)]">
       <header className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-black text-[#854836] mb-2 flex items-center gap-3">
-            <Shield className="w-8 h-8 text-[#FFB22C]" />
+          <h1 className="text-3xl font-black text-brand-main mb-2 flex items-center gap-3">
+            <Shield className="w-8 h-8 text-brand-secondary" />
             إدارة المستخدمين
           </h1>
           <p className="text-gray-500 font-bold">إدارة طاقم العمل وتحديد صلاحيات الوصول</p>
         </div>
         <button
           onClick={() => setIsAdding(!isAdding)}
-          className="flex items-center gap-2 px-6 py-3 bg-[#854836] text-white rounded-2xl font-bold hover:bg-[#6b3a2b] transition shadow-lg shadow-[#854836]/20"
+          className="flex items-center gap-2 px-6 py-3 bg-brand-main text-brand-third rounded-2xl font-bold hover:bg-brand-main/80 transition shadow-lg shadow-brand-main/20"
         >
           {isAdding ? <ArrowRight className="w-5 h-5" /> : <UserPlus className="w-5 h-5" />}
           {isAdding ? 'العودة للقائمة' : 'إضافة مستخدم جديد'}
@@ -117,7 +117,7 @@ const UserManagement = () => {
                 required
                 value={newUsername}
                 onChange={(e) => setNewUsername(e.target.value)}
-                className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836] outline-none transition font-bold"
+                className="w-full pl-12 pr-4 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 focus:bg-white transition-all duration-300 outline-none"
                 placeholder="أدخل اسم المستخدم..."
               />
             </div>
@@ -137,7 +137,7 @@ const UserManagement = () => {
               <select
                 value={newRole}
                 onChange={(e) => setNewRole(e.target.value)}
-                className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836] outline-none transition font-bold appearance-none"
+                className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main outline-none transition font-bold appearance-none"
               >
                 <option value="user">موظف (User)</option>
                 <option value="manager">مدير (Manager)</option>
@@ -146,7 +146,7 @@ const UserManagement = () => {
             </div>
             <button
               type="submit"
-              className="w-full py-4 bg-[#FFB22C] text-[#854836] rounded-2xl font-black text-lg hover:bg-yellow-400 transition shadow-lg shadow-yellow-400/20"
+              className="w-full py-4 bg-brand-secondary text-brand-main rounded-2xl font-black text-lg hover:bg-brand-secondary/90 transition shadow-lg shadow-brand-secondary/20"
             >
               إنشاء حساب جديد
             </button>
@@ -155,20 +155,20 @@ const UserManagement = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
-            <div className="col-span-full text-center py-20 text-[#854836] font-bold">جاري تحميل البيانات...</div>
+            <div className="col-span-full text-center py-20 text-brand-main font-bold">جاري تحميل البيانات...</div>
           ) : users.length === 0 ? (
             <div className="col-span-full text-center py-20 text-gray-400 font-bold">لا يوجد مستخدمين مضافين حالياً</div>
           ) : (
             users.map((dbUser) => (
               <div key={dbUser.id} className="bg-white rounded-[2rem] p-6 shadow-lg border border-gray-50 hover:shadow-xl transition relative group">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-16 h-16 bg-[#854836]/10 rounded-2xl flex items-center justify-center">
-                    <User className="w-8 h-8 text-[#854836]" />
+                  <div className="w-16 h-16 bg-brand-main/10 rounded-2xl flex items-center justify-center">
+                    <User className="w-8 h-8 text-brand-main" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-black text-[#854836]">{dbUser.username}</h3>
+                    <h3 className="text-xl font-black text-brand-main">{dbUser.username}</h3>
                     <div className="flex items-center gap-1 mt-1">
-                      <Shield className="w-3 h-3 text-[#FFB22C]" />
+                      <Shield className="w-3 h-3 text-brand-secondary" />
                       <span className="text-[10px] font-bold uppercase text-gray-400 tracking-wider">
                         {dbUser.role === 'admin' ? 'التحكم الكامل' : dbUser.role === 'manager' ? 'مدير' : 'موظف'}
                       </span>
@@ -186,7 +186,7 @@ const UserManagement = () => {
                         disabled={dbUser.username === 'admin' || dbUser.id === currentUser?.id}
                         className={`px-3 py-1.5 rounded-lg text-[10px] font-black transition ${
                           dbUser.role === role
-                            ? 'bg-[#FFB22C] text-[#854836]'
+                            ? 'bg-brand-secondary text-brand-main'
                             : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
                         } disabled:opacity-50 disabled:cursor-not-allowed`}
                       >

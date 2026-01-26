@@ -137,12 +137,12 @@ const QuotationEditor = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto" dir="rtl">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold text-[#854836]">تحرير عرض سعر</h1>
+        <h1 className="text-2xl font-bold text-brand-main">تحرير عرض سعر</h1>
         <div className="flex gap-4">
           <button
             onClick={() => handleSave(false)}
             disabled={saving}
-            className="flex items-center gap-2 px-4 py-2 bg-[#854836] text-white rounded-lg hover:bg-[#854836]/90"
+            className="flex items-center gap-2 px-4 py-2 bg-brand-main text-brand-third rounded-lg hover:bg-brand-main/90"
           >
             <Save className="w-4 h-4" />
             <span>حفظ مسودة</span>
@@ -150,7 +150,7 @@ const QuotationEditor = () => {
           <button
             onClick={() => handleSave(true)}
             disabled={saving}
-            className="flex items-center gap-2 px-4 py-2 bg-[#FFB22C] text-black rounded-lg hover:bg-[#FFB22C]/90"
+            className="flex items-center gap-2 px-4 py-2 bg-brand-secondary text-brand-main rounded-lg hover:bg-brand-secondary/90"
           >
             <Eye className="w-4 h-4" />
             <span>معاينة / طباعة</span>
@@ -203,7 +203,7 @@ const QuotationEditor = () => {
       <div className="bg-white rounded-xl shadow-sm p-6 overflow-x-auto">
         <table className="w-full min-w-[1000px]">
           <thead>
-            <tr className="bg-[#854836] text-white">
+            <tr className="bg-brand-main text-white">
               <th className="px-4 py-3 text-right w-16">#</th>
               <th className="px-4 py-3 text-right w-24">صورة</th>
               <th className="px-4 py-3 text-right w-64 min-w-[200px]">البند</th>
@@ -247,7 +247,7 @@ const QuotationEditor = () => {
                     type="text"
                     value={item.item_name}
                     onChange={(e) => updateItem(index, 'item_name', e.target.value)}
-                    className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-[#FFB22C]"
+                    className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-brand-secondary"
                     placeholder="اسم البند"
                   />
                 </td>
@@ -255,7 +255,7 @@ const QuotationEditor = () => {
                   <textarea
                     value={item.description}
                     onChange={(e) => updateItem(index, 'description', e.target.value)}
-                    className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-[#FFB22C] resize-none"
+                    className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-brand-secondary resize-none"
                     rows={2}
                     placeholder="الوصف"
                   />
@@ -265,7 +265,7 @@ const QuotationEditor = () => {
                     type="number"
                     value={item.meter_price}
                     onChange={(e) => updateItem(index, 'meter_price', parseFloat(e.target.value))}
-                    className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-[#FFB22C]"
+                    className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-brand-secondary"
                   />
                 </td>
                 <td className="px-4 py-3">
@@ -273,7 +273,7 @@ const QuotationEditor = () => {
                     type="number"
                     value={item.unit_price}
                     onChange={(e) => updateItem(index, 'unit_price', parseFloat(e.target.value))}
-                    className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-[#FFB22C]"
+                    className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-brand-secondary"
                   />
                 </td>
                 <td className="px-4 py-3">
@@ -284,7 +284,7 @@ const QuotationEditor = () => {
                     className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-[#FFB22C]"
                   />
                 </td>
-                <td className="px-4 py-3 font-semibold text-[#854836]">
+                <td className="px-4 py-3 font-semibold text-brand-main">
                   {item.row_total.toLocaleString()} جنية
                 </td>
                 <td className="px-4 py-3">
@@ -317,7 +317,7 @@ const QuotationEditor = () => {
           <tfoot>
             <tr className="bg-gray-50">
               <td colSpan={7} className="px-4 py-3 text-left font-bold text-lg">مجموع البنود:</td>
-              <td className="px-4 py-3 font-bold text-lg text-[#854836]">
+              <td className="px-4 py-3 font-bold text-lg text-brand-main">
                 {calculateTotal().toLocaleString()} جنية
               </td>
               <td></td>
@@ -329,13 +329,13 @@ const QuotationEditor = () => {
                     type="number"
                     value={discount}
                     onChange={(e) => setDiscount(parseFloat(e.target.value) || 0)}
-                    className="w-full max-w-[150px] px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-[#FFB22C] font-bold text-[#854836]"
+                    className="w-full max-w-[150px] px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-brand-secondary font-bold text-brand-main"
                     placeholder="0"
                   />
                </td>
                <td></td>
             </tr>
-            <tr className="bg-[#854836] text-white">
+            <tr className="bg-brand-main text-white">
                <td colSpan={7} className="px-4 py-3 text-left font-bold text-xl">الإجمالي الصافي:</td>
                <td className="px-4 py-3 font-bold text-xl">
                   {(calculateTotal() - discount).toLocaleString()} جنية
@@ -347,7 +347,7 @@ const QuotationEditor = () => {
         
         <button
           onClick={addItem}
-          className="mt-4 flex items-center gap-2 text-[#854836] font-medium hover:bg-[#854836]/5 px-4 py-2 rounded-lg transition-colors"
+          className="mt-4 flex items-center gap-2 text-brand-main font-medium hover:bg-brand-main/5 px-4 py-2 rounded-lg transition-colors"
         >
           <Plus className="w-4 h-4" />
           <span>إضافة بند جديد</span>

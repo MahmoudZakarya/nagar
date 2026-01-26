@@ -16,10 +16,12 @@ import QuotationPreview from './pages/QuotationPreview';
 import UserManagement from './pages/UserManagement';
 import { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
+import logo from './assets/nagar-logo-removebg.png';
+
 
 const SplashScreen = () => {
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#854836] overflow-hidden">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-brand-main overflow-hidden">
       <div className="relative flex flex-col items-center">
         {/* Animated Background Ring */}
         <div className="absolute inset-0 w-48 h-48 -m-10 border-4 border-white/10 rounded-full animate-ping"></div>
@@ -28,7 +30,7 @@ const SplashScreen = () => {
         <div className="relative animate-in zoom-in spin-in-12 duration-1000 ease-out">
           <div className="absolute inset-0 bg-white/20 blur-3xl rounded-full scale-150 animate-pulse"></div>
           <img 
-            src="src/assets/nagar-logo-removebg.png" 
+            src={logo}
             alt="Nagar Logo" 
             className="w-40 h-40 object-contain relative z-10 drop-shadow-2xl animate-bounce"
           />
@@ -37,7 +39,7 @@ const SplashScreen = () => {
         {/* Loading Text */}
         <div className="mt-8 flex flex-col items-center gap-3">
           <div className="h-1 w-40 bg-white/10 rounded-full overflow-hidden">
-            <div className="h-full bg-[#FFB22C] w-1/2 animate-[progress_1.5s_ease-in-out_infinite]"></div>
+            <div className="h-full bg-brand-secondary w-1/2 animate-[progress_1.5s_ease-in-out_infinite]"></div>
           </div>
           <p className="text-white/60 font-black text-xs tracking-[0.5em] uppercase animate-pulse">
             جاري التحميل

@@ -118,7 +118,7 @@ const EmployeeProfilePage = () => {
 
   if (!employee) return (
     <div className="flex items-center justify-center p-20">
-      <div className="w-10 h-10 border-4 border-[#854836]/20 border-t-[#854836] rounded-full animate-spin"></div>
+      <div className="w-10 h-10 border-4 border-brand-main/20 border-t-brand-main rounded-full animate-spin"></div>
     </div>
   );
 
@@ -134,7 +134,7 @@ const EmployeeProfilePage = () => {
               <ArrowLeft className="w-5 h-5 text-gray-500" />
             </button>
             <div>
-              <h1 className="text-3xl font-bold text-[#854836]">{employee.name}</h1>
+              <h1 className="text-3xl font-bold text-brand-main">{employee.name}</h1>
               <p className="text-gray-500 font-bold">{employee.role}</p>
             </div>
         </div>
@@ -142,12 +142,12 @@ const EmployeeProfilePage = () => {
         <div className="flex items-center gap-4">
             <button 
               onClick={() => setIsEditModalOpen(true)}
-              className="px-6 py-3 bg-[#FFB22C] text-[#854836] rounded-2xl font-bold text-sm shadow-lg shadow-orange-100 hover:shadow-orange-200 transition flex items-center gap-2"
+              className="px-6 py-3 bg-brand-secondary text-brand-main rounded-2xl font-bold text-sm shadow-lg shadow-orange-100 hover:shadow-orange-200 transition flex items-center gap-2"
             >
                <Edit className="w-5 h-5" />
                تعديل البيانات
             </button>
-            <div className="bg-[#854836] text-white p-6 rounded-[2rem] shadow-xl flex flex-col items-end">
+            <div className="bg-brand-main text-brand-third p-6 rounded-[2rem] shadow-xl flex flex-col items-end">
                 <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest mb-1">المستحقات الحالية</p>
                 <p className="text-3xl font-bold italic">{totalDeserved.toLocaleString()} <span className="text-xs font-normal">جنية</span></p>
             </div>
@@ -159,7 +159,7 @@ const EmployeeProfilePage = () => {
         <div className="space-y-6">
             <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
                <div className="flex flex-col items-center mb-8">
-                  <div className="w-24 h-24 bg-[#854836] rounded-[2rem] flex items-center justify-center text-white text-4xl font-bold shadow-xl shadow-[#854836]/20 mb-4">
+                  <div className="w-24 h-24 bg-brand-main rounded-[2rem] flex items-center justify-center text-brand-third text-4xl font-bold shadow-xl shadow-brand-main/20 mb-4">
                     {employee.name.charAt(0)}
                   </div>
                   <span className={`px-4 py-1 rounded-full text-xs font-bold uppercase ${
@@ -203,7 +203,7 @@ const EmployeeProfilePage = () => {
                 <div className="space-y-3">
                     <p className="text-gray-900 font-bold">{employee.relative_name || '---'}</p>
                     <p className="text-xs text-gray-500 font-medium">الصلة: {employee.relative_relation || '---'}</p>
-                    <p className="text-sm font-bold text-[#854836]">{employee.relative_phone || '---'}</p>
+                    <p className="text-sm font-bold text-brand-main">{employee.relative_phone || '---'}</p>
                 </div>
             </div>
         </div>
@@ -239,7 +239,7 @@ const EmployeeProfilePage = () => {
            <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
               <div className="p-8 border-b border-gray-50 bg-gray-50/20 flex justify-between items-center">
                  <h2 className="text-xl font-bold text-gray-900 flex items-center gap-3">
-                    <History className="w-6 h-6 text-[#854836]" />
+                    <History className="w-6 h-6 text-brand-main" />
                     سجل الحضور والغياب
                  </h2>
               </div>
@@ -280,7 +280,7 @@ const EmployeeProfilePage = () => {
           <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setShowManualModal(false)}></div>
           <div className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300">
              <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
-                <h2 className="text-2xl font-bold text-[#854836]">تسجيل حضور يدوي</h2>
+                <h2 className="text-2xl font-bold text-brand-main">تسجيل حضور يدوي</h2>
                 <button onClick={() => setShowManualModal(false)} className="p-2 hover:bg-white rounded-xl transition">
                    <X className="w-6 h-6 text-gray-400" />
                 </button>
@@ -293,7 +293,7 @@ const EmployeeProfilePage = () => {
                     type="date" required
                     value={manualData.date}
                     onChange={(e) => setManualData({...manualData, date: e.target.value})}
-                    className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                    className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -303,7 +303,7 @@ const EmployeeProfilePage = () => {
                       type="time" required
                       value={manualData.check_in_time}
                       onChange={(e) => setManualData({...manualData, check_in_time: e.target.value})}
-                      className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                      className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                     />
                   </div>
                   <div>
@@ -312,7 +312,7 @@ const EmployeeProfilePage = () => {
                       type="time" required
                       value={manualData.check_out_time}
                       onChange={(e) => setManualData({...manualData, check_out_time: e.target.value})}
-                      className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                      className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                     />
                   </div>
                 </div>
@@ -322,7 +322,7 @@ const EmployeeProfilePage = () => {
                     type="number" required
                     value={manualData.break_minutes}
                     onChange={(e) => setManualData({...manualData, break_minutes: parseInt(e.target.value)})}
-                    className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                    className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                   />
                 </div>
 
@@ -370,7 +370,7 @@ const EmployeeProfilePage = () => {
                     rows={3} required
                     value={deductionData.reason}
                     onChange={(e) => setDeductionData({...deductionData, reason: e.target.value})}
-                    className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold resize-none"
+                    className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold resize-none"
                     placeholder="مثال: غياب، إتلاف أدوات..."
                   />
                 </div>
@@ -380,7 +380,7 @@ const EmployeeProfilePage = () => {
                      type="date" required
                      value={deductionData.date}
                      onChange={(e) => setDeductionData({...deductionData, date: e.target.value})}
-                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                    />
                 </div>
 
@@ -470,7 +470,7 @@ const EmployeeProfilePage = () => {
           <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setIsEditModalOpen(false)}></div>
           <div className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300">
              <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
-                <h2 className="text-2xl font-bold text-[#854836]">تعديل بيانات الموظف</h2>
+                <h2 className="text-2xl font-bold text-brand-main">تعديل بيانات الموظف</h2>
                 <button onClick={() => setIsEditModalOpen(false)} className="p-2 hover:bg-white rounded-xl transition">
                    <X className="w-6 h-6 text-gray-400" />
                 </button>
@@ -495,7 +495,7 @@ const EmployeeProfilePage = () => {
                         type="text" required
                         value={editEmployeeData.name}
                         onChange={(e) => setEditEmployeeData({...editEmployeeData, name: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                       />
                    </div>
                    <div>
@@ -504,7 +504,7 @@ const EmployeeProfilePage = () => {
                         type="text" maxLength={14}
                         value={editEmployeeData.national_id}
                         onChange={(e) => setEditEmployeeData({...editEmployeeData, national_id: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                       />
                    </div>
                    <div>
@@ -513,7 +513,7 @@ const EmployeeProfilePage = () => {
                         type="text" required
                         value={editEmployeeData.role}
                         onChange={(e) => setEditEmployeeData({...editEmployeeData, role: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                       />
                    </div>
                    <div>
@@ -522,7 +522,7 @@ const EmployeeProfilePage = () => {
                         type="number" required
                         value={editEmployeeData.hourly_rate}
                         onChange={(e) => setEditEmployeeData({...editEmployeeData, hourly_rate: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                       />
                    </div>
                    <div>
@@ -530,7 +530,7 @@ const EmployeeProfilePage = () => {
                       <select 
                         value={editEmployeeData.status}
                         onChange={(e) => setEditEmployeeData({...editEmployeeData, status: e.target.value as any})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                       >
                          <option value="Active">نشط</option>
                          <option value="Inactive">غير نشط</option>
