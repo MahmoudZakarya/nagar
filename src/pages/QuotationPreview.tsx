@@ -4,7 +4,6 @@ import { useQuotations, Quotation } from '../hooks/useQuotations';
 import { useClients } from '../hooks/useClients';
 import API_URL from '../config/api';
 import logo from '../assets/nagar-logo-removebg.png';
-import bgPattern from '../assets/nagar-background-asset.png';
 import { Printer, ArrowRight, Edit, Save } from 'lucide-react';
 
 declare global {
@@ -109,7 +108,7 @@ const QuotationPreview = () => {
         
         {/* Header */}
         <div className="relative h-48 bg-brand-main overflow-hidden flex justify-between items-center px-12 print:px-8">
-           <div className="absolute inset-0 opacity-90" style={{ backgroundImage: `url(${bgPattern})`, backgroundSize: 'cover' }}></div>
+           <div className="absolute inset-0 opacity-90"></div>
            
            <div className="relative z-10 text-white">
              <h1 className="text-3xl font-bold mb-1">عرض سعر</h1>
