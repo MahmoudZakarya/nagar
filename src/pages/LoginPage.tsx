@@ -24,22 +24,22 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F7F7] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-secendory flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo Section */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-brand-main rounded-3xl shadow-xl mb-6 transform -rotate-6">
             <img src={logo} alt="Nagar Logic" className="h-28 object-contain" />
           </div>
-          <h1 className="text-4xl font-bold text-brand-main tracking-tight">نظام نجار</h1>
-          <p className="text-gray-500 mt-2 font-medium">نظام إدارة ورشة نجار</p>
+          <h1 className="text-4xl font-bold text-text-primary tracking-tight">نظام نجار</h1>
+          <p className="text-text-secondary mt-2 font-medium">نظام إدارة ورشة نجار</p>
         </div>
 
         {/* Login Card */}
-        <div className="bg-white rounded-[2rem] shadow-2xl shadow-gray-200/50 overflow-hidden border border-gray-100">
+        <div className="bg-bg-surface rounded-[2rem] shadow-2xl shadow-gray-200/50 overflow-hidden border border-gray-100">
           <div className="p-6 md:p-10">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">مرحباً بك مجدداً</h2>
-            <p className="text-gray-400 mb-8">يرجى إدخال بياناتك لتسجيل الدخول.</p>
+            <h2 className="text-2xl font-bold text-text-primary mb-2">مرحباً بك مجدداً</h2>
+            <p className="text-text-secondary mb-8">يرجى إدخال بياناتك لتسجيل الدخول.</p>
 
             {error && (
               <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-600 animate-shake">
@@ -50,30 +50,30 @@ const LoginPage = () => {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">اسم المستخدم</label>
+                <label className="block text-xs font-bold text-text-primary uppercase tracking-[0.2em] mb-2 ml-1">اسم المستخدم</label>
                 <div className="relative">
-                  <User className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
+                  <User className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-text-primary" />
                   <input 
                     type="text" 
                     required 
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 focus:bg-white transition-all duration-300 outline-none"
+                    className="w-full pl-12 pr-4 py-4 bg-bg-secondary border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10  transition-all duration-300 outline-none"
                     placeholder="اسم المستخدم"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">كلمة المرور</label>
+                <label className="block text-xs font-bold text-text-primary uppercase tracking-[0.2em] mb-2 ml-1">كلمة المرور</label>
                 <div className="relative">
-                  <Lock className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
+                  <Lock className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-text-primary" />
                   <input 
                     type="password" 
                     required 
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 focus:bg-white transition-all duration-300 outline-none"
+                    className="w-full pl-12 pr-4 py-4 bg-bg-secondary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10  transition-all duration-300 outline-none"
                     placeholder="••••••••"
                   />
                 </div>
@@ -98,8 +98,8 @@ const LoginPage = () => {
             </form>
           </div>
           
-          <div className="p-6 bg-gray-50/50 border-t border-gray-50 text-center">
-             <p className="text-gray-400 text-sm">نسيت كلمة المرور؟ تواصل مع المدير.</p>
+          <div className="p-6 bg-bg-secondary border-t border-gray-50 text-center">
+             <p className="text-text-secondary text-sm">نسيت كلمة المرور؟ تواصل مع المدير.</p>
           </div>
         </div>
 

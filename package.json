@@ -8,7 +8,9 @@
     "dev:api": "ts-node -P tsconfig.server.json server/index.ts",
     "dev:server": "vite",
     "dev:electron": "wait-on tcp:5173 && wait-on tcp:3000 && tsc -p electron && electron .",
-    "build": "tsc && vite build && electron-builder",
+    "build:client": "tsc && tsc -p electron && vite build",
+    "build:pack": "electron-builder",
+    "build": "npm run build:client && npm run build:pack",
     "start": "node dist-server/index.js"
   },
   "keywords": [],
@@ -40,7 +42,7 @@
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
-    "better-sqlite3-multiple-ciphers": "^11.5.0",
+    "better-sqlite3-multiple-ciphers": "^12.6.2",
     "body-parser": "^2.2.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
