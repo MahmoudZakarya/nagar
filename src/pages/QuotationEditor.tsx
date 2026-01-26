@@ -137,7 +137,7 @@ const QuotationEditor = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto" dir="rtl">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold text-brand-main">تحرير عرض سعر</h1>
+        <h1 className="text-2xl font-bold text-text-primary">تحرير عرض سعر</h1>
         <div className="flex gap-4">
           <button
             onClick={() => handleSave(false)}
@@ -158,10 +158,10 @@ const QuotationEditor = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+      <div className="bg-bg-surface border border-border-theme rounded-xl shadow-sm p-6 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">العميل</label>
+            <label className="block text-sm font-medium text-text-secondary mb-2">العميل</label>
             <select
               value={clientId}
               onChange={(e) => setClientId(e.target.value ? Number(e.target.value) : '')}
@@ -176,7 +176,7 @@ const QuotationEditor = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">رقم العرض</label>
+            <label className="block text-sm font-medium text-text-secondary mb-2">رقم العرض</label>
             <input
               type="text"
               value={quotationNumber}
@@ -185,7 +185,7 @@ const QuotationEditor = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">الحالة</label>
+            <label className="block text-sm font-medium text-text-secondary mb-2">الحالة</label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value as any)}
@@ -200,7 +200,7 @@ const QuotationEditor = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm p-6 overflow-x-auto">
+      <div className="bg-bg-surface border border-border-theme rounded-xl shadow-sm p-6 overflow-x-auto">
         <table className="w-full min-w-[1000px]">
           <thead>
             <tr className="bg-brand-main text-white">
@@ -215,9 +215,9 @@ const QuotationEditor = () => {
               <th className="px-4 py-3 text-right rounded-tl-lg w-32">إجراءات</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-border-theme">
             {items.map((item, index) => (
-              <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+              <tr key={index} className={index % 2 === 0 ? 'bg-bg-surface transition-colors duration-300' : 'bg-bg-primary transition-colors duration-300'}>
                 <td className="px-4 py-3">{index + 1}</td>
                 <td className="px-4 py-3">
                   <div className="relative w-16 h-16 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center overflow-hidden cursor-pointer group">
@@ -281,7 +281,7 @@ const QuotationEditor = () => {
                     type="number"
                     value={item.quantity}
                     onChange={(e) => updateItem(index, 'quantity', parseFloat(e.target.value))}
-                    className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-[#FFB22C]"
+                    className="w-full px-2 py-1 border border-border-theme bg-bg-primary rounded focus:ring-1 focus:ring-[#FFB22C] text-text-primary"
                   />
                 </td>
                 <td className="px-4 py-3 font-semibold text-brand-main">
@@ -315,21 +315,21 @@ const QuotationEditor = () => {
             ))}
           </tbody>
           <tfoot>
-            <tr className="bg-gray-50">
-              <td colSpan={7} className="px-4 py-3 text-left font-bold text-lg">مجموع البنود:</td>
-              <td className="px-4 py-3 font-bold text-lg text-brand-main">
+            <tr className="bg-bg-primary">
+              <td colSpan={7} className="px-4 py-3 text-left font-bold text-lg text-text-primary">مجموع البنود:</td>
+              <td className="px-4 py-3 font-bold text-lg text-brand-main dark:text-brand-secondary">
                 {calculateTotal().toLocaleString()} جنية
               </td>
               <td></td>
             </tr>
-            <tr className="bg-white border-t border-gray-100">
-               <td colSpan={7} className="px-4 py-3 text-left font-bold">الخصم:</td>
+            <tr className="bg-bg-surface border-t border-border-theme">
+               <td colSpan={7} className="px-4 py-3 text-left font-bold text-text-secondary">الخصم:</td>
                <td className="px-4 py-3">
                   <input
                     type="number"
                     value={discount}
                     onChange={(e) => setDiscount(parseFloat(e.target.value) || 0)}
-                    className="w-full max-w-[150px] px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-brand-secondary font-bold text-brand-main"
+                    className="w-full max-w-[150px] px-2 py-1 border border-border-theme bg-bg-primary rounded focus:ring-1 focus:ring-brand-secondary font-bold text-brand-main dark:text-brand-secondary"
                     placeholder="0"
                   />
                </td>

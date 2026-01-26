@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Users, Hammer, Landmark , ShoppingCart, LogOut, Search, X, BriefcaseBusiness, Contact } from 'lucide-react';
+import { Home, Users, Hammer, Landmark , ShoppingCart, LogOut, Search, X, BriefcaseBusiness, Contact, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { useState } from 'react';
 import logo from '../assets/nagar-logo-removebg.png';
 
@@ -9,6 +10,7 @@ const Sidebar = ({ onClose, isCollapsed }: { onClose?: () => void, isCollapsed?:
   const location = useLocation();
   const navigate = useNavigate();
   const { logout, user } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleSearch = (e: React.FormEvent) => {
@@ -94,6 +96,18 @@ const Sidebar = ({ onClose, isCollapsed }: { onClose?: () => void, isCollapsed?:
              </div>
            )}
         </div>
+        <button 
+          onClick={toggleTheme}
+          className="w-full flex items-center gap-3 px-4 py-3 mb-2 rounded-xl text-brand-third/60 hover:bg-brand-third/10 hover:text-brand-third transition-all duration-300 font-bold group"
+        >
+          {theme === 'light' ? (
+            <Moon className="w-5 h-5 transition-transform group-hover:rotate-12" />
+          ) : (
+            <Sun className="w-5 h-5 transition-transform group-hover:rotate-90" />
+          )}
+          {!isCollapsed && <span>{theme === 'light' ? 'الوضع الليلي' : 'الوضع المضيء'}</span>}
+        </button>
+
         <button 
           onClick={logout}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white/60 hover:bg-red-500/10 hover:text-red-400 transition-all duration-300 font-bold group"

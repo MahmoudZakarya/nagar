@@ -129,27 +129,27 @@ const EmployeeProfilePage = () => {
         <div className="flex items-center gap-4">
             <button 
               onClick={() => navigate('/employees')}
-              className="p-3 bg-white rounded-2xl shadow-sm border border-gray-100 hover:bg-gray-50 transition"
+              className="p-3 bg-bg-surface rounded-2xl shadow-sm border border-border-theme hover:bg-bg-primary transition"
             >
-              <ArrowLeft className="w-5 h-5 text-gray-500" />
+              <ArrowLeft className="w-5 h-5 text-text-secondary" />
             </button>
             <div>
-              <h1 className="text-3xl font-bold text-brand-main">{employee.name}</h1>
-              <p className="text-gray-500 font-bold">{employee.role}</p>
+              <h1 className="text-3xl font-bold text-text-primary">{employee.name}</h1>
+              <p className="text-text-muted font-bold">{employee.role}</p>
             </div>
         </div>
         
         <div className="flex items-center gap-4">
             <button 
               onClick={() => setIsEditModalOpen(true)}
-              className="px-6 py-3 bg-brand-secondary text-brand-main rounded-2xl font-bold text-sm shadow-lg shadow-orange-100 hover:shadow-orange-200 transition flex items-center gap-2"
+              className="px-6 py-3 bg-brand-main dark:bg-brand-secondary text-brand-third dark:text-brand-main rounded-2xl font-bold text-sm shadow-lg shadow-brand-main/10 hover:opacity-90 transition flex items-center gap-2"
             >
                <Edit className="w-5 h-5" />
                تعديل البيانات
             </button>
-            <div className="bg-brand-main text-brand-third p-6 rounded-[2rem] shadow-xl flex flex-col items-end">
-                <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest mb-1">المستحقات الحالية</p>
-                <p className="text-3xl font-bold italic">{totalDeserved.toLocaleString()} <span className="text-xs font-normal">جنية</span></p>
+            <div className="bg-bg-surface border border-border-theme p-6 rounded-[2rem] shadow-sm flex flex-col items-end">
+                <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1">المستحقات الحالية</p>
+                <p className="text-3xl font-bold italic text-text-primary">{totalDeserved.toLocaleString()} <span className="text-xs font-normal">جنية</span></p>
             </div>
         </div>
       </div>
@@ -157,37 +157,37 @@ const EmployeeProfilePage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Profile Details Sidebar */}
         <div className="space-y-6">
-            <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+            <div className="bg-bg-surface p-8 rounded-[2.5rem] shadow-sm border border-border-theme">
                <div className="flex flex-col items-center mb-8">
                   <div className="w-24 h-24 bg-brand-main rounded-[2rem] flex items-center justify-center text-brand-third text-4xl font-bold shadow-xl shadow-brand-main/20 mb-4">
                     {employee.name.charAt(0)}
                   </div>
                   <span className={`px-4 py-1 rounded-full text-xs font-bold uppercase ${
-                    employee.status === 'Active' ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'
+                    employee.status === 'Active' ? 'bg-green-100/10 text-green-500' : 'bg-bg-primary text-text-muted'
                   }`}>
                     {employee.status === 'Active' ? 'نشط' : 'غير نشط'}
                   </span>
                </div>
 
                <div className="space-y-4">
-                  <div className="p-4 bg-gray-50 rounded-2xl">
-                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">الرقم القومي</p>
-                     <p className="font-bold text-gray-900 flex items-center gap-2">
-                        <Hash className="w-4 h-4 text-gray-300" />
+                  <div className="p-4 bg-bg-primary border border-border-theme/30 rounded-2xl">
+                     <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1">الرقم القومي</p>
+                     <p className="font-bold text-text-primary flex items-center gap-2">
+                        <Hash className="w-4 h-4 text-text-muted" />
                         {employee.national_id || 'غير مسجل'}
                      </p>
                   </div>
-                  <div className="p-4 bg-gray-50 rounded-2xl">
-                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">العنوان</p>
-                     <p className="font-bold text-gray-900 flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-gray-300" />
+                  <div className="p-4 bg-bg-primary border border-border-theme/30 rounded-2xl">
+                     <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1">العنوان</p>
+                     <p className="font-bold text-text-primary flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-text-muted" />
                         {employee.address || 'غير مسجل'}
                      </p>
                   </div>
-                  <div className="p-4 bg-gray-50 rounded-2xl">
-                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">أرقام التواصل</p>
-                     <p className="font-bold text-gray-900 flex items-center gap-2">
-                        <Phone className="w-4 h-4 text-gray-300" />
+                  <div className="p-4 bg-bg-primary border border-border-theme/30 rounded-2xl">
+                     <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1">أرقام التواصل</p>
+                     <p className="font-bold text-text-primary flex items-center gap-2">
+                        <Phone className="w-4 h-4 text-text-muted" />
                         {employee.phone_1} {employee.phone_2 ? `/ ${employee.phone_2}` : ''}
                      </p>
                   </div>
@@ -195,15 +195,15 @@ const EmployeeProfilePage = () => {
             </div>
 
             {/* Relative Info */}
-            <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
-                <h3 className="text-sm font-bold text-gray-900 mb-6 flex items-center gap-2">
+            <div className="bg-bg-surface p-8 rounded-[2.5rem] shadow-sm border border-border-theme">
+                <h3 className="text-sm font-bold text-text-primary mb-6 flex items-center gap-2">
                     <Heart className="w-4 h-4 text-red-500" />
                     بيان قريب الطوارئ
                 </h3>
                 <div className="space-y-3">
-                    <p className="text-gray-900 font-bold">{employee.relative_name || '---'}</p>
-                    <p className="text-xs text-gray-500 font-medium">الصلة: {employee.relative_relation || '---'}</p>
-                    <p className="text-sm font-bold text-brand-main">{employee.relative_phone || '---'}</p>
+                    <p className="text-text-primary font-bold">{employee.relative_name || '---'}</p>
+                    <p className="text-xs text-text-muted font-medium">الصلة: {employee.relative_relation || '---'}</p>
+                    <p className="text-sm font-bold text-brand-main dark:text-brand-secondary">{employee.relative_phone || '---'}</p>
                 </div>
             </div>
         </div>
@@ -214,21 +214,21 @@ const EmployeeProfilePage = () => {
            <div className="flex flex-wrap gap-4">
                <button 
                 onClick={() => setShowManualModal(true)}
-                className="bg-white border border-gray-100 p-4 rounded-2xl shadow-sm hover:shadow-md transition flex items-center gap-3 font-bold text-sm text-gray-700"
+                className="bg-bg-surface border border-border-theme p-4 rounded-2xl shadow-sm hover:bg-bg-primary transition flex items-center gap-3 font-bold text-sm text-text-secondary"
                >
                   <Plus className="w-5 h-5 text-blue-500" />
                   تسجيل حضور يدوي
                </button>
                <button 
                 onClick={() => setShowDeductionModal(true)}
-                className="bg-white border border-gray-100 p-4 rounded-2xl shadow-sm hover:shadow-md transition flex items-center gap-3 font-bold text-sm text-gray-700"
+                className="bg-bg-surface border border-border-theme p-4 rounded-2xl shadow-sm hover:bg-bg-primary transition flex items-center gap-3 font-bold text-sm text-text-secondary"
                >
                   <MinusCircle className="w-5 h-5 text-red-500" />
                   إضافة خصم / جزاء
                </button>
                <button 
                 onClick={() => setShowLeaveModal(true)}
-                className="bg-white border border-gray-100 p-4 rounded-2xl shadow-sm hover:shadow-md transition flex items-center gap-3 font-bold text-sm text-gray-700"
+                className="bg-bg-surface border border-border-theme p-4 rounded-2xl shadow-sm hover:bg-bg-primary transition flex items-center gap-3 font-bold text-sm text-text-secondary"
                >
                   <Umbrella className="w-5 h-5 text-orange-500" />
                   تسجيل إجازة
@@ -236,9 +236,9 @@ const EmployeeProfilePage = () => {
            </div>
 
            {/* Attendance History */}
-           <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
-              <div className="p-8 border-b border-gray-50 bg-gray-50/20 flex justify-between items-center">
-                 <h2 className="text-xl font-bold text-gray-900 flex items-center gap-3">
+           <div className="bg-bg-surface rounded-[2.5rem] shadow-sm border border-border-theme overflow-hidden">
+              <div className="p-8 border-b border-border-theme bg-bg-primary/20 flex justify-between items-center">
+                 <h2 className="text-xl font-bold text-text-primary flex items-center gap-3">
                     <History className="w-6 h-6 text-brand-main" />
                     سجل الحضور والغياب
                  </h2>
@@ -246,26 +246,26 @@ const EmployeeProfilePage = () => {
               <div className="overflow-x-auto">
                  <table className="w-full text-right">
                     <thead>
-                       <tr className="bg-gray-50/50">
-                          <th className="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">التاريخ</th>
-                          <th className="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">الدخول</th>
-                          <th className="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">الانصراف</th>
-                          <th className="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">ساعات</th>
-                          <th className="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">الأجر</th>
+                       <tr className="bg-bg-primary/50">
+                          <th className="p-6 text-[10px] font-bold text-text-muted uppercase tracking-widest text-center">التاريخ</th>
+                          <th className="p-6 text-[10px] font-bold text-text-muted uppercase tracking-widest text-center">الدخول</th>
+                          <th className="p-6 text-[10px] font-bold text-text-muted uppercase tracking-widest text-center">الانصراف</th>
+                          <th className="p-6 text-[10px] font-bold text-text-muted uppercase tracking-widest text-center">ساعات</th>
+                          <th className="p-6 text-[10px] font-bold text-text-muted uppercase tracking-widest text-left">الأجر</th>
                        </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-50">
+                    <tbody className="divide-y divide-border-theme">
                        {history.map((a) => (
-                          <tr key={a.id} className="hover:bg-gray-50/30 transition">
-                             <td className="p-6 text-center font-bold text-gray-600">{new Date(a.date).toLocaleDateString('ar-EG')}</td>
-                             <td className="p-6 text-center font-medium text-gray-500">{a.check_in ? new Date(a.check_in).toLocaleTimeString('ar-EG') : '---'}</td>
-                             <td className="p-6 text-center font-medium text-gray-500">{a.check_out ? new Date(a.check_out).toLocaleTimeString('ar-EG') : '---'}</td>
-                             <td className="p-6 text-center font-bold text-gray-900">{a.total_hours?.toFixed(1) || '0'} س</td>
-                             <td className="p-6 text-left font-bold text-green-600 italic">{a.calculated_pay?.toLocaleString() || '0'} جنية</td>
+                          <tr key={a.id} className="hover:bg-bg-primary/30 transition">
+                             <td className="p-6 text-center font-bold text-text-secondary">{new Date(a.date).toLocaleDateString('ar-EG')}</td>
+                             <td className="p-6 text-center font-medium text-text-muted">{a.check_in ? new Date(a.check_in).toLocaleTimeString('ar-EG') : '---'}</td>
+                             <td className="p-6 text-center font-medium text-text-muted">{a.check_out ? new Date(a.check_out).toLocaleTimeString('ar-EG') : '---'}</td>
+                             <td className="p-6 text-center font-bold text-text-primary">{a.total_hours?.toFixed(1) || '0'} س</td>
+                             <td className="p-6 text-left font-bold text-green-600 italic font-mono">{a.calculated_pay?.toLocaleString() || '0'} جنية</td>
                           </tr>
                        ))}
                        {history.length === 0 && (
-                          <tr><td colSpan={5} className="p-20 text-center text-gray-400 italic">لا توجد سجلات بعد</td></tr>
+                          <tr><td colSpan={5} className="p-20 text-center text-text-muted italic">لا توجد سجلات بعد</td></tr>
                        )}
                     </tbody>
                  </table>
@@ -277,52 +277,52 @@ const EmployeeProfilePage = () => {
       {/* Manual Attendance Modal */}
       {showManualModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setShowManualModal(false)}></div>
-          <div className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300">
-             <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
-                <h2 className="text-2xl font-bold text-brand-main">تسجيل حضور يدوي</h2>
-                <button onClick={() => setShowManualModal(false)} className="p-2 hover:bg-white rounded-xl transition">
-                   <X className="w-6 h-6 text-gray-400" />
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowManualModal(false)}></div>
+          <div className="bg-bg-surface border border-border-theme w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300">
+             <div className="p-8 border-b border-border-theme flex justify-between items-center bg-bg-primary/50">
+                <h2 className="text-2xl font-bold text-text-primary">تسجيل حضور يدوي</h2>
+                <button onClick={() => setShowManualModal(false)} className="p-2 hover:bg-bg-primary rounded-xl transition">
+                   <X className="w-6 h-6 text-text-muted" />
                 </button>
              </div>
              
              <form onSubmit={handleManualSubmit} className="p-8 space-y-6 overflow-y-auto max-h-[75vh]">
                 <div>
-                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">تاريخ اليوم</label>
+                  <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 px-1">تاريخ اليوم</label>
                   <input 
                     type="date" required
                     value={manualData.date}
                     onChange={(e) => setManualData({...manualData, date: e.target.value})}
-                    className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                    className="w-full px-6 py-4 bg-bg-primary border border-border-theme/50 rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-text-primary"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">وقت الحضور</label>
+                    <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 px-1">وقت الحضور</label>
                     <input 
                       type="time" required
                       value={manualData.check_in_time}
                       onChange={(e) => setManualData({...manualData, check_in_time: e.target.value})}
-                      className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                      className="w-full px-6 py-4 bg-bg-primary border border-border-theme/50 rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-text-primary"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">وقت الانصراف</label>
+                    <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 px-1">وقت الانصراف</label>
                     <input 
                       type="time" required
                       value={manualData.check_out_time}
                       onChange={(e) => setManualData({...manualData, check_out_time: e.target.value})}
-                      className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                      className="w-full px-6 py-4 bg-bg-primary border border-border-theme/50 rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-text-primary"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">مدة الاستراحة (دقائق)</label>
+                  <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 px-1">مدة الاستراحة (دقائق)</label>
                   <input 
                     type="number" required
                     value={manualData.break_minutes}
                     onChange={(e) => setManualData({...manualData, break_minutes: parseInt(e.target.value)})}
-                    className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                    className="w-full px-6 py-4 bg-bg-primary border border-border-theme/50 rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-text-primary"
                   />
                 </div>
 
@@ -337,12 +337,12 @@ const EmployeeProfilePage = () => {
       {/* Deduction Modal */}
       {showDeductionModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setShowDeductionModal(false)}></div>
-          <div className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300">
-             <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
-                <h2 className="text-2xl font-bold text-red-600">إضافة خصم / جزاء</h2>
-                <button onClick={() => setShowDeductionModal(false)} className="p-2 hover:bg-white rounded-xl transition">
-                   <X className="w-6 h-6 text-gray-400" />
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowDeductionModal(false)}></div>
+          <div className="bg-bg-surface border border-border-theme w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300">
+             <div className="p-8 border-b border-border-theme flex justify-between items-center bg-bg-primary/50">
+                <h2 className="text-2xl font-bold text-red-500">إضافة خصم / جزاء</h2>
+                <button onClick={() => setShowDeductionModal(false)} className="p-2 hover:bg-bg-primary rounded-xl transition">
+                   <X className="w-6 h-6 text-text-muted" />
                 </button>
              </div>
              
@@ -395,12 +395,12 @@ const EmployeeProfilePage = () => {
       {/* Leave Modal */}
       {showLeaveModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setShowLeaveModal(false)}></div>
-          <div className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300">
-             <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
-                <h2 className="text-2xl font-bold text-orange-600">تسجيل إجازة</h2>
-                <button onClick={() => setShowLeaveModal(false)} className="p-2 hover:bg-white rounded-xl transition">
-                   <X className="w-6 h-6 text-gray-400" />
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowLeaveModal(false)}></div>
+          <div className="bg-bg-surface border border-border-theme w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300">
+             <div className="p-8 border-b border-border-theme flex justify-between items-center bg-bg-primary/50">
+                <h2 className="text-2xl font-bold text-orange-500">تسجيل إجازة</h2>
+                <button onClick={() => setShowLeaveModal(false)} className="p-2 hover:bg-bg-primary rounded-xl transition">
+                   <X className="w-6 h-6 text-text-muted" />
                 </button>
              </div>
              
@@ -467,12 +467,12 @@ const EmployeeProfilePage = () => {
       {/* Edit Employee Modal */}
       {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setIsEditModalOpen(false)}></div>
-          <div className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300">
-             <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
-                <h2 className="text-2xl font-bold text-brand-main">تعديل بيانات الموظف</h2>
-                <button onClick={() => setIsEditModalOpen(false)} className="p-2 hover:bg-white rounded-xl transition">
-                   <X className="w-6 h-6 text-gray-400" />
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsEditModalOpen(false)}></div>
+          <div className="bg-bg-surface border border-border-theme w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300">
+             <div className="p-8 border-b border-border-theme flex justify-between items-center bg-bg-primary/50">
+                <h2 className="text-2xl font-bold text-text-primary">تعديل بيانات الموظف</h2>
+                <button onClick={() => setIsEditModalOpen(false)} className="p-2 hover:bg-bg-primary rounded-xl transition">
+                   <X className="w-6 h-6 text-text-muted" />
                 </button>
              </div>
              

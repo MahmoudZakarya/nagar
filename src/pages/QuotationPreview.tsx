@@ -63,12 +63,12 @@ const QuotationPreview = () => {
   }
 
   return (
-    <div className="bg-gray-100 min-h-screen p-2 text-right print:p-0 print:bg-white print:min-h-0 print:overflow-visible" dir="rtl">
+    <div className="bg-bg-primary min-h-screen p-2 text-right print:p-0 print:bg-white print:min-h-0 print:overflow-visible transition-colors duration-300" dir="rtl">
       {/* Action Bar - Hidden in Print */}
       <div className="max-w-[210mm] mx-auto mb-6 flex justify-between items-center print:hidden">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+          className="flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors"
         >
           <ArrowRight className="w-5 h-5" />
           <span>رجوع</span>
@@ -76,7 +76,7 @@ const QuotationPreview = () => {
         <div className="flex gap-4">
           <button
             onClick={() => navigate(`/quotations/${id}/edit`)}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
+            className="flex items-center gap-2 px-4 py-2 bg-bg-surface border border-border-theme rounded-lg hover:bg-bg-surface-hover text-text-secondary transition-colors"
           >
             <Edit className="w-4 h-4" />
             <span>تعديل</span>
@@ -104,7 +104,7 @@ const QuotationPreview = () => {
       </div>
 
       {/* A4 Container */}
-      <div id="quotation-container" className="bg-white mx-auto flex flex-col relative print:w-full print:max-w-none print:m-0 print:flex print:flex-col print:h-auto print:shadow-none min-h-[290mm] print:min-h-[337mm]">
+      <div id="quotation-container" className="bg-bg-surface mx-auto flex flex-col relative print:bg-white print:w-full print:max-w-none print:m-0 print:flex print:flex-col print:h-auto print:shadow-none min-h-[290mm] print:min-h-[337mm] shadow-xl border border-border-theme transition-colors duration-300">
         
         {/* Header */}
         <div className="relative h-48 bg-brand-main overflow-hidden flex justify-between items-center px-12 print:px-8">
@@ -126,10 +126,10 @@ const QuotationPreview = () => {
 
         {/* Client Info */}
         <div className="px-12 py-6 print:px-8">
-          <div className="bg-gray-50 border-r-4 border-brand-main p-4 rounded-lg print:bg-white print:border-gray-300">
-            <h3 className="text-brand-main font-bold text-sm mb-1">إلى السيد / السيدة:</h3>
-            <p className="text-xl font-bold text-gray-800">{client?.name || '...'}</p>
-            {client?.address && <p className="text-sm text-gray-600 mt-1">{client.address}</p>}
+          <div className="bg-bg-primary/50 border-r-4 border-brand-main p-4 rounded-lg print:bg-white print:border-gray-300 transition-colors duration-300">
+            <h3 className="text-brand-main dark:text-brand-secondary font-bold text-sm mb-1">إلى السيد / السيدة:</h3>
+            <p className="text-xl font-bold text-text-primary">{client?.name || '...'}</p>
+            {client?.address && <p className="text-sm text-text-secondary mt-1">{client.address}</p>}
           </div>
         </div>
 
@@ -149,8 +149,8 @@ const QuotationPreview = () => {
             </thead>
             <tbody>
               {quotation.items?.map((item, index) => (
-                <tr key={index} className="border-b border-gray-100 break-inside-avoid bg-gray-50/50 bg-transparent">
-                  <td className="py-4 px-3 font-bold text-gray-500 text-center rounded-r-lg">{index + 1}</td>
+                <tr key={index} className="border-b border-border-theme break-inside-avoid bg-transparent transition-colors duration-300">
+                  <td className="py-4 px-3 font-bold text-text-muted text-center rounded-r-lg">{index + 1}</td>
                   <td className="py-2 px-2 align-top">
                      {item.image_path && (
                        <img 
@@ -161,13 +161,13 @@ const QuotationPreview = () => {
                      )}
                   </td>
                   <td className="py-4 px-3 align-top overflow-hidden">
-                    <h4 className="font-bold text-lg text-gray-800 break-words">{item.item_name}</h4>
-                    <p className="text-gray-600 text-sm mt-1 whitespace-pre-wrap break-words">{item.description}</p>
+                    <h4 className="font-bold text-lg text-text-primary break-words">{item.item_name}</h4>
+                    <p className="text-text-secondary text-sm mt-1 whitespace-pre-wrap break-words">{item.description}</p>
                   </td>
-                   <td className="py-4 px-3 text-center font-bold text-gray-700 align-top">{item.quantity}</td>
-                   <td className="py-4 px-3 text-center text-gray-700 align-top">{item.meter_price > 0 ? item.meter_price.toLocaleString() : '-'}</td>
-                   <td className="py-4 px-3 text-center text-gray-700 align-top">{item.unit_price > 0 ? item.unit_price.toLocaleString() : '-'}</td>
-                   <td className="py-4 px-3 text-center font-bold text-brand-main align-top rounded-l-lg">
+                   <td className="py-4 px-3 text-center font-bold text-text-secondary align-top">{item.quantity}</td>
+                   <td className="py-4 px-3 text-center text-text-secondary align-top">{item.meter_price > 0 ? item.meter_price.toLocaleString() : '-'}</td>
+                   <td className="py-4 px-3 text-center text-text-secondary align-top">{item.unit_price > 0 ? item.unit_price.toLocaleString() : '-'}</td>
+                   <td className="py-4 px-3 text-center font-bold text-brand-main dark:text-brand-secondary align-top rounded-l-lg">
                      {item.row_total.toLocaleString()}
                    </td>
                 </tr>
@@ -199,7 +199,7 @@ const QuotationPreview = () => {
             <tfoot>
                <tr>
                   <td colSpan={7}>
-                     <div className="pt-8 pb-4 mt-2 border-t border-gray-200 flex justify-between items-center text-xs text-brand-main font-medium print:mt-2">
+                     <div className="pt-8 pb-4 mt-2 border-t border-gray-200 flex justify-between items-center text-xs text-text-primary font-medium print:mt-2">
                         <div className="flex gap-4">
                           <span className="font-bold">النجار للأعمال الهندسية</span>
                           <span>|</span>

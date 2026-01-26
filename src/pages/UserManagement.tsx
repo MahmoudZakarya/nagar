@@ -92,11 +92,11 @@ const UserManagement = () => {
     <div className="p-8 animate-in fade-in duration-500 overflow-y-auto max-h-[calc(100vh-64px)]">
       <header className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-black text-brand-main mb-2 flex items-center gap-3">
+          <h1 className="text-3xl font-black text-text-primary mb-2 flex items-center gap-3">
             <Shield className="w-8 h-8 text-brand-secondary" />
             إدارة المستخدمين
           </h1>
-          <p className="text-gray-500 font-bold">إدارة طاقم العمل وتحديد صلاحيات الوصول</p>
+          <p className="text-text-secondary font-bold">إدارة طاقم العمل وتحديد صلاحيات الوصول</p>
         </div>
         <button
           onClick={() => setIsAdding(!isAdding)}
@@ -108,36 +108,36 @@ const UserManagement = () => {
       </header>
 
       {isAdding ? (
-        <div className="max-w-2xl mx-auto bg-white rounded-[2.5rem] p-8 shadow-xl border border-gray-100">
+        <div className="max-w-2xl mx-auto bg-bg-surface rounded-[2.5rem] p-8 shadow-xl border border-border-theme">
           <form onSubmit={handleCreateUser} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700 px-2">اسم المستخدم</label>
+              <label className="text-sm font-bold text-text-secondary px-2">اسم المستخدم</label>
               <input
                 type="text"
                 required
                 value={newUsername}
                 onChange={(e) => setNewUsername(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 focus:bg-white transition-all duration-300 outline-none"
+                className="w-full pl-12 pr-4 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 focus:bg-bg-surface transition-all duration-300 outline-none text-text-primary"
                 placeholder="أدخل اسم المستخدم..."
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700 px-2">كلمة المرور</label>
+              <label className="text-sm font-bold text-text-secondary px-2">كلمة المرور</label>
               <input
                 type="password"
                 required
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#854836] outline-none transition font-bold"
+                className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-[#854836] outline-none transition font-bold text-text-primary"
                 placeholder="••••••••"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700 px-2">الصلاحية</label>
+              <label className="text-sm font-bold text-text-secondary px-2">الصلاحية</label>
               <select
                 value={newRole}
                 onChange={(e) => setNewRole(e.target.value)}
-                className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main outline-none transition font-bold appearance-none"
+                className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main outline-none transition font-bold appearance-none text-text-primary"
               >
                 <option value="user">موظف (User)</option>
                 <option value="manager">مدير (Manager)</option>
@@ -160,24 +160,24 @@ const UserManagement = () => {
             <div className="col-span-full text-center py-20 text-gray-400 font-bold">لا يوجد مستخدمين مضافين حالياً</div>
           ) : (
             users.map((dbUser) => (
-              <div key={dbUser.id} className="bg-white rounded-[2rem] p-6 shadow-lg border border-gray-50 hover:shadow-xl transition relative group">
+              <div key={dbUser.id} className="bg-bg-surface rounded-[2rem] p-6 shadow-lg border border-border-theme hover:shadow-xl transition relative group">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-16 h-16 bg-brand-main/10 rounded-2xl flex items-center justify-center">
-                    <User className="w-8 h-8 text-brand-main" />
+                  <div className="w-16 h-16 bg-bg-primary rounded-2xl flex items-center justify-center border border-border-theme">
+                    <User className="w-8 h-8 text-brand-main dark:text-brand-secondary" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-black text-brand-main">{dbUser.username}</h3>
+                    <h3 className="text-xl font-black text-text-primary">{dbUser.username}</h3>
                     <div className="flex items-center gap-1 mt-1">
                       <Shield className="w-3 h-3 text-brand-secondary" />
-                      <span className="text-[10px] font-bold uppercase text-gray-400 tracking-wider">
+                      <span className="text-[10px] font-bold uppercase text-text-muted tracking-wider">
                         {dbUser.role === 'admin' ? 'التحكم الكامل' : dbUser.role === 'manager' ? 'مدير' : 'موظف'}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                  <span className="text-sm font-bold text-gray-500">تغيير الصلاحية:</span>
+                <div className="flex items-center justify-between pt-4 border-t border-border-theme">
+                  <span className="text-sm font-bold text-text-secondary">تغيير الصلاحية:</span>
                   <div className="flex gap-2">
                     {['user', 'manager', 'admin'].map((role) => (
                       <button
@@ -187,7 +187,7 @@ const UserManagement = () => {
                         className={`px-3 py-1.5 rounded-lg text-[10px] font-black transition ${
                           dbUser.role === role
                             ? 'bg-brand-secondary text-brand-main'
-                            : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                            : 'bg-bg-primary text-text-muted hover:bg-bg-primary/80'
                         } disabled:opacity-50 disabled:cursor-not-allowed`}
                       >
                         {role === 'admin' ? 'Admin' : role === 'manager' ? 'Manager' : 'User'}

@@ -4,12 +4,51 @@
   --main-color: #000000;
   --secondary-color: #faa70d;
   --third-color: #ffffff;
+
+  /* Theme Variables - Light Mode */
+  --bg-primary: #f7f7f7;
+  --bg-secondary: #ffffff;
+  --bg-surface: #ffffff;
+  --bg-surface-hover: #f8fafc;
+
+  --text-primary: #0f172a; /* Slate-900 */
+  --text-secondary: #475569; /* Slate-600 */
+  --text-muted: #94a3b8; /* Slate-400 */
+
+  --border-theme: #e2e8f0; /* Slate-200 */
+  --sidebar-bg: var(--main-color);
+  --sidebar-text: var(--third-color);
+}
+
+.dark {
+  /* Theme Variables - Dark Mode */
+  --bg-primary: #020617; /* Slate-950 */
+  --bg-secondary: #0f172a; /* Slate-900 */
+  --bg-surface: #1e293b; /* Slate-800 */
+  --bg-surface-hover: #334155; /* Slate-700 */
+
+  --text-primary: #f8fafc; /* Slate-50 */
+  --text-secondary: #cbd5e1; /* Slate-300 */
+  --text-muted: #64748b; /* Slate-500 */
+
+  --border-theme: #334155; /* Slate-700 */
 }
 
 @theme {
   --color-brand-main: var(--main-color);
   --color-brand-secondary: var(--secondary-color);
   --color-brand-third: var(--third-color);
+
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-surface-hover: var(--bg-surface-hover);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  --color-border-theme: var(--border-theme);
 }
 
 @font-face {
@@ -20,13 +59,16 @@
 }
 
 body {
-  background-color: #f7f7f7;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  color: #000000;
   font-family: "Cairo", sans-serif;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 @media print {

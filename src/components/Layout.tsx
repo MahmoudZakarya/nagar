@@ -8,7 +8,7 @@ const Layout = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   return (
-    <div className="flex h-screen bg-[#F7F7F7] font-sans overflow-hidden print:h-auto print:overflow-visible" dir="rtl">
+    <div className="flex h-screen bg-bg-primary font-sans overflow-hidden print:h-auto print:overflow-visible transition-colors duration-300" dir="rtl">
       {/* Sidebar Overlay for Mobile */}
       {isSidebarOpen && (
         <div 
@@ -39,17 +39,17 @@ const Layout = () => {
 
       <main className="flex-1 overflow-y-auto flex flex-col relative">
         {/* Responsive Header */}
-        <header className="bg-white shadow-sm px-4 py-3 border-b flex items-center justify-between lg:justify-end sticky top-0 z-30 print:hidden">
+        <header className="bg-bg-secondary shadow-sm px-4 py-3 border-b border-border-theme flex items-center justify-between lg:justify-end sticky top-0 z-30 print:hidden transition-colors duration-300">
           <button 
             onClick={() => setIsSidebarOpen(true)}
-            className="p-2 hover:bg-gray-100 rounded-xl lg:hidden text-brand-main"
+            className="p-2 hover:bg-bg-primary rounded-xl lg:hidden text-brand-main dark:text-brand-secondary"
           >
             <Menu className="w-6 h-6" />
           </button>
           
           <div className="flex items-center gap-4">
              {/* Future: Notifications, User Profile Quick Access */}
-             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest hidden sm:block">نظام إدارة نجار v1.0</p>
+             <p className="text-[10px] font-black text-text-secondary uppercase tracking-widest hidden sm:block">نظام إدارة نجار v1.0</p>
           </div>
         </header>
 

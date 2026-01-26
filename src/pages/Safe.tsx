@@ -60,8 +60,8 @@ const Safe = () => {
           <X className="w-12 h-12" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">عذراً، الوصول غير مسموح</h1>
-          <p className="text-gray-500 font-medium">هذه الصفحة مخصصة لمدير النظام فقط. لا تملك الصلاحيات الكافية لعرض البيانات المالية.</p>
+          <h1 className="text-3xl font-bold text-text-primary mb-2">عذراً، الوصول غير مسموح</h1>
+          <p className="text-text-secondary font-medium">هذه الصفحة مخصصة لمدير النظام فقط. لا تملك الصلاحيات الكافية لعرض البيانات المالية.</p>
         </div>
       </div>
     );
@@ -103,8 +103,8 @@ const Safe = () => {
       {/* Header & Balance Card */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-4xl font-bold text-brand-main tracking-tight">الخزينة والمالية</h1>
-          <p className="text-gray-500 font-medium mt-1">تتبع التدفقات النقدية والمصاريف</p>
+          <h1 className="text-4xl font-bold text-text-primary tracking-tight">الخزنة والماليات</h1>
+          <p className="text-text-secondary font-medium mt-1">تتبع التدفقات النقدية والمصاريف</p>
         </div>
         
         <div className="bg-brand-main p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl shadow-brand-main/30 flex items-center gap-4 md:gap-8 min-w-0 w-full md:min-w-[350px] relative overflow-hidden group">
@@ -133,8 +133,8 @@ const Safe = () => {
              <span>إضافة معاملة يدوية</span>
            </button>
 
-           <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
-              <h3 className="text-lg font-bold text-gray-900 flex items-center gap-3">
+           <div className="bg-bg-surface p-8 rounded-[2.5rem] shadow-sm border border-border-theme space-y-6">
+              <h3 className="text-lg font-bold text-text-primary flex items-center gap-3">
                  <PieChart className="w-5 h-5 text-brand-main" />
                  ملخص سريع
               </h3>
@@ -152,30 +152,30 @@ const Safe = () => {
         </div>
 
         {/* Right: History List */}
-        <div className="lg:col-span-3 space-y-6">
-           <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
-              <div className="p-6 md:p-8 border-b border-gray-50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50/30">
+         <div className="lg:col-span-3 space-y-6">
+           <div className="bg-bg-surface rounded-[2.5rem] shadow-sm border border-border-theme overflow-hidden">
+              <div className="p-6 md:p-8 border-b border-border-theme flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-bg-primary/30">
                  <div className="flex flex-col gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-white rounded-xl shadow-sm">
-                       <History className="w-5 h-5 text-gray-400" />
+                    <div className="p-2 bg-bg-surface rounded-xl shadow-sm border border-border-theme">
+                       <History className="w-5 h-5 text-text-muted" />
                     </div>
-                    <h2 className="text-xl font-bold text-gray-900">سجل المعاملات</h2>
+                    <h2 className="text-xl font-bold text-text-primary">سجل المعاملات</h2>
                  </div>
-                  <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-2xl shadow-sm border border-gray-100">
-                      <label className="text-[10px] font-bold text-gray-400 uppercase whitespace-nowrap">من</label>
+                  <div className="flex items-center gap-2 bg-bg-surface px-4 py-2 rounded-2xl shadow-sm border border-border-theme">
+                      <label className="text-[10px] font-bold text-text-muted uppercase whitespace-nowrap">من</label>
                       <input 
                         type="date" 
                         value={dateFilter.start}
                         onChange={(e) => setDateFilter({...dateFilter, start: e.target.value})}
-                        className="bg-transparent border-none outline-none font-bold text-sm text-gray-700"
+                        className="bg-transparent border-none outline-none font-bold text-sm text-text-secondary"
                       />
-                      <label className="text-[10px] font-bold text-gray-400 uppercase whitespace-nowrap">إلى</label>
+                      <label className="text-[10px] font-bold text-text-muted uppercase whitespace-nowrap">إلى</label>
                       <input 
                         type="date" 
                         value={dateFilter.end}
                         onChange={(e) => setDateFilter({...dateFilter, end: e.target.value})}
-                        className="bg-transparent border-none outline-none font-bold text-sm text-gray-700"
+                        className="bg-transparent border-none outline-none font-bold text-sm text-text-secondary"
                       />
                       <button 
                         onClick={() => setAppliedDates({...dateFilter})}
@@ -188,13 +188,13 @@ const Safe = () => {
                  
                   <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
                     <div className="relative w-full md:w-64">
-                       <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                       <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted w-4 h-4" />
                        <input 
                          type="text" 
                          placeholder="بحث في المعاملات..."
                          value={searchTerm}
                          onChange={(e) => setSearchTerm(e.target.value)}
-                         className="pr-10 pl-4 py-2.5 bg-white border border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-brand-main/10 outline-none font-medium w-full text-sm"
+                         className="pr-10 pl-4 py-2.5 bg-bg-surface border border-border-theme rounded-2xl shadow-sm focus:ring-2 focus:ring-brand-main/10 outline-none font-medium w-full text-sm text-text-primary"
                        />
                     </div>
                  </div>
@@ -211,7 +211,7 @@ const Safe = () => {
                           </div>
                             <div className="flex-1">
                                <div className="flex items-center gap-2 mb-1">
-                                  <span className="font-bold text-gray-900 text-lg">
+                                  <span className="font-bold text-text-primary text-lg">
                                      {(() => {
                                        const mapping: Record<string, string> = {
                                          'Client Deposit': 'دفعة مقدمة',
@@ -280,11 +280,11 @@ const Safe = () => {
              </div>
              
              <form onSubmit={handleAdd} className="p-8 space-y-6 overflow-y-auto max-h-[70vh]">
-                <div className="flex gap-4 p-1.5 bg-gray-100 rounded-2xl">
+                 <div className="flex gap-4 p-1.5 bg-bg-primary rounded-2xl border border-border-theme">
                    <button 
                     type="button"
                     onClick={() => setNewTx({...newTx, transaction_type: 'Income'})}
-                    className={`flex-1 py-4 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 ${newTx.transaction_type === 'Income' ? 'bg-white text-green-600 shadow-sm scale-[1.02]' : 'text-gray-400'}`}
+                    className={`flex-1 py-4 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 ${newTx.transaction_type === 'Income' ? 'bg-bg-surface text-green-600 shadow-sm scale-[1.02] border border-border-theme' : 'text-text-muted'}`}
                    >
                      <TrendingUp className="w-5 h-5" />
                      وارد / دخل
@@ -292,32 +292,32 @@ const Safe = () => {
                    <button 
                     type="button"
                     onClick={() => setNewTx({...newTx, transaction_type: 'Expense'})}
-                    className={`flex-1 py-4 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 ${newTx.transaction_type === 'Expense' ? 'bg-white text-red-600 shadow-sm scale-[1.02]' : 'text-gray-400'}`}
+                    className={`flex-1 py-4 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 ${newTx.transaction_type === 'Expense' ? 'bg-bg-surface text-red-600 shadow-sm scale-[1.02] border border-border-theme' : 'text-text-muted'}`}
                    >
                      <TrendingDown className="w-5 h-5" />
                      صادر / صرف
                    </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                    <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">المبلغ (<EGP />)</label>
+                      <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 px-1">المبلغ (<EGP />)</label>
                       <input 
                         type="number" 
                         required
                         value={newTx.amount}
                         onChange={(e) => setNewTx({...newTx, amount: e.target.value})}
-                         className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold italic text-xl"
+                         className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold italic text-xl text-text-primary"
                         placeholder="0.00"
                       />
                    </div>
                    <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">الفئة</label>
+                      <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 px-1">الفئة</label>
                       <select 
                         required
                         value={newTx.category}
                         onChange={(e) => setNewTx({...newTx, category: e.target.value})}
-                         className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                         className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-text-primary"
                       >
                          <option value="">اختر الفئة...</option>
                          <option value="دفعة مقدمة">عربون عميل</option>
@@ -332,12 +332,12 @@ const Safe = () => {
                 </div>
 
                 <div>
-                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">ملاحظات إضافية</label>
+                   <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 px-1">ملاحظات إضافية</label>
                    <textarea 
                      rows={3}
                      value={newTx.description}
                      onChange={(e) => setNewTx({...newTx, description: e.target.value})}
-                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold resize-none"
+                     className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold resize-none text-text-primary"
                      placeholder="تفاصيل المعاملة..."
                    />
                 </div>

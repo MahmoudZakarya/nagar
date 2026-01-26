@@ -117,19 +117,19 @@ const Tasks = () => {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-4xl font-bold text-brand-main tracking-tight">المشاريع</h1>
-          <p className="text-gray-500 font-medium mt-1">تتبع حالة تصنيع الأثاث والتسليمات</p>
+          <h1 className="text-4xl font-bold text-text-primary tracking-tight">المشاريع</h1>
+          <p className="text-text-secondary font-medium mt-1">تتبع حالة تصنيع الأثاث والتسليمات</p>
         </div>
         
         <div className="flex items-center gap-4 w-full md:w-auto">
            <div className="relative flex-1 md:w-64">
-              <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted w-5 h-5" />
               <input 
                 type="text" 
                 placeholder="بحث في المشاريع..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pr-12 pl-4 py-3 bg-white border-none rounded-2xl shadow-sm focus:ring-2 focus:ring-brand-main/10 outline-none font-medium"
+                className="w-full pr-12 pl-4 py-3 bg-bg-surface border border-border-theme rounded-2xl shadow-sm focus:ring-2 focus:ring-brand-main/10 outline-none font-medium text-text-primary"
               />
            </div>
            <button 
@@ -144,9 +144,9 @@ const Tasks = () => {
 
       <div className="space-y-4">
         {displayedTasks.length === 0 ? (
-          <div className="py-20 text-center bg-white rounded-[2.5rem] shadow-sm border border-gray-100">
-            <AlertCircle className="w-16 h-16 text-gray-200 mx-auto mb-4" />
-            <p className="text-gray-400 font-bold">لم يتم العثور على مشاريع</p>
+          <div className="py-20 text-center bg-bg-surface rounded-[2.5rem] shadow-sm border border-border-theme">
+            <AlertCircle className="w-16 h-16 text-text-muted/20 mx-auto mb-4" />
+            <p className="text-text-muted font-bold">لم يتم العثور على مشاريع</p>
           </div>
         ) : (
           displayedTasks.map((task) => {
@@ -155,7 +155,7 @@ const Tasks = () => {
             return (
               <div 
                 key={task.id} 
-                className={`bg-white rounded-[2rem] shadow-sm border border-gray-100 hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 p-6 md:p-8 ${urgency.border}`}
+                className={`bg-bg-surface rounded-[2rem] shadow-sm border border-border-theme hover:shadow-xl transition-all duration-300 p-6 md:p-8 ${urgency.border}`}
               >
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                    <div className="flex-1 space-y-3">
@@ -178,14 +178,14 @@ const Tasks = () => {
                             مشروع رقم {task.id}
                          </span>
                       </div>
-                      <h3 className="text-2xl font-bold text-gray-900">{task.title}</h3>
-                      <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-500 font-medium">
+                      <h3 className="text-2xl font-bold text-text-primary">{task.title}</h3>
+                      <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-text-secondary font-medium">
                          <div className="flex items-center gap-2">
-                           <span className="text-brand-main font-bold">العميل:</span>
+                           <span className="text-brand-main dark:text-brand-secondary font-bold">العميل:</span>
                            {task.client_name}
                          </div>
                          <div className="flex items-center gap-2">
-                            <Calendar className={`w-4 h-4 ${urgency.level >= 3 ? 'text-red-500 animate-pulse' : 'text-gray-300'}`} />
+                            <Calendar className={`w-4 h-4 ${urgency.level >= 3 ? 'text-red-500 animate-pulse' : 'text-text-muted'}`} />
                             {task.delivery_due_date ? `موعد التسليم: ${new Date(task.delivery_due_date).toLocaleDateString('ar-EG')}` : 'موعد غير محدد'}
                          </div>
                       </div>
@@ -195,7 +195,7 @@ const Tasks = () => {
                       <div className="text-center sm:text-right">
                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">نسبة الإنجاز</p>
                          <div className="flex items-center gap-3">
-                            <span className="text-lg font-bold text-gray-900">{task.completion_percent}%</span>
+                            <span className="text-lg font-bold text-text-primary">{task.completion_percent}%</span>
                             <div className="w-32 h-2.5 bg-gray-100 rounded-full overflow-hidden">
                                <div 
                                  className="h-full bg-green-500 transition-all duration-700 ease-out shadow-[0_0_8px_rgba(34,197,94,0.4)]"

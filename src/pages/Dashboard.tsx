@@ -48,54 +48,54 @@ const Dashboard = () => {
             <img src={logo} alt="شعار نجار" className="h-10 md:h-16 w-auto" />
           </div>
           <div>
-            <h1 className="text-2xl md:text-4xl font-bold text-brand-main tracking-tight">نظرة عامة</h1>
-            <p className="text-gray-500 text-sm md:text-base font-medium mt-1">مرحباً بك مجدداً! إليك ملخص حالة ورشة نجار اليوم.</p>
+            <h1 className="text-2xl md:text-4xl font-bold text-text-primary tracking-tight">نظرة عامة</h1>
+            <p className="text-text-secondary text-sm md:text-base font-medium mt-1">مرحباً بك مجدداً! إليك ملخص حالة ورشة نجار اليوم.</p>
           </div>
         </div>
-        <div className="text-right md:text-left bg-white px-6 py-3 rounded-2xl shadow-sm border border-gray-50 w-full md:w-auto">
-           <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">التاريخ اليوم</p>
-           <p className="font-bold text-gray-900">{today.toLocaleDateString('ar-EG', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+        <div className="text-right md:text-left bg-bg-surface px-6 py-3 rounded-2xl shadow-sm border border-border-theme w-full md:w-auto">
+           <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1">التاريخ اليوم</p>
+           <p className="font-bold text-text-primary">{today.toLocaleDateString('ar-EG', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
         </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Active Tasks */}
-        <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100 hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 group relative overflow-hidden">
+        <div className="bg-bg-surface p-6 rounded-[2.5rem] shadow-sm border border-border-theme hover:shadow-xl transition-all duration-300 group relative overflow-hidden">
           <div className="flex justify-between items-start mb-4 relative z-10">
-            <div className="bg-orange-50 p-3 rounded-2xl text-orange-600 group-hover:bg-brand-secondary group-hover:text-brand-main transition-colors">
+            <div className="bg-orange-50 dark:bg-orange-500/10 p-3 rounded-2xl text-orange-600 dark:text-orange-400 group-hover:bg-brand-secondary group-hover:text-brand-main transition-colors">
               <ClipboardList className="w-6 h-6" />
             </div>
           </div>
-          <h3 className="text-gray-400 font-bold text-[10px] uppercase tracking-widest mb-1 relative z-10">مشاريع نشطة</h3>
-          <p className="text-5xl font-bold text-gray-900 relative z-10">{activeTasks}</p>
+          <h3 className="text-text-muted font-bold text-[10px] uppercase tracking-widest mb-1 relative z-10">مشاريع نشطة</h3>
+          <p className="text-5xl font-bold text-text-primary relative z-10">{activeTasks}</p>
           <div className="absolute right-0 bottom-0 p-4 opacity-5 pointer-events-none transform translate-x-2 translate-y-2">
              <ClipboardList className="w-20 h-20" />
           </div>
         </div>
 
         {/* Ready to Deliver */}
-        <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100 hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 group relative overflow-hidden">
+        <div className="bg-bg-surface p-6 rounded-[2.5rem] shadow-sm border border-border-theme hover:shadow-xl transition-all duration-300 group relative overflow-hidden">
           <div className="flex justify-between items-start mb-4 relative z-10">
-            <div className="bg-green-50 p-3 rounded-2xl text-green-600 group-hover:bg-[#5E9E54] group-hover:text-white transition-colors">
+            <div className="bg-green-50 dark:bg-green-500/10 p-3 rounded-2xl text-green-600 dark:text-green-400 group-hover:bg-[#5E9E54] group-hover:text-white transition-colors">
               <CheckCircle2 className="w-6 h-6" />
             </div>
           </div>
-          <h3 className="text-gray-400 font-bold text-[10px] uppercase tracking-widest mb-1 relative z-10">جاهز للتسليم</h3>
-          <p className="text-5xl font-bold text-gray-900 relative z-10">{readyTasks}</p>
+          <h3 className="text-text-muted font-bold text-[10px] uppercase tracking-widest mb-1 relative z-10">جاهز للتسليم</h3>
+          <p className="text-5xl font-bold text-text-primary relative z-10">{readyTasks}</p>
           <div className="absolute right-0 bottom-0 p-4 opacity-5 pointer-events-none transform translate-x-2 translate-y-2">
              <CheckCircle2 className="w-20 h-20" />
           </div>
         </div>
 
         {/* Overdue */}
-        <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100 hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 group relative overflow-hidden">
+        <div className="bg-bg-surface p-6 rounded-[2.5rem] shadow-sm border border-border-theme hover:shadow-xl transition-all duration-300 group relative overflow-hidden">
           <div className="flex justify-between items-start mb-4 relative z-10">
-            <div className="bg-red-50 p-3 rounded-2xl text-red-600 group-hover:bg-red-600 group-hover:text-white transition-colors">
+            <div className="bg-red-50 dark:bg-red-500/10 p-3 rounded-2xl text-red-600 dark:text-red-400 group-hover:bg-red-600 group-hover:text-white transition-colors">
               <AlertCircle className="w-6 h-6" />
             </div>
           </div>
-          <h3 className="text-gray-400 font-bold text-[10px] uppercase tracking-widest mb-1 relative z-10">مشاريع متأخرة</h3>
-          <p className="text-5xl font-bold text-gray-900 relative z-10">{overdueTasks}</p>
+          <h3 className="text-text-muted font-bold text-[10px] uppercase tracking-widest mb-1 relative z-10">مشاريع متأخرة</h3>
+          <p className="text-5xl font-bold text-text-primary relative z-10">{overdueTasks}</p>
           <div className="absolute right-0 bottom-0 p-4 opacity-5 pointer-events-none transform translate-x-2 translate-y-2">
              <AlertCircle className="w-20 h-20" />
           </div>
@@ -117,13 +117,13 @@ const Dashboard = () => {
 
       <div className="grid lg:grid-cols-3 gap-8 pb-10">
         <div className="lg:col-span-2 space-y-8">
-           <div className="bg-white rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden">
+           <div className="bg-bg-suface rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden">
               <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/20">
-                 <h2 className="text-xl font-bold text-gray-900 flex items-center gap-3">
+                 <h2 className="text-xl font-bold text-text-primary flex items-center gap-3">
                     <TrendingUp className="w-6 h-6 text-brand-secondary" />
                     آخر المعاملات المالية
                  </h2>
-                 <Link to="/safe" className="text-xs font-bold text-brand-main hover:underline uppercase tracking-widest">عرض الكل</Link>
+                 <Link to="/safe" className="text-xs font-bold text-text-primary hover:underline uppercase tracking-widest">عرض الكل</Link>
               </div>
               <div className="divide-y divide-gray-50">
                   {history.slice(0, 5).map((tx) => (
@@ -133,7 +133,7 @@ const Dashboard = () => {
                              {tx.transaction_type === 'Income' ? <ArrowUpLeft className="w-6 h-6" /> : <TrendingUp className="w-6 h-6 rotate-180" />}
                           </div>
                            <div>
-                              <p className="font-bold text-gray-900 text-lg">
+                              <p className="font-bold text-text-primary text-lg">
                                  {(() => {
                                    const mapping: Record<string, string> = {
                                      'Client Deposit': 'دفعة مقدمة',
@@ -169,9 +169,9 @@ const Dashboard = () => {
         </div>
 
         <div className="lg:col-span-1">
-           <div className="bg-white rounded-[3rem] shadow-sm border border-gray-100 p-8 h-full relative overflow-hidden">
-              <h2 className="text-xl font-bold text-gray-900 mb-8 flex items-center gap-3 relative z-10">
-                  <Clock className="w-6 h-6 text-brand-main" />
+           <div className="bg-bg-surface rounded-[3rem] shadow-sm border border-border-theme p-8 h-full relative overflow-hidden">
+              <h2 className="text-xl font-bold text-text-primary mb-8 flex items-center gap-3 relative z-10">
+                  <Clock className="w-6 h-6 text-brand-main dark:text-brand-secondary" />
                  مواعيد التسليم القادمة
               </h2>
               <div className="space-y-8 relative z-10">
@@ -195,19 +195,19 @@ const Dashboard = () => {
                      return (
                       <Link to={`/tasks/${task.id}`} key={task.id} className="block group">
                           <div className={`relative pr-6 before:absolute before:right-0 before:top-1 before:bottom-1 before:w-1.5 ${colorClass} before:rounded-full group-hover:before:w-2 transition-all`}>
-                             <p className="text-xs font-bold text-gray-600 mb-1">{dueDate.toLocaleDateString('ar-EG')}</p>
-                             <p className="font-bold text-gray-800 text-lg leading-tight group-hover:text-brand-main transition">{task.title}</p>
-                             <p className="text-xs text-gray-500 mt-1 font-bold">{task.client_name}</p>
+                             <p className="text-xs font-bold text-text-muted mb-1">{dueDate.toLocaleDateString('ar-EG')}</p>
+                             <p className="font-bold text-text-primary text-lg leading-tight group-hover:text-brand-main dark:group-hover:text-brand-secondary transition">{task.title}</p>
+                             <p className="text-xs text-text-secondary mt-1 font-bold">{task.client_name}</p>
                           </div>
                       </Link>
                      );
                    })}
                  {tasks.length === 0 && (
-                    <div className="py-20 text-center text-gray-400 italic">لا توجد مواعيد تسليم مجدولة</div>
+                    <div className="py-20 text-center text-text-muted italic">لا توجد مواعيد تسليم مجدولة</div>
                  )}
               </div>
               <div className="absolute left-0 bottom-0 p-8 opacity-5 pointer-events-none transform rotate-12 translate-x-4 translate-y-4">
-                 <Clock className="w-48 h-48" />
+                 <Clock className="w-48 h-48 text-text-primary" />
               </div>
            </div>
         </div>

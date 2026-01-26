@@ -115,13 +115,13 @@ const Purchases = () => {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-4xl font-bold text-brand-main tracking-tight">المشتريات والخامات</h1>
-          <p className="text-gray-500 font-medium mt-1">إدارة فواتير الموردين ومخزون الخامات</p>
+          <h1 className="text-4xl font-bold text-text-primary tracking-tight">المشتريات والخامات</h1>
+          <p className="text-text-secondary font-medium mt-1">إدارة فواتير الموردين ومخزون الخامات</p>
         </div>
 
         <button
           onClick={() => setShowAddModal(true)}
-          className="bg-[#5E9E54] text-white font-bold py-4 px-8 rounded-2xl shadow-xl shadow-green-200 hover:shadow-green-300 hover:-translate-y-1 active:translate-y-0 transition-all duration-300 flex items-center gap-3 whitespace-nowrap"
+          className="bg-[#5E9E54] text-white font-bold py-4 px-8 rounded-2xl shadow-green-200 hover:shadow-green-300 hover:-translate-y-1 active:translate-y-0 transition-all duration-300 flex items-center gap-3 whitespace-nowrap"
         >
           <Plus className="w-6 h-6" />
           <span>تسجيل فاتورة شراء</span>
@@ -130,39 +130,39 @@ const Purchases = () => {
 
       {/* Stats Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-         <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 flex items-center gap-6 relative overflow-hidden group">
-            <div className="bg-blue-50 p-4 rounded-2xl text-blue-600 relative z-10 group-hover:scale-110 transition-transform">
+         <div className="bg-bg-surface p-8 rounded-[2.5rem] shadow-sm border border-border-theme flex items-center gap-6 relative overflow-hidden group">
+            <div className="bg-blue-50 dark:bg-blue-500/10 p-4 rounded-2xl text-blue-600 dark:text-blue-400 relative z-10 group-hover:scale-110 transition-transform">
                <Package className="w-8 h-8" />
             </div>
             <div className="relative z-10">
-               <p className="text-gray-700 text-[10px] font-bold uppercase tracking-widest mb-1">إجمالي الطلبات</p>
-               <p className="text-3xl font-bold text-gray-900">{purchases.length}</p>
+               <p className="text-text-secondary text-[10px] font-bold uppercase tracking-widest mb-1">إجمالي الطلبات</p>
+               <p className="text-3xl font-bold text-text-primary">{purchases.length}</p>
             </div>
             <div className="absolute -right-4 -bottom-4 opacity-5 pointer-events-none">
                 <Package className="w-24 h-24" />
             </div>
          </div>
 
-         <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 flex items-center gap-6 relative overflow-hidden group">
-            <div className="bg-red-50 p-4 rounded-2xl text-red-600 relative z-10 group-hover:scale-110 transition-transform">
+         <div className="bg-bg-surface p-8 rounded-[2.5rem] shadow-sm border border-border-theme flex items-center gap-6 relative overflow-hidden group">
+            <div className="bg-red-50 dark:bg-red-500/10 p-4 rounded-2xl text-red-600 dark:text-red-400 relative z-10 group-hover:scale-110 transition-transform">
                <DollarSign className="w-8 h-8" />
             </div>
             <div className="relative z-10">
                <p className="text-red-400 text-[10px] font-bold uppercase tracking-widest mb-1">المديونيات للموردين</p>
-               <p className="text-3xl font-bold text-red-600">{totalDebt.toLocaleString()}<EGP /></p>
+               <p className="text-3xl font-bold text-red-600 dark:text-red-400">{totalDebt.toLocaleString()}<EGP /></p>
             </div>
             <div className="absolute -right-4 -bottom-4 opacity-5 pointer-events-none">
                 <DollarSign className="w-24 h-24" />
             </div>
          </div>
 
-         <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 flex items-center gap-6 relative overflow-hidden group">
-            <div className="bg-green-50 p-4 rounded-2xl text-green-600 relative z-10 group-hover:scale-110 transition-transform">
+         <div className="bg-bg-surface p-8 rounded-[2.5rem] shadow-sm border border-border-theme flex items-center gap-6 relative overflow-hidden group">
+            <div className="bg-green-50 dark:bg-green-500/10 p-4 rounded-2xl text-green-600 dark:text-green-400 relative z-10 group-hover:scale-110 transition-transform">
                <ShoppingBag className="w-8 h-8" />
             </div>
             <div className="relative z-10">
                <p className="text-green-400 text-[10px] font-bold uppercase tracking-widest mb-1">إجمالي المشتريات</p>
-               <p className="text-3xl font-bold text-green-700">{totalSpent.toLocaleString()}<EGP /></p>
+               <p className="text-3xl font-bold text-green-700 dark:text-green-500">{totalSpent.toLocaleString()}<EGP /></p>
             </div>
             <div className="absolute -right-4 -bottom-4 opacity-5 pointer-events-none">
                 <ShoppingBag className="w-24 h-24" />
@@ -170,8 +170,8 @@ const Purchases = () => {
          </div>
       </div>
 
-      <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-8 border-b border-gray-50 flex flex-col md:flex-row justify-between gap-6 items-center bg-gray-50/20">
+      <div className="bg-bg-surface rounded-[2.5rem] shadow-sm border border-border-theme overflow-hidden">
+        <div className="p-8 border-b border-gray-50 flex flex-col md:flex-row justify-between gap-6 items-center ">
            
             <div className="flex flex-col gap-4">
                 <div className="relative w-full md:w-96">
@@ -181,32 +181,32 @@ const Purchases = () => {
                   placeholder="بحث في المشتريات أو الموردين..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pr-12 pl-4 py-3 bg-white border border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#5E9E54]/10 outline-none font-medium"
+                  className="w-full pr-12 pl-4 py-3 bg-bg-surface border border-gray-100 rounded-2xl shadow-sm focus:ring-2 focus:ring-[#5E9E54]/10 outline-none font-medium"
                 />
             </div>
-                <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-2xl shadow-sm border border-gray-100">
+                <div className="flex items-center gap-2 bg-bg-surface px-4 py-2 rounded-2xl shadow-sm border border-border-theme">
                   <div className='flex flex-col gap-1'>
-                     <label className="text-[10px] font-bold text-gray-400 uppercase whitespace-nowrap">من</label>
+                     <label className="text-[10px] font-bold text-text-muted uppercase whitespace-nowrap">من</label>
                   <input 
                     type="date" 
                     value={dateFilter.start}
                     onChange={(e) => setDateFilter({...dateFilter, start: e.target.value})}
-                    className="bg-transparent border-none outline-none font-bold text-sm text-gray-700"
+                    className="bg-transparent border-none outline-none font-bold text-sm text-text-primary"
                   />
 
                   </div>
                   <div className='flex flex-col gap-1'>
-                  <label className="text-[10px] font-bold text-gray-400 uppercase whitespace-nowrap">إلى</label>
+                  <label className="text-[10px] font-bold text-text-muted uppercase whitespace-nowrap">إلى</label>
                   <input 
                     type="date" 
                     value={dateFilter.end}
                     onChange={(e) => setDateFilter({...dateFilter, end: e.target.value})}
-                    className="bg-transparent border-none outline-none font-bold text-sm text-gray-700"
+                    className="bg-transparent border-none outline-none font-bold text-sm text-text-primary"
                   />
                   </div>
                   <button 
                     onClick={() => setAppliedDates({...dateFilter})}
-                    className="bg-[#5E9E54] text-white px-4 py-1 rounded-xl text-xs font-bold hover:bg-[#4D8245] mr-4 transition shadow-md shadow-green-100"
+                    className="bg-[#5E9E54] text-white px-4 py-1 rounded-xl text-xs font-bold hover:bg-[#4D8245] mr-4 transition"
                   >
                     عرض
                   </button>
@@ -217,13 +217,13 @@ const Purchases = () => {
 
                <button
                 onClick={() => setActiveFilter('All')}
-                className={`px-6 py-2.5 text-xs font-bold uppercase tracking-widest transition rounded-xl ${activeFilter === 'All' ? 'text-[#5E9E54] bg-green-50' : 'text-gray-700 hover:text-gray-600'}`}
+                className={`px-6 py-2.5 text-xs font-bold uppercase tracking-widest transition rounded-xl ${activeFilter === 'All' ? 'text-[#5E9E54] bg-green-50 dark:bg-green-500/10' : 'text-text-secondary hover:text-text-primary'}`}
                >
                 الكل
                </button>
                <button
                 onClick={() => setActiveFilter('Remaining')}
-                className={`px-6 py-2.5 text-xs font-bold uppercase tracking-widest transition rounded-xl ${activeFilter === 'Remaining' ? 'text-red-600 bg-red-50' : 'text-gray-700 hover:text-red-500 hover:bg-red-50'}`}
+                className={`px-6 py-2.5 text-xs font-bold uppercase tracking-widest transition rounded-xl ${activeFilter === 'Remaining' ? 'text-red-600 bg-red-50 dark:bg-red-500/10' : 'text-text-secondary hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10'}`}
                >
                 فواتير متبقية
                </button>
@@ -233,14 +233,14 @@ const Purchases = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-right">
             <thead>
-              <tr className="bg-gray-100/50">
-                <th className="p-4 md:p-8 text-xs font-bold text-gray-600 uppercase tracking-widest text-right">التاريخ / الصنف</th>
-                <th className="p-4 md:p-8 text-xs font-bold text-gray-600 uppercase tracking-widest text-right">المورد</th>
-                <th className="p-4 md:p-8 text-xs font-bold text-gray-600 uppercase tracking-widest text-center">الكمية</th>
-                <th className="p-4 md:p-8 text-xs font-bold text-gray-600 uppercase tracking-widest text-left">التكلفة</th>
-                <th className="p-4 md:p-8 text-xs font-bold text-gray-600 uppercase tracking-widest text-left">المدفوع</th>
-                <th className="p-4 md:p-8 text-xs font-bold text-gray-600 uppercase tracking-widest text-left">المتبقي</th>
-                <th className="p-4 md:p-8 text-xs font-bold text-gray-600 uppercase tracking-widest text-center">الإجراءات</th>
+              <tr className="">
+                <th className="p-4 md:p-8 text-xs font-bold text-text-primary uppercase tracking-widest text-right">التاريخ / الصنف</th>
+                <th className="p-4 md:p-8 text-xs font-bold text-text-primary uppercase tracking-widest text-right">المورد</th>
+                <th className="p-4 md:p-8 text-xs font-bold text-text-primary uppercase tracking-widest text-center">الكمية</th>
+                <th className="p-4 md:p-8 text-xs font-bold text-text-primary uppercase tracking-widest text-left">التكلفة</th>
+                <th className="p-4 md:p-8 text-xs font-bold text-text-primary uppercase tracking-widest text-left">المدفوع</th>
+                <th className="p-4 md:p-8 text-xs font-bold text-text-primary uppercase tracking-widest text-left">المتبقي</th>
+                <th className="p-4 md:p-8 text-xs font-bold text-text-primary uppercase tracking-widest text-center">الإجراءات</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -250,27 +250,27 @@ const Purchases = () => {
                 </tr>
               ) : (
                 filteredPurchases.map((p) => (
-                  <tr key={p.id} className="hover:bg-gray-50/50 transition duration-300 group">
+                  <tr key={p.id} className="hover:bg-bg-primary/50 transition duration-300 group transition-colors">
                     <td className="p-4 md:p-8">
-                       <p className="text-[12px] font-bold text-gray-700 uppercase tracking-widest mb-1">{new Date(p.date).toLocaleDateString('ar-EG')}</p>
-                       <p className="font-bold text-gray-900 flex items-center gap-3">
-                          <Package className="w-5 h-5 text-gray-200 group-hover:text-[#5E9E54] transition" />
+                       <p className="text-[12px] font-bold text-text-muted uppercase tracking-widest mb-1">{new Date(p.date).toLocaleDateString('ar-EG')}</p>
+                       <p className="font-bold text-text-primary flex items-center gap-3">
+                          <Package className="w-5 h-5 text-text-muted group-hover:text-[#5E9E54] transition" />
                           {p.item_name}
                        </p>
                     </td>
                     <td className="p-4 md:p-8">
-                       <div className="flex items-center gap-3 text-gray-600 font-bold">
-                          <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-700 group-hover:bg-brand-secondary group-hover:text-brand-main transition">
+                       <div className="flex items-center gap-3 text-text-secondary font-bold">
+                          <div className="w-8 h-8 rounded-full bg-bg-primary flex items-center justify-center text-text-primary group-hover:bg-brand-secondary group-hover:text-brand-main transition border border-border-theme/10">
                              <Truck className="w-4 h-4" />
                           </div>
                           {p.supplier_name || 'مورد عام'}
                        </div>
                     </td>
                     <td className="p-4 md:p-8 text-center">
-                       <span className="text-gray-900 font-bold text-lg">{p.quantity}</span>
-                       <span className="text-gray-700 text-[10px] block font-bold uppercase mt-1">@ {p.price_per_unit}<EGP /></span>
+                       <span className="text-text-primary font-bold text-lg">{p.quantity}</span>
+                       <span className="text-text-muted text-[10px] block font-bold uppercase mt-1">@ {p.price_per_unit}<EGP /></span>
                     </td>
-                    <td className="p-4 md:p-8 text-left font-bold text-gray-900 text-lg">{p.total_cost.toLocaleString()}<EGP /></td>
+                    <td className="p-4 md:p-8 text-left font-bold text-text-primary text-lg">{p.total_cost.toLocaleString()}<EGP /></td>
                     <td className="p-4 md:p-8 text-left font-bold text-green-600 italic text-lg">{p.amount_paid_now.toLocaleString()}<EGP /></td>
                     <td className="p-4 md:p-8 text-left">
                        {p.amount_remaining > 0 ? (
@@ -319,8 +319,8 @@ const Purchases = () => {
       {/* Add Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setShowAddModal(false)}></div>
-          <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300 max-h-[90vh] flex flex-col">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowAddModal(false)}></div>
+          <div className="bg-bg-surface border border-border-theme w-full max-w-2xl rounded-[2.5rem] relative z-10 overflow-hidden animate-in zoom-in duration-300 max-h-[90vh] flex flex-col shadow-2xl">
              <div className="bg-[#5E9E54] p-10 text-white relative flex-shrink-0">
                 <h2 className="text-3xl font-bold">تسجيل فاتورة شراء</h2>
                 <p className="text-white/60 font-medium mt-2">أدخل تفاصيل الخامات أو المشتريات من الفاتورة</p>
@@ -335,20 +335,20 @@ const Purchases = () => {
              <form onSubmit={handleSubmit} className="p-10 space-y-8 overflow-y-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                    <div>
-                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-3 px-1">اسم الصنف / الخامة</label>
+                      <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-3 px-1">اسم الصنف / الخامة</label>
                       <input 
                         type="text" required 
-                        className="w-full px-6 py-5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#5E9E54]/10 outline-none font-bold"
+                        className="w-full px-6 py-5 bg-bg-primary border border-border-theme/50 rounded-2xl focus:ring-2 focus:ring-[#5E9E54]/10 outline-none font-bold text-text-primary"
                         placeholder="مثال: خشب زان، منشار، غراء..."
                         value={formData.item_name}
                         onChange={(e) => setFormData({...formData, item_name: e.target.value})}
                       />
                    </div>
                    <div>
-                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-3 px-1">اسم المورد</label>
+                      <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-3 px-1">اسم المورد</label>
                       <input 
                         type="text" 
-                        className="w-full px-6 py-5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#5E9E54]/10 outline-none font-bold"
+                        className="w-full px-6 py-5 bg-bg-primary border border-border-theme/50 rounded-2xl focus:ring-2 focus:ring-[#5E9E54]/10 outline-none font-bold text-text-primary"
                         placeholder="شركة توريد الأخشاب"
                         value={formData.supplier_name}
                         onChange={(e) => setFormData({...formData, supplier_name: e.target.value})}
@@ -356,30 +356,30 @@ const Purchases = () => {
                    </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 p-6 md:p-8 bg-gray-50 rounded-[2rem]">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 p-6 md:p-8 bg-bg-primary border border-border-theme/30 rounded-[2rem]">
                    <div>
-                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-3 text-center">الكمية</label>
+                      <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-3 text-center">الكمية</label>
                       <input 
                         type="number" 
-                        className="w-full px-4 py-4 rounded-2xl border-none bg-white shadow-inner focus:ring-2 focus:ring-[#5E9E54]/10 transition text-center font-bold text-lg"
+                        className="w-full px-4 py-4 rounded-2xl border border-border-theme/30 bg-bg-surface shadow-inner focus:ring-2 focus:ring-[#5E9E54]/10 transition text-center font-bold text-lg text-text-primary"
                         value={formData.quantity}
                         onChange={(e) => calculateTotal(Number(e.target.value), formData.price_per_unit, formData.discount_received)}
                       />
                    </div>
                    <div>
-                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-3 text-center">سعر الوحدة</label>
+                      <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-3 text-center">سعر الوحدة</label>
                       <input 
                         type="number"
-                        className="w-full px-4 py-4 rounded-2xl border-none bg-white shadow-inner focus:ring-2 focus:ring-[#5E9E54]/10 transition text-center font-bold text-lg"
+                        className="w-full px-4 py-4 rounded-2xl border border-border-theme/30 bg-bg-surface shadow-inner focus:ring-2 focus:ring-[#5E9E54]/10 transition text-center font-bold text-lg text-text-primary"
                         value={formData.price_per_unit}
                         onChange={(e) => calculateTotal(formData.quantity, Number(e.target.value), formData.discount_received)}
                       />
                    </div>
                    <div>
-                      <label className="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-3 text-center">الخصم</label>
+                      <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-3 text-center">الخصم</label>
                       <input 
                         type="number"
-                        className="w-full px-4 py-4 rounded-2xl border-none bg-white shadow-inner focus:ring-2 focus:ring-[#5E9E54]/10 transition text-center font-bold text-lg"
+                        className="w-full px-4 py-4 rounded-2xl border border-border-theme/30 bg-bg-surface shadow-inner focus:ring-2 focus:ring-[#5E9E54]/10 transition text-center font-bold text-lg text-text-primary"
                         value={formData.discount_received}
                         onChange={(e) => calculateTotal(formData.quantity, formData.price_per_unit, Number(e.target.value))}
                       />
@@ -389,10 +389,10 @@ const Purchases = () => {
                 <div className="flex flex-col md:flex-row items-center justify-between gap-10 py-6">
                    <div className="flex items-center gap-8">
                       <div>
-                         <p className="text-[10px] font-bold text-gray-700 uppercase tracking-widest mb-1">صافي التكلفة</p>
-                         <p className="text-4xl font-bold text-gray-900 italic tracking-tighter">{formData.total_cost.toLocaleString()}<EGP /></p>
+                         <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1">صافي التكلفة</p>
+                         <p className="text-4xl font-bold text-text-primary italic tracking-tighter">{formData.total_cost.toLocaleString()}<EGP /></p>
                       </div>
-                      <ArrowLeft className="w-6 h-6 text-gray-200 mt-4" />
+                      <ArrowLeft className="w-6 h-6 text-text-muted/30 mt-4" />
                       <div>
                          <p className="text-[10px] font-bold text-[#5E9E54] uppercase tracking-widest mb-1">المدفوع حالياً</p>
                          <input 
@@ -424,23 +424,23 @@ const Purchases = () => {
       {/* Payment Modal */}
       {showPaymentModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setShowPaymentModal(false)}></div>
-          <div className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300">
-             <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
-                <h2 className="text-2xl font-bold text-brand-main">سداد مديونية</h2>
-                <button onClick={() => setShowPaymentModal(false)}><X className="w-6 h-6 text-gray-700" /></button>
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowPaymentModal(false)}></div>
+          <div className="bg-bg-surface border border-border-theme w-full max-w-md rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300">
+             <div className="p-8 border-b border-border-theme flex justify-between items-center bg-bg-primary/50">
+                <h2 className="text-2xl font-bold text-text-primary">سداد مديونية</h2>
+                <button onClick={() => setShowPaymentModal(false)}><X className="w-6 h-6 text-text-muted" /></button>
              </div>
              <form onSubmit={handlePaymentSubmit} className="p-8 space-y-6">
                 <div>
-                   <p className="text-[10px] font-bold text-gray-700 uppercase tracking-widest mb-1 px-1">المتبقي: {selectedPurchase?.amount_remaining.toLocaleString()}<EGP /></p>
-                   <label className="block text-xs font-bold text-gray-700 uppercase tracking-widest mb-2 px-1">المبلغ المراد دفعه</label>
+                   <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1 px-1">المتبقي: {selectedPurchase?.amount_remaining.toLocaleString()}<EGP /></p>
+                   <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 px-1">المبلغ المراد دفعه</label>
                    <input 
                      type="number" 
                      required
                      max={selectedPurchase?.amount_remaining}
                      value={paymentAmount}
                      onChange={(e) => setPaymentAmount(e.target.value)}
-                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-2xl text-center"
+                     className="w-full px-6 py-4 bg-bg-primary border border-border-theme/50 rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-2xl text-center text-text-primary"
                      placeholder="0.00"
                    />
                 </div>
