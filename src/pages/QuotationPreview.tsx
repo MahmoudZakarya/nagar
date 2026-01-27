@@ -104,7 +104,7 @@ const QuotationPreview = () => {
       </div>
 
       {/* A4 Container */}
-      <div id="quotation-container" className="bg-bg-surface mx-auto flex flex-col relative  print:w-full print:max-w-none print:m-0 print:flex print:flex-col print:h-auto print:shadow-none min-h-[290mm] print:min-h-[337mm] shadow-xl border border-border-theme transition-colors duration-300">
+      <div id="quotation-container" className="bg-bg-surface mx-auto flex flex-col relative  print:w-full print:max-w-none print:m-0 print:flex print:flex-col print:h-auto print:shadow-none min-h-[290mm] shadow-xl border border-border-theme transition-colors duration-300">
         
         {/* Header */}
         <div className="relative h-auto bg-brand-main overflow-hidden flex justify-between items-start px-12 py-8 print:px-8">
@@ -236,7 +236,7 @@ const QuotationPreview = () => {
         
         {/* Decorative Bottom Bar */}
         <div className="h-4 bg-brand-main w-full mt-auto print:hidden"></div>
-        <div className="h-[337mm] bg-bg-surface w-full break-inside-avoid "></div>
+        <div className="h-[290mm] bg-bg-surface w-full break-inside-avoid "></div>
       </div>
       
       <style>{`
