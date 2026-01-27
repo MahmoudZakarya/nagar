@@ -209,9 +209,9 @@ const QuotationEditor = () => {
               <th className="px-4 py-3 text-right w-64 min-w-[200px]">البند</th>
               <th className="px-4 py-3 text-right w-1/3 min-w-[300px]">الوصف</th>
               <th className="px-4 py-3 text-right w-48 min-w-[100px]">سعر المتر</th>
-              <th className="px-4 py-3 text-right w-36">سعر الوحدة</th>
-              <th className="px-4 py-3 text-right w-32">الكمية</th>
-              <th className="px-4 py-3 text-right w-36">الإجمالي</th>
+              <th className="px-4 py-3 text-right w-36 min-w-[100px]">سعر الوحدة</th>
+              <th className="px-4 py-3 text-right w-32 min-w-[82px]">الكمية</th>
+              <th className="px-4 py-3 text-right w-36 min-w-[82px]">الإجمالي</th>
               <th className="px-4 py-3 text-right rounded-tl-lg w-32">إجراءات</th>
             </tr>
           </thead>
@@ -268,7 +268,7 @@ const QuotationEditor = () => {
                     className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-brand-secondary"
                   />
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-4 py-2">
                   <input
                     type="number"
                     value={item.unit_price}
@@ -276,7 +276,7 @@ const QuotationEditor = () => {
                     className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-brand-secondary"
                   />
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-4 py-2">
                   <input
                     type="number"
                     value={item.quantity}
@@ -347,7 +347,7 @@ const QuotationEditor = () => {
         
         <button
           onClick={addItem}
-          className="mt-4 flex items-center gap-2 text-brand-main font-medium hover:bg-brand-main/5 px-4 py-2 rounded-lg transition-colors"
+          className="mt-4 flex items-center gap-2 text-text-primary font-medium hover:bg-brand-main/5 px-4 py-2 rounded-lg transition-colors"
         >
           <Plus className="w-4 h-4" />
           <span>إضافة بند جديد</span>

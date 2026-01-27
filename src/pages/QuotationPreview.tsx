@@ -63,7 +63,7 @@ const QuotationPreview = () => {
   }
 
   return (
-    <div className="bg-bg-primary min-h-screen p-2 text-right print:p-0 print:bg-white print:min-h-0 print:overflow-visible transition-colors duration-300" dir="rtl">
+    <div className="bg-bg-primary min-h-screen p-2 text-right print:p-0  print:min-h-0 print:overflow-visible transition-colors duration-300" dir="rtl">
       {/* Action Bar - Hidden in Print */}
       <div className="max-w-[210mm] mx-auto mb-6 flex justify-between items-center print:hidden">
         <button
@@ -104,122 +104,139 @@ const QuotationPreview = () => {
       </div>
 
       {/* A4 Container */}
-      <div id="quotation-container" className="bg-bg-surface mx-auto flex flex-col relative print:bg-white print:w-full print:max-w-none print:m-0 print:flex print:flex-col print:h-auto print:shadow-none min-h-[290mm] print:min-h-[337mm] shadow-xl border border-border-theme transition-colors duration-300">
+      <div id="quotation-container" className="bg-bg-surface mx-auto flex flex-col relative  print:w-full print:max-w-none print:m-0 print:flex print:flex-col print:h-auto print:shadow-none min-h-[290mm] print:min-h-[337mm] shadow-xl border border-border-theme transition-colors duration-300">
         
         {/* Header */}
-        <div className="relative h-48 bg-brand-main overflow-hidden flex justify-between items-center px-12 print:px-8">
+        <div className="relative h-auto bg-brand-main overflow-hidden flex justify-between items-start px-12 py-8 print:px-8">
            <div className="absolute inset-0 opacity-90"></div>
            
-           <div className="relative z-10 text-white">
-             <h1 className="text-3xl font-bold mb-1">عرض سعر</h1>
-             <p className="text-lg font-semibold opacity-90">QUOTATION</p>
-             <div className="mt-2 space-y-1 text-sm font-medium text-white/90">
-               <p>رقم العرض: {quotation.quotation_number}</p>
-               <p>التاريخ: {new Date(quotation.created_at).toLocaleDateString('ar-EG')}</p>
+           <div className="relative z-10 text-white pt-2">
+             <h1 className="text-4xl font-bold mb-2">عرض سعر</h1>
+             <p className="text-xl font-semibold opacity-90 tracking-wider">Quotation</p>
+             <div className="mt-4 space-y-1 text-base font-medium text-white/90">
+               <div className="flex gap-2">
+                 <span className="opacity-75">رقم العرض:</span>
+                 <span className="font-bold font-mono">{quotation.quotation_number}</span>
+               </div>
+               <div className="flex gap-2">
+                 <span className="opacity-75">التاريخ:</span>
+                 <span className="font-bold ">{new Date(quotation.created_at).toLocaleDateString('ar-EG')}</span>
+               </div>
              </div>
            </div>
 
-           <div className="relative z-10">
-             <img src={logo} alt="Nagar Logic" className="h-28 object-contain" />
+           <div className="relative z-10 flex flex-col items-end text-left text-white">
+             <img src={logo} alt="Nagar Logic" className="h-24 object-contain mb-4  rounded-lg p-2 backdrop-blur-sm" />
+             <div className="text-sm space-y-1 opacity-95" dir="ltr">
+                <p className="font-bold text-lg">النجار للأعمال الهندسية</p>
+                <p>01000000000</p>
+                <p>123 شارع الصناعة، القاهرة</p>
+             </div>
            </div>
         </div>
 
         {/* Client Info */}
-        <div className="px-12 py-6 print:px-8">
-          <div className="bg-bg-primary/50 border-r-4 border-brand-main p-4 rounded-lg print:bg-white print:border-gray-300 transition-colors duration-300">
-            <h3 className="text-brand-main dark:text-brand-secondary font-bold text-sm mb-1">إلى السيد / السيدة:</h3>
-            <p className="text-xl font-bold text-text-primary">{client?.name || '...'}</p>
-            {client?.address && <p className="text-sm text-text-secondary mt-1">{client.address}</p>}
+        <div className="px-12 py-8 print:px-8">
+          <div className="bg-bg-primary/50 border-r-4 border-brand-main p-6 rounded-lg  transition-colors duration-300 shadow-sm">
+            <h3 className="text-text-primary dark:text-brand-secondary font-bold text-sm mb-2 opacity-80">إلى السيد / السيدة:</h3>
+            <p className="text-2xl font-bold text-text-primary">{client?.name || '...'}</p>
+            {client?.address && <p className="text-base text-text-secondary mt-1">{client.address}</p>}
           </div>
         </div>
 
         {/* Items Table */}
-        <div className="px-12 flex-1 print:flex-1 print:px-8 mb-8 overflow-visible flex flex-col">
+        <div className="px-12 flex-1 print:flex-1 print:px-8 mb-8 overflow-visible flex flex-col gap-6">
           <table className="w-full border-separate table-fixed overflow-visible" style={{ borderSpacing: '0 8px' }}>
             <thead>
               <tr className="bg-brand-main text-brand-third">
-                <th className="py-3 px-3 text-right w-[5%] border-b border-brand-main rounded-r-lg">#</th>
-                <th className="py-3 px-3 text-right w-[20%] border-b border-brand-main">صورة</th>
-                <th className="py-3 px-3 text-right w-auto border-b border-brand-main">البند</th>
-                <th className="py-3 px-3 text-center w-[10%] border-b border-brand-main">الكمية</th>
-                <th className="py-3 px-3 text-center w-[10%] border-b border-brand-main">سعر المتر</th>
-                <th className="py-3 px-3 text-center w-[10%] border-b border-brand-main">سعر الوحدة</th>
-                <th className="py-3 px-3 text-center w-[15%] border-b border-brand-main rounded-l-lg">الإجمالي</th>
+                <th className="py-4 px-4 text-right w-[5%] border-b border-brand-main rounded-r-lg font-bold">#</th>
+                <th className="py-4 px-4 text-right w-[15%] border-b border-brand-main font-bold">صورة</th>
+                <th className="py-4 px-4 text-right w-auto border-b border-brand-main font-bold">البند</th>
+                <th className="py-4 px-4 text-center w-[10%] border-b border-brand-main font-bold">الكمية</th>
+                <th className="py-4 px-4 text-center w-[12%] border-b border-brand-main font-bold">سعر المتر</th>
+                <th className="py-4 px-4 text-center w-[12%] border-b border-brand-main font-bold">سعر الوحدة</th>
+                <th className="py-4 px-4 text-center w-[15%] border-b border-brand-main rounded-l-lg font-bold">الإجمالي</th>
               </tr>
             </thead>
             <tbody>
               {quotation.items?.map((item, index) => (
-                <tr key={index} className="border-b border-border-theme break-inside-avoid bg-transparent transition-colors duration-300">
-                  <td className="py-4 px-3 font-bold text-text-muted text-center rounded-r-lg">{index + 1}</td>
-                  <td className="py-2 px-2 align-top">
+                <tr key={index} className="break-inside-avoid bg-transparent transition-colors duration-300 group">
+                  <td className="py-4 px-4 font-bold text-text-muted text-center rounded-r-lg border-b border-border-theme group-last:border-0">{index + 1}</td>
+                  <td className="py-4 px-4 align-top border-b border-border-theme group-last:border-0">
                      {item.image_path && (
                        <img 
                          src={`${API_URL}${item.image_path}`} 
                          alt="" 
-                         className="w-42 h-36 object-contain rounded"
+                         className="w-24 h-24 object-contain rounded-lg "
                        />
                      )}
                   </td>
-                  <td className="py-4 px-3 align-top overflow-hidden">
+                  <td className="py-4 px-4 align-top border-b border-border-theme group-last:border-0">
                     <h4 className="font-bold text-lg text-text-primary break-words">{item.item_name}</h4>
-                    <p className="text-text-secondary text-sm mt-1 whitespace-pre-wrap break-words">{item.description}</p>
+                    <p className="text-text-secondary text-sm mt-2 whitespace-pre-wrap break-words leading-relaxed">{item.description}</p>
                   </td>
-                   <td className="py-4 px-3 text-center font-bold text-text-secondary align-top">{item.quantity}</td>
-                   <td className="py-4 px-3 text-center text-text-secondary align-top">{item.meter_price > 0 ? item.meter_price.toLocaleString() : '-'}</td>
-                   <td className="py-4 px-3 text-center text-text-secondary align-top">{item.unit_price > 0 ? item.unit_price.toLocaleString() : '-'}</td>
-                   <td className="py-4 px-3 text-center font-bold text-brand-main dark:text-brand-secondary align-top rounded-l-lg">
+                   <td className="py-4 px-4 text-center font-bold text-text-secondary align-top border-b border-border-theme group-last:border-0">{item.quantity}</td>
+                   <td className="py-4 px-4 text-center text-text-secondary align-top border-b border-border-theme group-last:border-0 font-mono">{item.meter_price > 0 ? item.meter_price.toLocaleString() : '-'}</td>
+                   <td className="py-4 px-4 text-center text-text-secondary align-top border-b border-border-theme group-last:border-0 font-mono">{item.unit_price > 0 ? item.unit_price.toLocaleString() : '-'}</td>
+                   <td className="py-4 px-4 text-center font-bold text-brand-secondary dark:text-brand-secondary align-top rounded-l-lg border-b border-border-theme group-last:border-0 font-mono">
                      {item.row_total.toLocaleString()}
                    </td>
                 </tr>
               ))}
-              
-              {/* Totals integrated at the end of body */}
-              <tr className="break-inside-avoid border-t-2 border-brand-main">
-                  <td colSpan={6} className="py-3 px-4 text-left font-bold text-gray-600">المجموع:</td>
-                  <td className="py-3 px-3 text-center font-bold text-lg text-brand-main">
-                    {quotation.total_amount.toLocaleString()}
-                  </td>
-              </tr>
-              {quotation.discount > 0 && (
-                <tr className="break-inside-avoid border-t border-gray-100">
-                   <td colSpan={6} className="py-3 px-4 text-left font-bold text-gray-600">الخصم:</td>
-                   <td className="py-3 px-3 text-center font-bold text-lg text-red-600">
-                     -{quotation.discount.toLocaleString()}
-                   </td>
-                </tr>
-              )}
-              <tr className="break-inside-avoid bg-brand-main text-brand-third">
-                 <td colSpan={6} className="py-4 px-4 text-left font-bold text-xl rounded-r-lg">الإجمالي النهائي:</td>
-                 <td className="py-4 px-3 text-center font-bold text-2xl rounded-l-lg">
-                   {(quotation.total_amount - (quotation.discount || 0)).toLocaleString()} <span className="text-sm font-normal mr-1">جنية</span>
-                 </td>
-              </tr>
             </tbody>
-
-            <tfoot>
-               <tr>
-                  <td colSpan={7}>
-                     <div className="pt-8 pb-4 mt-2 border-t border-gray-200 flex justify-between items-center text-xs text-text-primary font-medium print:mt-2">
-                        <div className="flex gap-4">
-                          <span className="font-bold">النجار للأعمال الهندسية</span>
-                          <span>|</span>
-                          <span>01000000000</span>
-                          <span>|</span>
-                          <span>www.nagar-engineering.com</span>
-                        </div>
-                        <div>
-                          <span>123 شارع الصناعة، القاهرة</span>
-                        </div>
-                     </div>
-                  </td>
-               </tr>
-            </tfoot>
           </table>
           
- 
+          {/* Notes & Totals Section */}
+          <div className="mt-8 flex gap-8 break-inside-avoid print:mt-8">
+            
+            {/* Notes Section - 60% width */}
+            <div className="flex-[1.5] bg-bg-primary/30 p-6 rounded-xl border border-border-theme">
+              <h3 className="text-text-primary font-bold text-lg mb-4 flex items-center gap-2">
+                <span className="w-2 h-6 bg-text-primary rounded-full inline-block"></span>
+                ملاحظات وشروط
+              </h3>
+              <ul className="text-text-secondary text-sm space-y-2 list-disc list-inside leading-relaxed opacity-80">
+                <li>هذا العرض ساري لمدة 15 يوم من تاريخه.</li>
+                <li>الأسعار تشمل التوريد والتركيب ما لم يذكر خلاف ذلك.</li>
+                <li>يتم دفع 50% مقدم، و 50% عند الاستلام.</li>
+                <li>لوريم إيبسوم دولار سيت أميت ،كونسيكتيتور أدايبا يسكينج أليايت ،سيت دو أيوسمود تيمبور أنكايديديونتيوت لابوري ات دولار ماجنا أليكيوا .</li>
+              </ul>
+            </div>
+
+            {/* Totals Section - 40% width */}
+            <div className="flex-1 bg-brand-main/5 p-6 rounded-xl border border-brand-main/20 h-fit">
+               <div className="space-y-3">
+                 <div className="flex justify-between items-center text-text-secondary">
+                   <span className="font-medium">المجموع الفرعي</span>
+                   <span className="font-bold font-mono text-lg">{quotation.total_amount.toLocaleString()}</span>
+                 </div>
+                 
+                 {quotation.discount > 0 && (
+                   <div className="flex justify-between items-center text-red-600">
+                     <span className="font-medium">خصم</span>
+                     <span className="font-bold font-mono text-lg">-{quotation.discount.toLocaleString()}</span>
+                   </div>
+                 )}
+                 
+                 <div className="my-4 border-t border-brand-main/20"></div>
+
+                 <div className="flex justify-between items-center text-text-primary">
+                   <span className="font-bold text-lg">الإجمالي النهائي</span>
+                   <div className="flex items-baseline gap-1">
+                     <span className="font-bold font-mono text-3xl">{(quotation.total_amount - (quotation.discount || 0)).toLocaleString()}</span>
+                     <span className="text-sm font-medium">جنية</span>
+                   </div>
+                 </div>
+               </div>
+            </div>
+
+          </div>
 
         </div>
-        <div className="w-full h-[337mm]  print:break-before-page" style={{ breakBefore: 'page' }}></div>
+        
+        {/* Decorative Bottom Bar */}
+        <div className="h-4 bg-brand-main w-full mt-auto print:hidden"></div>
+        <div className="h-[337mm] bg-bg-surface w-full break-inside-avoid "></div>
       </div>
       
       <style>{`
@@ -237,7 +254,6 @@ const QuotationPreview = () => {
             overflow: visible !important;
             margin: 0 !important;
             padding: 0 !important;
-            background: white !important;
           }
 
           #quotation-container {
@@ -254,7 +270,6 @@ const QuotationPreview = () => {
           table { 
             display: table !important;
             width: 100% !important;
-            border-collapse: collapse !important;
             page-break-inside: auto !important;
           }
           
@@ -271,13 +286,13 @@ const QuotationPreview = () => {
             border-bottom: 1px solid #eee !important;
           }
 
-          .bg-\[\#854836\] {
+          .bg-brand-main {
             background-color: var(--main-color) !important;
             -webkit-print-color-adjust: exact;
             color: var(--third-color) !important;
           }
 
-          .text-\[\#854836\] {
+          .text-brand-main {
             color: var(--main-color) !important;
             -webkit-print-color-adjust: exact;
           }
