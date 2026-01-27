@@ -145,7 +145,7 @@ const QuotationPreview = () => {
         </div>
 
         {/* Items Table */}
-        <div className="px-12 flex-1 print:flex-1 print:px-8 mb-8 overflow-visible flex flex-col gap-6">
+        <div className="px-12 flex-1 print:flex-1 print:px-8 mb-8 overflow-visible flex flex-col gap-0">
           <table className="w-full border-separate table-fixed overflow-visible" style={{ borderSpacing: '0 8px' }}>
             <thead>
               <tr className="bg-brand-main text-brand-third">
@@ -187,7 +187,7 @@ const QuotationPreview = () => {
           </table>
           
           {/* Notes & Totals Section */}
-          <div className="mt-8 flex gap-8 break-inside-avoid print:mt-8">
+          <div className="mt-8 flex gap-8 break-inside-avoid ">
             
             {/* Notes Section - 60% width */}
             <div className="flex-[1.5] bg-bg-primary/30 p-6 rounded-xl border border-border-theme">
