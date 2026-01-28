@@ -325,6 +325,20 @@ export function initData() {
   db.exec(quotationItemsTable);
   db.exec(taskPaymentsTable);
 
+  // Migration: Add current_break_start column to attendance if it doesn't exist
+  try {
+    const info = db.prepare("PRAGMA table_info(attendance)").all() as any[];
+    const hasBreakStart = info.some(
+      (col) => col.name === "current_break_start",
+    );
+    if (!hasBreakStart) {
+      db.exec("ALTER TABLE attendance ADD COLUMN current_break_start DATETIME");
+      console.log("Added current_break_start column to attendance table.");
+    }
+  } catch (err) {
+    console.error("Failed to add current_break_start column:", err);
+  }
+
   // Settings table for application configuration
   const settingsTable = `
     CREATE TABLE IF NOT EXISTS settings (

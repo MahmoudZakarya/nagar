@@ -27,6 +27,17 @@ export interface Attendance {
   unpaid_break_minutes: number;
   total_hours: number;
   calculated_pay: number;
+  current_break_start: string | null;
+}
+
+export interface Payroll {
+  id: number;
+  employee_id: number;
+  amount_paid: number;
+  payment_date: string;
+  period_start: string;
+  period_end: string;
+  performed_by_id?: number;
 }
 
 export interface Leave {
@@ -122,6 +133,7 @@ export const useEmployees = () => {
 
 export const useAttendance = (employeeId?: number) => {
   const [history, setHistory] = useState<Attendance[]>([]);
+  const [payroll, setPayroll] = useState<Payroll[]>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchHistory = async (id: number) => {
@@ -134,6 +146,16 @@ export const useAttendance = (employeeId?: number) => {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchPayroll = async (id: number) => {
+    try {
+      const response = await fetch(`${API_URL}/api/payroll/${id}`);
+      const data = await response.json();
+      setPayroll(data);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -158,6 +180,22 @@ export const useAttendance = (employeeId?: number) => {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ check_out, unpaid_break_minutes }),
+    });
+  };
+
+  const startBreak = async (attendanceId: number, break_start: string) => {
+    await fetch(`${API_URL}/api/attendance/${attendanceId}/break-start`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ break_start }),
+    });
+  };
+
+  const endBreak = async (attendanceId: number, break_end: string) => {
+    await fetch(`${API_URL}/api/attendance/${attendanceId}/break-end`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ break_end }),
     });
   };
 
@@ -189,14 +227,27 @@ export const useAttendance = (employeeId?: number) => {
     });
   };
 
+  const updateAttendanceRecord = async (id: number, data: any) => {
+    await fetch(`${API_URL}/api/attendance/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+  };
+
   return {
     history,
+    payroll,
     loading,
     fetchHistory,
+    fetchPayroll,
     checkIn,
     checkOut,
+    startBreak,
+    endBreak,
     paySalary,
     logManualAttendance,
+    updateAttendanceRecord,
   };
 };
 

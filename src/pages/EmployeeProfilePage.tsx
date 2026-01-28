@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useEmployees, useAttendance, useLeaves, useDeductions, Leave, Employee } from '../hooks/useEmployees';
+import { useEmployees, useAttendance, useLeaves, useDeductions, Leave, Employee, Attendance } from '../hooks/useEmployees';
 import { 
   ArrowRight, 
   Calendar, 
@@ -22,19 +22,33 @@ import {
   Edit,
   Phone,
   MapPin,
-  Hash
+  Hash,
+  Coffee,
+  CheckCircle,
+  TrendingDown
 } from 'lucide-react';
+import { useQuotations, Quotation } from '../hooks/useQuotations';
+import { useAuth } from '../context/AuthContext';
+import { Payroll } from '../hooks/useEmployees';
+import toast from 'react-hot-toast';
 
 const EmployeeProfilePage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { employees, refetch: refetchEmployees } = useEmployees();
-  const { history, loading, fetchHistory, checkIn, checkOut, paySalary, logManualAttendance } = useAttendance();
+  const { history, payroll, loading, fetchHistory, fetchPayroll, checkIn, checkOut, startBreak, endBreak, paySalary, logManualAttendance } = useAttendance();
   const { addLeave, fetchLeaves, leaves } = useLeaves();
   const { addDeduction, fetchDeductions, deductions } = useDeductions();
   const { updateEmployee } = useEmployees();
   const [employee, setEmployee] = useState<Employee | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [showPayModal, setShowPayModal] = useState(false);
+  const [payAmount, setPayAmount] = useState('');
+  const [payPeriod, setPayPeriod] = useState({
+    start: new Date(new Date().setDate(1)).toISOString().split('T')[0],
+    end: new Date().toISOString().split('T')[0]
+  });
   
   // Manual Attendance State
   const [showManualModal, setShowManualModal] = useState(false);
@@ -65,9 +79,17 @@ const EmployeeProfilePage = () => {
 
   const [editEmployeeData, setEditEmployeeData] = useState<any>(null); // Keeping any for now because of potential extra fields or form handling nuances, but will ensure safety at call site
 
-  // Payroll/Deduction/Leave Modals
   const [showDeductionModal, setShowDeductionModal] = useState(false);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
+  const [isAttendanceEditModalOpen, setIsAttendanceEditModalOpen] = useState(false);
+  const [editingAttendance, setEditingAttendance] = useState<Attendance | null>(null);
+  const [attendanceEditForm, setAttendanceEditForm] = useState({
+    check_in: '',
+    check_out: '',
+    unpaid_break_minutes: 0
+  });
+
+  const { updateAttendanceRecord } = useAttendance();
 
   useEffect(() => {
     if (id) {
@@ -77,6 +99,7 @@ const EmployeeProfilePage = () => {
         fetchHistory(parseInt(id));
         fetchLeaves(parseInt(id));
         fetchDeductions(parseInt(id));
+        fetchPayroll(parseInt(id));
         setEditEmployeeData({
            ...emp,
            start_date: emp.start_date.split('T')[0]
@@ -85,13 +108,14 @@ const EmployeeProfilePage = () => {
     }
   }, [id, employees]);
 
-  // Calculate total deductions
+  // Calculate total deductions and paid salary
   const totalDeductions = deductions.reduce((sum, d) => sum + d.amount, 0);
+  const totalPaid = payroll.reduce((sum, p) => sum + p.amount_paid, 0);
 
-  // Calculate deserved salary (total unpaid attendance) - deductions
+  // Calculate deserved salary (total unpaid attendance) - deductions - already paid
   const totalDeserved = history
     .filter(a => a.check_out) // Only finished shifts
-    .reduce((sum, a) => sum + (a.calculated_pay || 0), 0) - totalDeductions;
+    .reduce((sum, a) => sum + (a.calculated_pay || 0), 0) - totalDeductions - totalPaid;
 
   const handleManualSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,8 +135,93 @@ const EmployeeProfilePage = () => {
       });
       fetchHistory(parseInt(id));
       setShowManualModal(false);
+      toast.success('تم تسجيل الحضور يدوياً');
     } catch (error) {
        console.error(error);
+       toast.error('فشل في تسجيل الحضور');
+    }
+  };
+
+  const activeAttendance = history.find(a => a.date === new Date().toISOString().split('T')[0] && !a.check_out);
+
+  const handleCheckIn = async () => {
+    if (!id) return;
+    try {
+      await checkIn(parseInt(id), new Date().toISOString());
+      fetchHistory(parseInt(id));
+      toast.success('تم تسجيل الحضور بنجاح');
+    } catch (error) {
+      toast.error('حدث خطأ أثناء تسجيل الحضور');
+    }
+  };
+
+  const handleStartBreak = async () => {
+    if (!activeAttendance) return;
+    try {
+      await startBreak(activeAttendance.id, new Date().toISOString());
+      fetchHistory(Number(id));
+      toast.success('بدأت الاستراحة الآن');
+    } catch (error) {
+      toast.error('حدث خطأ');
+    }
+  };
+
+  const handleEndBreak = async () => {
+    if (!activeAttendance) return;
+    try {
+      await endBreak(activeAttendance.id, new Date().toISOString());
+      fetchHistory(Number(id));
+      toast.success('انتهت الاستراحة');
+    } catch (error) {
+      toast.error('حدث خطأ');
+    }
+  };
+
+  const handleCheckOut = async () => {
+    if (!activeAttendance) return;
+    try {
+      await checkOut(activeAttendance.id, new Date().toISOString(), activeAttendance.unpaid_break_minutes);
+      fetchHistory(Number(id));
+      toast.success('تم تسجيل الانصراف');
+    } catch (error) {
+      toast.error('حدث خطأ');
+    }
+  };
+
+  const handlePaySalary = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!id || !user) return;
+    try {
+      await paySalary(parseInt(id), parseFloat(payAmount), payPeriod.start, payPeriod.end, user.id);
+      fetchPayroll(parseInt(id));
+      setShowPayModal(false);
+      setPayAmount('');
+      toast.success('تم صرف الراتب بنجاح');
+    } catch (error) {
+      toast.error('فشل في صرف الراتب');
+    }
+  };
+
+  const handleEditAttendance = (record: Attendance) => {
+    setEditingAttendance(record);
+    setAttendanceEditForm({
+      check_in: record.check_in ? record.check_in.substring(0, 16) : '',
+      check_out: record.check_out ? record.check_out.substring(0, 16) : '',
+      unpaid_break_minutes: record.unpaid_break_minutes
+    });
+    setIsAttendanceEditModalOpen(true);
+  };
+
+  const onUpdateAttendance = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingAttendance || !id) return;
+    try {
+      await updateAttendanceRecord(editingAttendance.id, attendanceEditForm);
+      fetchHistory(parseInt(id));
+      setIsAttendanceEditModalOpen(false);
+      toast.success('تم تحديث سجل الحضور');
+    } catch (error) {
+      toast.error('حدث خطأ أثناء التحديث');
     }
   };
 
@@ -141,15 +250,22 @@ const EmployeeProfilePage = () => {
         
         <div className="flex items-center gap-4">
             <button 
+              onClick={() => setShowPayModal(true)}
+              className="px-6 py-3 bg-green-600 text-white rounded-2xl font-bold text-sm shadow-lg shadow-green-600/10 hover:opacity-90 transition flex items-center gap-2 cursor-pointer"
+            >
+               <DollarSign className="w-5 h-5" />
+               صرف راتب
+            </button>
+            <button 
               onClick={() => setIsEditModalOpen(true)}
-              className="px-6 py-3 bg-brand-main dark:bg-brand-secondary text-brand-third dark:text-brand-main rounded-2xl font-bold text-sm shadow-lg shadow-brand-main/10 hover:opacity-90 transition flex items-center gap-2"
+              className="px-6 py-3 bg-brand-main dark:bg-brand-secondary text-brand-third dark:text-brand-main rounded-2xl font-bold text-sm shadow-lg shadow-brand-main/10 hover:opacity-90 transition flex items-center gap-2 cursor-pointer"
             >
                <Edit className="w-5 h-5" />
                تعديل البيانات
             </button>
             <div className="bg-bg-surface border border-border-theme p-6 rounded-[2rem] shadow-sm flex flex-col items-end">
                 <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1">المستحقات الحالية</p>
-                <p className="text-3xl font-bold italic text-text-primary">{totalDeserved.toLocaleString()} <span className="text-xs font-normal">جنية</span></p>
+                <p className="text-3xl font-bold italic text-text-primary">{Math.max(0, totalDeserved).toLocaleString()} <span className="text-xs font-normal">جنية</span></p>
             </div>
         </div>
       </div>
@@ -212,27 +328,70 @@ const EmployeeProfilePage = () => {
         <div className="lg:col-span-2 space-y-8">
            {/* Actions Toolbar */}
            <div className="flex flex-wrap gap-4">
-               <button 
-                onClick={() => setShowManualModal(true)}
-                className="bg-bg-surface border border-border-theme p-4 rounded-2xl shadow-sm hover:bg-bg-primary transition flex items-center gap-3 font-bold text-sm text-text-secondary"
-               >
-                  <Plus className="w-5 h-5 text-blue-500" />
-                  تسجيل حضور يدوي
-               </button>
-               <button 
-                onClick={() => setShowDeductionModal(true)}
-                className="bg-bg-surface border border-border-theme p-4 rounded-2xl shadow-sm hover:bg-bg-primary transition flex items-center gap-3 font-bold text-sm text-text-secondary"
-               >
-                  <MinusCircle className="w-5 h-5 text-red-500" />
-                  إضافة خصم / جزاء
-               </button>
-               <button 
-                onClick={() => setShowLeaveModal(true)}
-                className="bg-bg-surface border border-border-theme p-4 rounded-2xl shadow-sm hover:bg-bg-primary transition flex items-center gap-3 font-bold text-sm text-text-secondary"
-               >
-                  <Umbrella className="w-5 h-5 text-orange-500" />
-                  تسجيل إجازة
-               </button>
+               {activeAttendance ? (
+                 <div className="flex gap-4 w-full">
+                   {!activeAttendance.current_break_start ? (
+                     <button 
+                      onClick={handleStartBreak}
+                      className="flex-1 bg-bg-surface border border-border-theme p-6 rounded-[2rem] shadow-sm hover:bg-bg-primary transition flex flex-col items-center justify-center gap-3 font-bold group cursor-pointer"
+                     >
+                        <div className="p-4 bg-orange-100 rounded-2xl group-hover:bg-orange-500 group-hover:text-white transition-colors">
+                          <Coffee className="w-8 h-8" />
+                        </div>
+                        <span className="text-lg">بدء استراحة</span>
+                     </button>
+                   ) : (
+                     <button 
+                      onClick={handleEndBreak}
+                      className="flex-1 bg-orange-500 text-white p-6 rounded-[2rem] shadow-lg shadow-orange-500/20 transition flex flex-col items-center justify-center gap-3 font-bold cursor-pointer"
+                     >
+                        <Play className="w-8 h-8 animate-pulse" />
+                        <span className="text-lg">العودة من الاستراحة</span>
+                     </button>
+                   )}
+                   <button 
+                    onClick={handleCheckOut}
+                    className="flex-1 bg-bg-surface border border-border-theme p-6 rounded-[2rem] shadow-sm hover:bg-red-500 hover:text-white transition group flex flex-col items-center justify-center gap-3 font-bold cursor-pointer"
+                   >
+                      <div className="p-4 bg-red-100 rounded-2xl group-hover:bg-red-400 group-hover:text-white transition-colors">
+                        <Square className="w-8 h-8" />
+                      </div>
+                      <span className="text-lg">تسجيل انصراف</span>
+                   </button>
+                 </div>
+               ) : (
+                 <button 
+                  onClick={handleCheckIn}
+                  className="w-full bg-brand-main dark:bg-brand-secondary text-brand-third dark:text-brand-main p-8 rounded-[2.5rem] shadow-xl shadow-brand-main/20 hover:opacity-90 transition flex items-center justify-center gap-5 cursor-pointer font-black text-2xl"
+                 >
+                    <CheckCircle className="w-10 h-10" />
+                    تسجيل حضور الموظف الآن
+                 </button>
+               )}
+
+               <div className="flex gap-4 w-full mt-4">
+                  <button 
+                    onClick={() => setShowManualModal(true)}
+                    className="flex-1 bg-bg-surface border border-border-theme p-4 rounded-2xl shadow-sm hover:bg-bg-primary transition flex items-center justify-center gap-3 font-bold text-xs text-text-secondary cursor-pointer"
+                  >
+                      <Plus className="w-4 h-4 text-blue-500" />
+                      تسجيل يدوي
+                  </button>
+                  <button 
+                    onClick={() => setShowDeductionModal(true)}
+                    className="flex-1 bg-bg-surface border border-border-theme p-4 rounded-2xl shadow-sm hover:bg-bg-primary transition flex items-center justify-center gap-3 font-bold text-xs text-text-secondary cursor-pointer"
+                  >
+                      <MinusCircle className="w-4 h-4 text-red-500" />
+                      خصم / جزاء
+                  </button>
+                  <button 
+                    onClick={() => setShowLeaveModal(true)}
+                    className="flex-1 bg-bg-surface border border-border-theme p-4 rounded-2xl shadow-sm hover:bg-bg-primary transition flex items-center justify-center gap-3 font-bold text-xs text-text-secondary cursor-pointer"
+                  >
+                      <Umbrella className="w-4 h-4 text-orange-500" />
+                      إجازة
+                  </button>
+               </div>
            </div>
 
            {/* Attendance History */}
@@ -261,11 +420,56 @@ const EmployeeProfilePage = () => {
                              <td className="p-6 text-center font-medium text-text-muted">{a.check_in ? new Date(a.check_in).toLocaleTimeString('ar-EG') : '---'}</td>
                              <td className="p-6 text-center font-medium text-text-muted">{a.check_out ? new Date(a.check_out).toLocaleTimeString('ar-EG') : '---'}</td>
                              <td className="p-6 text-center font-bold text-text-primary">{a.total_hours?.toFixed(1) || '0'} س</td>
-                             <td className="p-6 text-left font-bold text-green-600 italic font-mono">{a.calculated_pay?.toLocaleString() || '0'} جنية</td>
+                             <td className="p-6 text-left font-bold text-green-600 italic font-mono flex items-center justify-end gap-3">
+                                {a.calculated_pay?.toLocaleString() || '0'} جنية
+                                {user?.role === 'admin' && (
+                                   <button 
+                                    onClick={() => handleEditAttendance(a)}
+                                    className="p-2 hover:bg-bg-primary rounded-lg transition text-text-muted hover:text-brand-main cursor-pointer"
+                                   >
+                                      <Edit className="w-4 h-4" />
+                                   </button>
+                                )}
+                             </td>
                           </tr>
                        ))}
                        {history.length === 0 && (
                           <tr><td colSpan={5} className="p-20 text-center text-text-muted italic">لا توجد سجلات بعد</td></tr>
+                       )}
+                    </tbody>
+                 </table>
+              </div>
+           </div>
+
+           {/* Payment History */}
+           <div className="bg-bg-surface rounded-[2.5rem] shadow-sm border border-border-theme overflow-hidden">
+              <div className="p-8 border-b border-border-theme bg-bg-primary/20 flex justify-between items-center">
+                 <h2 className="text-xl font-bold text-text-primary flex items-center gap-3">
+                    <TrendingDown className="w-6 h-6 text-green-600" />
+                    سجل صرف الرواتب
+                 </h2>
+              </div>
+              <div className="overflow-x-auto">
+                 <table className="w-full text-right">
+                    <thead>
+                       <tr className="bg-bg-primary/50">
+                          <th className="p-6 text-[10px] font-bold text-text-muted uppercase tracking-widest text-center">التاريخ</th>
+                          <th className="p-6 text-[10px] font-bold text-text-muted uppercase tracking-widest text-center">الفترة</th>
+                          <th className="p-6 text-[10px] font-bold text-text-muted uppercase tracking-widest text-left">المبلغ المنصرف</th>
+                       </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border-theme">
+                       {payroll.map((p) => (
+                          <tr key={p.id} className="hover:bg-bg-primary/30 transition">
+                             <td className="p-6 text-center font-bold text-text-secondary">{new Date(p.payment_date).toLocaleDateString('ar-EG')}</td>
+                             <td className="p-6 text-center font-medium text-text-muted text-xs">
+                                {new Date(p.period_start).toLocaleDateString('ar-EG')} - {new Date(p.period_end).toLocaleDateString('ar-EG')}
+                             </td>
+                             <td className="p-6 text-left font-bold text-brand-main italic">{p.amount_paid.toLocaleString()} جنية</td>
+                          </tr>
+                       ))}
+                       {payroll.length === 0 && (
+                          <tr><td colSpan={3} className="p-20 text-center text-text-muted italic">لا توجد دفعات منصرفة بعد</td></tr>
                        )}
                     </tbody>
                  </table>
@@ -487,6 +691,7 @@ const EmployeeProfilePage = () => {
                 }
                refetchEmployees();
                setIsEditModalOpen(false);
+               toast.success('تم تحديث بيانات الموظف');
              }} className="p-8 space-y-6 overflow-y-auto max-h-[75vh]">
                 <div className="grid grid-cols-2 gap-4">
                    <div className="col-span-2">
@@ -530,17 +735,194 @@ const EmployeeProfilePage = () => {
                       <select 
                         value={editEmployeeData.status}
                         onChange={(e) => setEditEmployeeData({...editEmployeeData, status: e.target.value as any})}
-                        className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold cursor-pointer"
                       >
                          <option value="Active">نشط</option>
                          <option value="Inactive">غير نشط</option>
                          <option value="On Leave">في إجازة</option>
                       </select>
                    </div>
+                   
+                   <div className="col-span-2">
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">العنوان</label>
+                      <input 
+                        type="text" 
+                        value={editEmployeeData.address}
+                        onChange={(e) => setEditEmployeeData({...editEmployeeData, address: e.target.value})}
+                        className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                      />
+                   </div>
+
+                   <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">رقم الهاتف 1</label>
+                      <input 
+                        type="text" 
+                        value={editEmployeeData.phone_1}
+                        onChange={(e) => setEditEmployeeData({...editEmployeeData, phone_1: e.target.value})}
+                        className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                      />
+                   </div>
+                   <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">رقم الهاتف 2</label>
+                      <input 
+                        type="text" 
+                        value={editEmployeeData.phone_2}
+                        onChange={(e) => setEditEmployeeData({...editEmployeeData, phone_2: e.target.value})}
+                        className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                      />
+                   </div>
+
+                   <div className="col-span-2 border-t border-gray-100 pt-6 mt-4">
+                       <p className="text-xs font-bold text-text-primary uppercase tracking-widest mb-4">بيانات قريب الطوارئ</p>
+                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="col-span-2">
+                             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">اسم القريب</label>
+                             <input 
+                               type="text"
+                               value={editEmployeeData.relative_name}
+                               onChange={(e) => setEditEmployeeData({...editEmployeeData, relative_name: e.target.value})}
+                               className="w-full px-4 py-3 bg-bg-primary border-none rounded-xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                             />
+                          </div>
+                          <div>
+                             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">رقم هاتف القريب</label>
+                             <input 
+                               type="text"
+                               value={editEmployeeData.relative_phone}
+                               onChange={(e) => setEditEmployeeData({...editEmployeeData, relative_phone: e.target.value})}
+                               className="w-full px-4 py-3 bg-bg-primary border-none rounded-xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                             />
+                          </div>
+                          <div>
+                             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">صلة القرابة</label>
+                             <input 
+                               type="text"
+                               value={editEmployeeData.relative_relation}
+                               onChange={(e) => setEditEmployeeData({...editEmployeeData, relative_relation: e.target.value})}
+                               className="w-full px-4 py-3 bg-bg-primary border-none rounded-xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                             />
+                          </div>
+                       </div>
+                   </div>
                 </div>
 
-                <button type="submit" className="w-full bg-[#854836] text-white font-bold py-5 rounded-2xl shadow-xl shadow-[#854836]/20 hover:bg-[#703a2a] transition duration-300">
+                <button type="submit" className="w-full bg-[#854836] text-white font-bold py-5 rounded-2xl shadow-xl shadow-[#854836]/20 hover:bg-[#703a2a] transition duration-300 cursor-pointer">
                    حفظ التعديلات
+                </button>
+             </form>
+          </div>
+        </div>
+      )}
+      {/* Salary Payment Modal */}
+      {showPayModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowPayModal(false)}></div>
+          <div className="bg-bg-surface border border-border-theme w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300">
+             <div className="p-8 border-b border-border-theme flex justify-between items-center bg-bg-primary/50">
+                <h2 className="text-2xl font-bold text-green-600">صرف راتب موظف</h2>
+                <button onClick={() => setShowPayModal(false)} className="p-2 hover:bg-bg-primary rounded-xl transition cursor-pointer">
+                   <X className="w-6 h-6 text-text-muted" />
+                </button>
+             </div>
+             
+             <form onSubmit={handlePaySalary} className="p-8 space-y-6">
+                <div className="bg-blue-50 p-6 rounded-3xl border border-blue-100 flex justify-between items-center">
+                   <div>
+                      <p className="text-xs font-bold text-blue-400 uppercase mb-1">المستحقات الحالية</p>
+                      <p className="text-2xl font-black text-blue-700">{totalDeserved.toLocaleString()} ج.م</p>
+                   </div>
+                   <button 
+                    type="button" 
+                    onClick={() => setPayAmount(totalDeserved.toString())}
+                    className="text-xs font-black bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition cursor-pointer"
+                   >
+                     سحب الكل
+                   </button>
+                </div>
+
+                <div>
+                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">المبلغ المراد صرفه</label>
+                   <input 
+                     type="number" required
+                     value={payAmount}
+                     onChange={(e) => setPayAmount(e.target.value)}
+                     className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-green-500/10 outline-none font-bold text-green-600 text-xl"
+                     placeholder="0.00"
+                   />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                   <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">من تاريخ</label>
+                      <input 
+                        type="date" required
+                        value={payPeriod.start}
+                        onChange={(e) => setPayPeriod({...payPeriod, start: e.target.value})}
+                        className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                      />
+                   </div>
+                   <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">إلى تاريخ</label>
+                      <input 
+                        type="date" required
+                        value={payPeriod.end}
+                        onChange={(e) => setPayPeriod({...payPeriod, end: e.target.value})}
+                        className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                      />
+                   </div>
+                </div>
+
+                <button type="submit" className="w-full bg-green-600 text-white font-bold py-5 rounded-2xl shadow-xl shadow-green-200 hover:bg-green-700 transition duration-300 cursor-pointer">
+                   تأكيد عملية الصرف والخصم من الخزنة
+                </button>
+             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Attendance Edit Modal (Admin Only) */}
+      {isAttendanceEditModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsAttendanceEditModalOpen(false)}></div>
+          <div className="bg-bg-surface border border-border-theme w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300">
+             <div className="p-8 border-b border-border-theme flex justify-between items-center bg-bg-primary/50">
+                <h2 className="text-2xl font-bold text-text-primary">تعديل سجل الحضور</h2>
+                <button onClick={() => setIsAttendanceEditModalOpen(false)} className="p-2 hover:bg-bg-primary rounded-xl transition cursor-pointer">
+                   <X className="w-6 h-6 text-text-muted" />
+                </button>
+             </div>
+             
+             <form onSubmit={onUpdateAttendance} className="p-8 space-y-6">
+                <div>
+                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">وقت الحضور</label>
+                   <input 
+                     type="datetime-local" step="60" required
+                     value={attendanceEditForm.check_in}
+                     onChange={(e) => setAttendanceEditForm({...attendanceEditForm, check_in: e.target.value})}
+                     className="w-full px-6 py-4 bg-bg-primary border border-border-theme/50 rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-text-primary"
+                   />
+                </div>
+                <div>
+                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">وقت الانصراف</label>
+                   <input 
+                     type="datetime-local" step="60" required
+                     value={attendanceEditForm.check_out}
+                     onChange={(e) => setAttendanceEditForm({...attendanceEditForm, check_out: e.target.value})}
+                     className="w-full px-6 py-4 bg-bg-primary border border-border-theme/50 rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-text-primary"
+                   />
+                </div>
+                <div>
+                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">دقائق الاستراحة</label>
+                   <input 
+                     type="number" required
+                     value={attendanceEditForm.unpaid_break_minutes}
+                     onChange={(e) => setAttendanceEditForm({...attendanceEditForm, unpaid_break_minutes: parseInt(e.target.value)})}
+                     className="w-full px-6 py-4 bg-bg-primary border border-border-theme/50 rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-text-primary"
+                   />
+                </div>
+
+                <button type="submit" className="w-full bg-brand-main dark:bg-brand-secondary text-brand-third dark:text-brand-main font-bold py-5 rounded-2xl shadow-xl shadow-brand-main/20 hover:opacity-90 transition duration-300 cursor-pointer">
+                   حفظ التعديلات وإعادة الحساب
                 </button>
              </form>
           </div>

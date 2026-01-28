@@ -46,6 +46,10 @@ import {
   getAttendanceByEmployee,
   logManualAttendance,
   paySalary,
+  startBreak,
+  endBreak,
+  getPayrollByEmployee,
+  updateAttendance,
 } from "../controllers/attendanceController";
 import {
   getLeaves,
@@ -128,7 +132,11 @@ router.get("/attendance/:employee_id", getAttendanceByEmployee);
 router.post("/attendance/check-in", checkIn);
 router.post("/attendance/manual", logManualAttendance);
 router.patch("/attendance/:id/check-out", checkOut);
+router.patch("/attendance/:id", updateAttendance);
+router.post("/attendance/:id/break-start", startBreak);
+router.post("/attendance/:id/break-end", endBreak);
 router.post("/payroll/pay", paySalary);
+router.get("/payroll/:employee_id", getPayrollByEmployee);
 
 // Leaves
 router.get("/leaves/:employee_id", getLeaves);
