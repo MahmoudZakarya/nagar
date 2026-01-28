@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useClients } from '../hooks/useClients';
-import { Phone, MapPin, Plus, X, Search, Hash, MoreVertical, Edit2 } from 'lucide-react';
+import { Phone, MapPin, Plus, X, Search, Hash, MoreVertical, Edit2, Contact } from 'lucide-react';
 import { useSearchParams, Link } from 'react-router-dom';
 
 const Clients = () => {
@@ -75,7 +75,12 @@ const Clients = () => {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-4xl font-bold text-text-primary tracking-tight">العملاء</h1>
+          <h1 className="text-4xl font-bold text-text-primary tracking-tight flex items-center gap-2 mb-2"
+          ><Contact className="w-10 h-10 text-brand-secondary" />
+            العملاء
+
+
+          </h1>
           <p className="text-text-secondary font-medium mt-1">إدارة بيانات العملاء والتواصل</p>
         </div>
         
@@ -92,7 +97,7 @@ const Clients = () => {
            </div>
            <button 
              onClick={openAddModal}
-             className="bg-brand-main text-brand-third font-bold py-3 px-6 rounded-2xl shadow-xl shadow-brand-main/20 hover:shadow-brand-main/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center gap-2 whitespace-nowrap"
+             className="bg-brand-secondary cursor-pointer text-brand-third font-bold py-3 px-6 rounded-2xl shadow-xl shadow-brand-main/20 hover:shadow-brand-main/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center gap-2 whitespace-nowrap"
            >
              <Plus className="w-5 h-5" />
              <span>عميل جديد</span>
@@ -171,7 +176,7 @@ const Clients = () => {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={closeModal}></div>
-          <div className="bg-bg-surface w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300 max-h-[90vh] flex flex-col border border-border-theme">
+          <div className="bg-bg-primary w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300 max-h-[90vh] flex flex-col border border-border-theme">
              <div className="p-8 border-b border-border-theme flex justify-between items-center bg-bg-primary/50">
                 <h2 className="text-2xl font-bold text-text-primary">
                    {isEditMode ? 'تعديل بيانات العميل' : 'إضافة عميل جديد'}
@@ -189,7 +194,7 @@ const Clients = () => {
                      required
                      value={clientForm.name}
                      onChange={(e) => setClientForm({...clientForm, name: e.target.value})}
-                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                     className="w-full px-6 py-4 bg-bg-surface border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                      placeholder="مثال: محمد احمد"
                    />
                 </div>
@@ -202,7 +207,7 @@ const Clients = () => {
                         required
                         value={clientForm.phone_1}
                         onChange={(e) => setClientForm({...clientForm, phone_1: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold italic"
+                        className="w-full px-6 py-4 bg-bg-surface border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold italic"
                         placeholder="01xxxxxxxxx"
                       />
                    </div>
@@ -212,7 +217,7 @@ const Clients = () => {
                         type="text" 
                         value={clientForm.phone_2}
                         onChange={(e) => setClientForm({...clientForm, phone_2: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold italic"
+                        className="w-full px-6 py-4 bg-bg-surface border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold italic"
                         placeholder="اختياري"
                       />
                    </div>
@@ -224,7 +229,7 @@ const Clients = () => {
                      rows={3}
                      value={clientForm.address}
                      onChange={(e) => setClientForm({...clientForm, address: e.target.value})}
-                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold resize-none"
+                     className="w-full px-6 py-4 bg-bg-surface border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold resize-none"
                      placeholder="عنوان العميل بالتفصيل..."
                    />
                 </div>
@@ -232,7 +237,7 @@ const Clients = () => {
                 <div className="pt-4">
                    <button 
                      type="submit"
-                     className="w-full bg-brand-main text-brand-third font-bold py-5 rounded-2xl shadow-xl shadow-brand-main/20 hover:shadow-brand-main/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
+                     className="w-full bg-brand-secondary text-brand-third font-bold py-5 rounded-2xl shadow-xl shadow-brand-main/20 hover:shadow-brand-main/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
                    >
                      {isEditMode ? 'حفظ التغييرات' : 'حفظ بيانات العميل'}
                    </button>

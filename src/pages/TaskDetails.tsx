@@ -132,12 +132,12 @@ const TaskDetails = () => {
         <div className="flex items-center gap-4">
           <button 
             onClick={() => navigate('/tasks')}
-            className="p-3 bg-white rounded-2xl shadow-sm border border-gray-100 hover:bg-gray-50 transition"
+            className="p-3 bg-bg-surface rounded-2xl shadow-sm border border-border-theme hover:bg-bg-primary transition cursor-pointer"
           >
             <ArrowRight className="w-5 h-5 text-gray-500" />
           </button>
           <div className="flex items-center gap-2 text-sm font-bold text-text-secondary">
-            <Link to="/tasks" className="hover:text-brand-main">المشاريع</Link>
+            <Link to="/tasks" className="hover:text-text-primary">المشاريع</Link>
             <ChevronRight className="w-4 h-4 rotate-180" />
             <span className="text-text-primary">تفاصيل المشروع #{id}</span>
           </div>
@@ -146,7 +146,7 @@ const TaskDetails = () => {
         {user?.role === 'admin' && (
            <button 
              onClick={openEditModal}
-             className="flex items-center gap-2 px-6 py-3 bg-brand-secondary text-brand-main font-bold rounded-2xl shadow-sm hover:shadow-md transition"
+             className="flex items-center gap-2 px-6 py-3 bg-brand-secondary text-brand-main font-bold rounded-2xl shadow-sm hover:shadow-md transition cursor-pointer"
            >
               <Edit className="w-4 h-4" />
               <span>تعديل المشروع</span>
@@ -225,7 +225,7 @@ const TaskDetails = () => {
                     placeholder="أضف خطوة جديدة (مثال: تقطيع الخشب)..."
                     className="flex-1 px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-text-primary"
                    />
-                   <button type="submit" className="bg-brand-main text-brand-third p-4 rounded-2xl shadow-lg hover:shadow-brand-main/30 transition transform active:scale-95">
+                   <button type="submit" className="bg-brand-main text-brand-third p-4 rounded-2xl shadow-lg hover:shadow-brand-main/30 transition transform active:scale-95 cursor-pointer">
                       <Plus className="w-6 h-6" />
                    </button>
                 </form>
@@ -286,7 +286,7 @@ const TaskDetails = () => {
 
                    <button 
                      onClick={() => setShowPaymentModal(true)}
-                     className="w-full py-4 bg-white/10 hover:bg-white/20 border border-white/20 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition"
+                     className="w-full py-4 bg-white/10 hover:bg-white/20 border border-white/20 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition cursor-pointer"
                    >
                       <Coins className="w-5 h-5" />
                       تسجيل دفعة جديدة
@@ -352,7 +352,7 @@ const TaskDetails = () => {
           <div className="bg-bg-surface w-full max-w-md rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300 max-h-[90vh] flex flex-col border border-border-theme">
              <div className="p-8 border-b border-border-theme flex justify-between items-center bg-bg-primary/50">
                 <h2 className="text-2xl font-bold text-text-primary">تسجيل دفعة نقدية</h2>
-                <button onClick={() => setShowPaymentModal(false)}><X className="w-6 h-6 text-text-muted" /></button>
+                <button onClick={() => setShowPaymentModal(false)}><X className="w-6 h-6 text-text-muted cursor-pointer" /></button>
              </div>
               <form onSubmit={handlePayment} className="p-8 space-y-6">
                 <div>
@@ -386,7 +386,7 @@ const TaskDetails = () => {
                      className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold text-text-primary"
                    />
                 </div>
-                <button type="submit" className="w-full bg-green-600 text-white font-bold py-5 rounded-2xl hover:bg-green-700 transition shadow-lg shadow-green-600/20">تأكيد الدفع</button>
+                <button type="submit" className="w-full bg-green-600 text-white font-bold py-5 rounded-2xl hover:bg-green-700 transition shadow-lg shadow-green-600/20 cursor-pointer">تأكيد الدفع</button>
              </form>
           </div>
         </div>
@@ -399,7 +399,7 @@ const TaskDetails = () => {
           <div className="bg-bg-surface w-full max-w-2xl rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300 max-h-[90vh] flex flex-col border border-border-theme">
              <div className="p-8 border-b border-border-theme flex justify-between items-center bg-bg-primary/50">
                 <h2 className="text-2xl font-bold text-text-primary">تعديل بيانات المشروع الماليّة</h2>
-                <button onClick={() => setShowEditModal(false)}><X className="w-6 h-6 text-text-muted" /></button>
+                <button onClick={() => setShowEditModal(false)}><X className="w-6 h-6 text-text-muted cursor-pointer" /></button>
              </div>
              <form onSubmit={handleEditTask} className="p-8 space-y-6 overflow-y-auto">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -450,7 +450,7 @@ const TaskDetails = () => {
                       />
                    </div>
                 </div>
-                <button type="submit" className="w-full bg-brand-main text-brand-third font-bold py-5 rounded-2xl hover:scale-[1.02] transition shadow-lg shadow-brand-main/20">تحديث البيانات</button>
+                <button type="submit" className="w-full bg-brand-main text-brand-third font-bold py-5 rounded-2xl hover:scale-[1.02] transition shadow-lg shadow-brand-main/20 cursor-pointer">تحديث البيانات</button>
              </form>
           </div>
         </div>

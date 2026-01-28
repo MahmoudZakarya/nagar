@@ -3,7 +3,8 @@ import {
   login,
   register,
   getAllUsers,
-  updateRole,
+  changePassword,
+  updateUser,
 } from "../controllers/authController";
 import {
   getClients,
@@ -64,6 +65,20 @@ import {
   uploadImage,
   upload,
 } from "../controllers/quotationController";
+import {
+  triggerBackup,
+  getBackupStatus,
+  getBackupList,
+  restoreBackup,
+} from "../controllers/backupController";
+import {
+  getGCSSettings,
+  updateGCSSettings,
+  uploadServiceAccountKey,
+  testGCSConnection,
+  clearGCSSettings,
+} from "../controllers/settingsController";
+import multer from "multer";
 
 const router = express.Router();
 
@@ -71,7 +86,8 @@ const router = express.Router();
 router.post("/auth/login", login);
 router.post("/auth/register", register);
 router.get("/users", getAllUsers);
-router.patch("/users/:id/role", updateRole);
+router.post("/auth/change-password/:id", changePassword);
+router.patch("/users/:id", updateUser);
 
 // Clients
 router.get("/clients", getClients);
@@ -130,5 +146,23 @@ router.get("/quotations/client/:clientId", getQuotationsByClient);
 router.get("/quotations/:id", getQuotationById);
 router.put("/quotations/:id", updateQuotation);
 router.post("/quotations/upload", upload.single("image"), uploadImage);
+
+// Backup (Admin only)
+router.post("/admin/backup", triggerBackup);
+router.get("/admin/backup/status", getBackupStatus);
+router.get("/admin/backup/list", getBackupList);
+router.post("/admin/backup/restore", restoreBackup);
+
+// GCS Settings (Admin only)
+const keyUpload = multer({ storage: multer.memoryStorage() });
+router.get("/admin/settings/gcs", getGCSSettings);
+router.post("/admin/settings/gcs", updateGCSSettings);
+router.post(
+  "/admin/settings/gcs/key",
+  keyUpload.single("keyFile"),
+  uploadServiceAccountKey,
+);
+router.post("/admin/settings/gcs/test", testGCSConnection);
+router.delete("/admin/settings/gcs", clearGCSSettings);
 
 export default router;

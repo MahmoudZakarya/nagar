@@ -142,7 +142,7 @@ const QuotationEditor = () => {
           <button
             onClick={() => handleSave(false)}
             disabled={saving}
-            className="flex items-center gap-2 px-4 py-2 bg-brand-main text-brand-third rounded-lg hover:bg-brand-main/90"
+            className="flex items-center gap-2 px-4 py-2 bg-brand-main text-brand-third rounded-lg hover:bg-brand-main/90 cursor-pointer"
           >
             <Save className="w-4 h-4" />
             <span>حفظ مسودة</span>
@@ -150,7 +150,7 @@ const QuotationEditor = () => {
           <button
             onClick={() => handleSave(true)}
             disabled={saving}
-            className="flex items-center gap-2 px-4 py-2 bg-brand-secondary text-brand-main rounded-lg hover:bg-brand-secondary/90"
+            className="flex items-center gap-2 px-4 py-2 bg-brand-secondary text-brand-main rounded-lg hover:bg-brand-secondary/90 cursor-pointer"
           >
             <Eye className="w-4 h-4" />
             <span>معاينة / طباعة</span>
@@ -284,7 +284,7 @@ const QuotationEditor = () => {
                     className="w-full px-2 py-1 border border-border-theme bg-bg-primary rounded focus:ring-1 focus:ring-[#FFB22C] text-text-primary"
                   />
                 </td>
-                <td className="px-4 py-3 font-semibold text-brand-main">
+                <td className="px-4 py-3 font-semibold text-brand-secondary">
                   {item.row_total.toLocaleString()} جنية
                 </td>
                 <td className="px-4 py-3">
@@ -292,14 +292,14 @@ const QuotationEditor = () => {
                     <button
                       onClick={() => moveItem(index, 'up')}
                       disabled={index === 0}
-                      className="p-1 text-gray-500 hover:text-[#854836] disabled:opacity-30"
+                      className="p-1 text-gray-500 hover:text-[#854836] disabled:opacity-30 cursor-pointer"
                     >
                       <ChevronUp className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => moveItem(index, 'down')}
                       disabled={index === items.length - 1}
-                      className="p-1 text-gray-500 hover:text-[#854836] disabled:opacity-30"
+                      className="p-1 text-gray-500 hover:text-[#854836] disabled:opacity-30 cursor-pointer"
                     >
                       <ChevronDown className="w-4 h-4" />
                     </button>
@@ -347,7 +347,7 @@ const QuotationEditor = () => {
         
         <button
           onClick={addItem}
-          className="mt-4 flex items-center gap-2 text-text-primary font-medium hover:bg-brand-main/5 px-4 py-2 rounded-lg transition-colors"
+          className="mt-4 flex items-center gap-2 text-text-primary font-medium hover:bg-brand-main/5 px-4 py-2 rounded-lg transition-colors cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>إضافة بند جديد</span>

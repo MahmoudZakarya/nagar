@@ -18,7 +18,8 @@ import {
   X,
   CreditCard,
   Hash,
-  Trash2
+  Trash2,
+  Hammer
 } from 'lucide-react';
 const Tasks = () => {
   const { tasks, loading, error, updateSubtask, addTask, deleteTask } = useTasks();
@@ -117,7 +118,8 @@ const Tasks = () => {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-4xl font-bold text-text-primary tracking-tight">المشاريع</h1>
+          <h1 className="text-4xl font-bold text-text-primary tracking-tight flex items-center gap-2 mb-2"
+                    ><Hammer className="w-10 h-10 text-brand-secondary" />المشاريع</h1>
           <p className="text-text-secondary font-medium mt-1">تتبع حالة تصنيع الأثاث والتسليمات</p>
         </div>
         
@@ -134,7 +136,7 @@ const Tasks = () => {
            </div>
            <button 
              onClick={() => setIsModalOpen(true)}
-             className="bg-brand-main text-brand-third font-bold py-3 px-6 rounded-2xl shadow-xl shadow-brand-main/20 hover:shadow-brand-main/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center gap-2 whitespace-nowrap"
+             className="bg-brand-secondary text-brand-third font-bold py-3 px-6 rounded-2xl shadow-xl shadow-brand-main/20 hover:shadow-brand-main/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center gap-2 whitespace-nowrap"
            >
              <Plus className="w-5 h-5" />
              <span>مشروع جديد</span>
@@ -219,7 +221,7 @@ const Tasks = () => {
                             deleteTask(task.id, user?.id);
                           }
                         }}
-                        className="p-4 bg-red-50 text-red-500 rounded-2xl hover:bg-red-500 hover:text-white transition-all duration-300"
+                        className="p-4 bg-red-50 text-red-500 rounded-2xl hover:bg-red-500 hover:text-white transition-all duration-300 cursor-pointer"
                         title="حذف المشروع"
                       >
                         <Trash2 className="w-5 h-5" />
@@ -235,7 +237,7 @@ const Tasks = () => {
           <div className="pt-8 flex justify-center">
             <button 
               onClick={() => setVisibleCount(prev => prev + 10)}
-              className="px-12 py-4 bg-white border border-gray-200 rounded-2xl font-bold text-gray-500 hover:bg-gray-50 hover:text-brand-main transition shadow-sm flex items-center gap-2"
+              className="px-12 py-4 bg-bg-surface border border-border-color rounded-2xl font-bold text-text-primary hover:bg-bg-surface/50 hover:text-brand-secondary transition shadow-sm flex items-center gap-2 cursor-pointer"
             >
               <Plus className="w-5 h-5" />
               <span>عرض المزيد من المشاريع</span>
@@ -248,22 +250,22 @@ const Tasks = () => {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setIsModalOpen(false)}></div>
-          <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300 max-h-[90vh] flex flex-col">
-             <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
-                 <h2 className="text-2xl font-bold text-brand-main">إضافة مشروع جديد</h2>
-                <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white rounded-xl transition">
-                   <X className="w-6 h-6 text-gray-400" />
+          <div className="bg-bg-primary w-full max-w-2xl rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300 max-h-[90vh] flex flex-col">
+             <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-bg-surface/50">
+                 <h2 className="text-2xl font-bold text-text-primary">إضافة مشروع جديد</h2>
+                <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-red-600 rounded-xl transition">
+                   <X className="w-6 h-6 text-text-primary" />
                 </button>
              </div>
              
              <form onSubmit={handleSubmit} className="p-8 space-y-6 overflow-y-auto">
                 <div>
-                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">العميل</label>
+                   <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 px-1">العميل</label>
                    <select 
                      required
                      value={newTask.client_id}
                      onChange={(e) => setNewTask({...newTask, client_id: e.target.value})}
-                      className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold appearance-none cursor-pointer"
+                      className="w-full px-6 py-4 bg-bg-surface border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold appearance-none cursor-pointer"
                    >
                      <option value="">اختر عميلاً...</option>
                      {clients.map(c => (
@@ -273,58 +275,58 @@ const Tasks = () => {
                 </div>
 
                 <div>
-                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">اسم المشروع / القطعة</label>
+                   <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 px-1">اسم المشروع / القطعة</label>
                    <input 
                      type="text" required
                      value={newTask.title}
                      onChange={(e) => setNewTask({...newTask, title: e.target.value})}
-                         className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                         className="w-full px-6 py-4 bg-bg-surface border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                      placeholder="مثال: طقم انتريه مودرن"
                    />
                 </div>
 
                 <div>
-                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">وصف المشروع</label>
+                   <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 px-1">وصف المشروع</label>
                    <textarea 
                      rows={3}
                      value={newTask.description}
                      onChange={(e) => setNewTask({...newTask, description: e.target.value})}
-                      className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold resize-none"
+                      className="w-full px-6 py-4 bg-bg-surface border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold resize-none"
                      placeholder="تفاصيل المقاسات والخامات..."
                    />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                    <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">السعر المتفق عليه</label>
+                      <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 px-1">السعر المتفق عليه</label>
                       <input 
                         type="number" 
                         required
                         value={newTask.total_agreed_price}
                         onChange={(e) => setNewTask({...newTask, total_agreed_price: e.target.value})}
-                         className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-green-600"
+                         className="w-full px-6 py-4 bg-bg-surface border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-green-600"
                         placeholder="0"
                       />
                    </div>
                    <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">المقدم المدفوع</label>
+                      <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 px-1">المقدم المدفوع</label>
                       <input 
                         type="number" 
                         required
                         value={newTask.deposit_paid}
                         onChange={(e) => setNewTask({...newTask, deposit_paid: e.target.value})}
-                         className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-orange-600"
+                         className="w-full px-6 py-4 bg-bg-surface border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-orange-600"
                         placeholder="0"
                       />
                    </div>
                    <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">تاريخ التسليم المتوقع</label>
+                      <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 px-1">تاريخ التسليم المتوقع</label>
                       <input 
                         type="date" 
                         required
                         value={newTask.delivery_due_date}
                         onChange={(e) => setNewTask({...newTask, delivery_due_date: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-bg-surface border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                       />
                    </div>
                 </div>
@@ -333,13 +335,13 @@ const Tasks = () => {
                    <button 
                      type="button"
                      onClick={() => setIsModalOpen(false)}
-                     className="flex-1 bg-gray-100 text-gray-500 font-bold py-5 rounded-2xl hover:bg-gray-200 transition-all"
+                     className="flex-1 bg-bg-surface text-text-primary font-bold py-5 rounded-2xl hover:bg-bg-surface/80 transition-all"
                    >
                      إلغاء
                    </button>
                    <button 
                      type="submit"
-                      className="flex-[2] bg-brand-main text-brand-third font-bold py-5 rounded-2xl shadow-xl shadow-brand-main/20 hover:shadow-brand-main/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
+                      className="flex-[2] bg-brand-secondary text-text-primary font-bold py-5 rounded-2xl shadow-xl shadow-brand-main/20 hover:shadow-brand-main/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
                    >
                      بدء المشروع وحفظ البيانات
                    </button>

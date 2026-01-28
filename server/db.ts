@@ -2,18 +2,47 @@ import Database from "better-sqlite3-multiple-ciphers";
 import path from "path";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
+import os from "os";
+import fs from "fs";
 
 // Load environment variables
 dotenv.config();
 
-// Ensure the db directory exists or just put it in root
-const dbPath = process.env.DATABASE_PATH
-  ? process.env.DATABASE_PATH
-  : path.resolve(__dirname, "../nagar.db");
+// Environment-aware database path logic
+let dbPath: string;
+
+if (
+  process.env.RAILWAY_ENVIRONMENT ||
+  (process.env.DATABASE_PATH && process.env.DATABASE_PATH.startsWith("/"))
+) {
+  // Railway Deployment Path (Linux/Cloud environment)
+  dbPath = process.env.DATABASE_PATH || path.resolve(__dirname, "../nagar.db");
+} else if (
+  process.env.DATABASE_PATH &&
+  !process.env.DATABASE_PATH.startsWith("/")
+) {
+  // Explicit relative path from .env (for local dev)
+  dbPath = process.env.DATABASE_PATH;
+} else {
+  // Windows Installer Path - Use AppData for data persistence
+  dbPath = path.join(
+    os.homedir(),
+    "AppData",
+    "Roaming",
+    "NagarERP",
+    "nagar.db",
+  );
+
+  // Ensure the NagarERP directory exists
+  const dir = path.dirname(dbPath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+    console.log(`Created NagarERP data directory at: ${dir}`);
+  }
+}
 
 console.log(`Initializing database at: ${dbPath}`);
 
-// Note: Ensure the directory for DATABASE_PATH exists if you set it to /data/nagar.db
 const db = new Database(dbPath);
 
 // Database Encryption Configuration
@@ -71,7 +100,8 @@ export function initData() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       username TEXT UNIQUE NOT NULL,
       password_hash TEXT NOT NULL,
-      role TEXT CHECK(role IN ('admin', 'manager', 'user')) NOT NULL DEFAULT 'user'
+      role TEXT CHECK(role IN ('admin', 'manager', 'user')) NOT NULL DEFAULT 'user',
+      status TEXT CHECK(status IN ('Active', 'Inactive')) DEFAULT 'Active'
     );
   `;
 
@@ -264,6 +294,24 @@ export function initData() {
   // Execute Migrations
   db.exec(usersTable);
   db.exec(clientsTable);
+  // Migration: Add status column to users if it doesn't exist
+  try {
+    const info = db.prepare("PRAGMA table_info(users)").all() as any[];
+    const hasStatus = info.some((col) => col.name === "status");
+    if (!hasStatus) {
+      db.exec(
+        "ALTER TABLE users ADD COLUMN status TEXT CHECK(status IN ('Active', 'Inactive')) DEFAULT 'Active'",
+      );
+      // Explicitly set all existing users to Active status
+      db.exec("UPDATE users SET status = 'Active' WHERE status IS NULL");
+      console.log(
+        "Added status column to users table and set existing users to Active.",
+      );
+    }
+  } catch (err) {
+    console.error("Failed to add status column:", err);
+  }
+
   db.exec(tasksTable);
   db.exec(subTasksTable);
   db.exec(safeTable);
@@ -276,6 +324,16 @@ export function initData() {
   db.exec(quotationsTable);
   db.exec(quotationItemsTable);
   db.exec(taskPaymentsTable);
+
+  // Settings table for application configuration
+  const settingsTable = `
+    CREATE TABLE IF NOT EXISTS settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `;
+  db.exec(settingsTable);
 
   // Migration: Add discount column to quotations if it doesn't exist
   const tableInfo = db.prepare("PRAGMA table_info(quotations)").all() as any[];

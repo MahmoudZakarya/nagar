@@ -1,8 +1,10 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
+import cron from "node-cron";
 import { initData } from "./db";
 import { translateExistingData } from "./scripts/translate_data";
+import { backupDatabase, isBackupConfigured } from "./services/backupService";
 import path from "path";
 
 import apiRoutes from "./routes";
@@ -20,6 +22,23 @@ try {
   translateExistingData();
 } catch (error) {
   console.error("Failed to initialize database:", error);
+}
+
+// Initialize automated backup scheduler (daily at 3 AM)
+const backupSchedule = process.env.BACKUP_SCHEDULE || "0 3 * * *";
+if (isBackupConfigured()) {
+  cron.schedule(backupSchedule, async () => {
+    console.log("Running scheduled database backup...");
+    try {
+      const result = await backupDatabase();
+      console.log("Scheduled backup completed:", result?.filename);
+    } catch (error) {
+      console.error("Scheduled backup failed:", error);
+    }
+  });
+  console.log(`Automated backup scheduled: ${backupSchedule}`);
+} else {
+  console.warn("Backup system not configured. Automated backups disabled.");
 }
 
 app.use("/api", apiRoutes);

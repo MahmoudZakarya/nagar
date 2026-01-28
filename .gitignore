@@ -6,11 +6,13 @@ node_modules/
 
 # Database
 *.db
+*.bak
 
 # Build outputs
 /dist
 /dist-electron
 /dist-server
+/dist-installer
 
 # IDE files
 .vscode/
@@ -22,3 +24,11 @@ yarn-error.log*
 
 # Uploads
 /uploads
+
+# GCS Keys
+/server/keys/*.json
+
+# Logs & temp
+*.log
+.DS_Store
+Thumbs.db

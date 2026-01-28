@@ -9,8 +9,8 @@ import {
   MapPin, 
   Package, 
   Calendar, 
-  ArrowLeft,
-  ChevronRight,
+  ArrowRight,
+  ChevronLeft,
   Search,
   CheckCircle2,
   Clock,
@@ -19,7 +19,8 @@ import {
   Edit,
   FileText,
   Plus,
-  Eye
+  Eye,
+  X,
 } from 'lucide-react';
 import { useQuotations, Quotation } from '../hooks/useQuotations';
 
@@ -37,12 +38,45 @@ const ClientProfile = () => {
   const client = clients.find(c => c.id === Number(id));
   const clientTasks = tasks.filter(t => t.client_id === Number(id));
   const [searchTerm, setSearchTerm] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [clientForm, setClientForm] = useState({
+    name: '',
+    phone_1: '',
+    phone_2: '',
+    address: ''
+  });
 
   useEffect(() => {
     if (id) {
        getQuotationsByClient(Number(id)).then(setQuotations);
     }
   }, [id, getQuotationsByClient]);
+
+  const openModal = () => {
+    if (client) {
+      setClientForm({
+        name: client.name,
+        phone_1: client.phone_1,
+        phone_2: client.phone_2 || '',
+        address: client.address || ''
+      });
+      setIsModalOpen(true);
+    }
+  };
+
+  const closeModal = () => setIsModalOpen(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (id) {
+        await updateClient(Number(id), clientForm);
+        setIsModalOpen(false);
+      }
+    } catch (error) {
+      console.error('Failed to update client:', error);
+    }
+  };
 
   if (!client) {
     return (
@@ -51,7 +85,7 @@ const ClientProfile = () => {
           <User className="w-10 h-10 text-text-muted" />
         </div>
         <h2 className="text-2xl font-bold text-text-primary mb-2">العميل غير موجود</h2>
-        <button onClick={() => navigate('/clients')} className="text-brand-main dark:text-brand-secondary font-bold hover:underline">العودة لقائمة العملاء</button>
+        <button onClick={() => navigate('/clients')} className="text-brand-main dark:text-brand-secondary font-bold hover:underline cursor-pointer">العودة لقائمة العملاء</button>
       </div>
     );
   }
@@ -73,13 +107,13 @@ const ClientProfile = () => {
       <div className="flex items-center gap-4 mb-2">
         <button 
           onClick={() => navigate('/clients')}
-          className="p-3 bg-bg-surface rounded-2xl shadow-sm border border-border-theme hover:bg-bg-primary transition"
+          className="p-3 bg-bg-surface rounded-2xl cursor-pointer shadow-sm border border-border-theme hover:bg-bg-primary transition"
         >
-          <ArrowLeft className="w-5 h-5 text-text-secondary" />
+          <ArrowRight className="w-5 h-5 text-text-secondary" />
         </button>
         <div className="flex items-center gap-2 text-sm font-bold text-text-muted">
           <Link to="/clients" className="hover:text-brand-main dark:hover:text-brand-secondary">العملاء</Link>
-          <ChevronRight className="w-4 h-4" />
+          <ChevronLeft className="w-4 h-4" />
           <span className="text-text-primary">ملف العميل</span>
         </div>
       </div>
@@ -133,11 +167,12 @@ const ClientProfile = () => {
               </div>
               
               <button 
-                className="w-full mt-8 py-4 border-2 border-dashed border-gray-100 rounded-2xl text-gray-400 font-bold text-sm hover:border-brand-main/20 hover:text-brand-main transition flex items-center justify-center gap-2"
+                onClick={openModal}
+                className="w-full mt-8 py-4 border-2 border-dashed border-gray-100 cursor-pointer rounded-2xl text-text-400 font-bold text-sm hover:border-brand-main/20 hover:text-brand-secondary transition flex items-center justify-center gap-2"
               >
                  <Edit className="w-4 h-4" />
                  تعديل البيانات
-              </button>
+              </button> 
            </div>
 
             {/* Quick Stats Grid */}
@@ -164,13 +199,13 @@ const ClientProfile = () => {
                   <div className="flex gap-6">
                      <button 
                        onClick={() => setActiveTab('projects')}
-                       className={`text-xl font-bold transition-colors ${activeTab === 'projects' ? 'text-text-primary border-b-2 border-brand-main dark:border-brand-secondary' : 'text-text-muted hover:text-text-secondary'}`}
+                       className={`text-xl font-bold transition-colors cursor-pointer ${activeTab === 'projects' ? 'text-text-primary border-b-2 border-brand-main dark:border-brand-secondary cursor-pointer' : 'text-text-muted hover:text-text-secondary cursor-pointer'}`}
                      >
                        المشاريع
                      </button>
                      <button 
                        onClick={() => setActiveTab('quotations')}
-                       className={`text-xl font-bold transition-colors ${activeTab === 'quotations' ? 'text-text-primary border-b-2 border-brand-main dark:border-brand-secondary' : 'text-text-muted hover:text-text-secondary'}`}
+                       className={`text-xl font-bold transition-colors ${activeTab === 'quotations' ? 'text-text-primary border-b-2 border-brand-main dark:border-brand-secondary cursor-pointer' : 'text-text-muted hover:text-text-secondary cursor-pointer'}`}
                      >
                        عروض الأسعار
                      </button>
@@ -189,7 +224,7 @@ const ClientProfile = () => {
                   ) : (
                     <button
                       onClick={() => navigate('/quotations/new')}
-                      className="flex items-center gap-2 px-4 py-2 bg-brand-main dark:bg-brand-secondary text-brand-third dark:text-brand-main rounded-xl hover:opacity-90 transition"
+                      className="flex items-center gap-2 px-4 py-2 font-bold bg-brand-main dark:bg-brand-secondary text-brand-third dark:text-brand-main rounded-xl hover:opacity-90 transition cursor-pointer"
                     >
                       <Plus className="w-4 h-4" />
                       <span>عرض سعر جديد</span>
@@ -247,7 +282,7 @@ const ClientProfile = () => {
                                 {task.final_payment_status === 'Settled' ? 'خالص' : 'متبقي'}
                               </p>
                           </div>
-                           <ChevronRight className="w-6 h-6 text-text-muted group-hover:text-brand-main dark:group-hover:text-brand-secondary transition transform group-hover:-translate-x-1" />
+                           <ChevronLeft className="w-6 h-6 text-text-muted group-hover:text-brand-main dark:group-hover:text-brand-secondary transition transform group-hover:-translate-x-1" />
                         </Link>
                       ))
                     )
@@ -285,14 +320,14 @@ const ClientProfile = () => {
                                <div className="flex items-center gap-2">
                                   <button 
                                     onClick={() => navigate(`/quotations/${quotation.id}/preview`)}
-                                    className="p-2 text-text-muted hover:text-brand-main dark:hover:text-brand-secondary hover:bg-bg-primary rounded-lg transition"
+                                    className="p-2 text-text-muted hover:text-brand-main dark:hover:text-brand-secondary hover:bg-bg-primary rounded-lg transition cursor-pointer"
                                     title="معاينة"
                                   >
                                     <Eye className="w-5 h-5" />
                                   </button>
                                   <button 
                                     onClick={() => navigate(`/quotations/${quotation.id}/edit`)}
-                                    className="p-2 text-text-muted hover:text-brand-main dark:hover:text-brand-secondary hover:bg-bg-primary rounded-lg transition"
+                                    className="p-2 text-text-muted hover:text-brand-main dark:hover:text-brand-secondary hover:bg-bg-primary rounded-lg transition cursor-pointer"
                                     title="تعديل"
                                   >
                                     <Edit className="w-5 h-5" />
@@ -307,6 +342,79 @@ const ClientProfile = () => {
            </div>
         </div>
       </div>
+
+      {/* Edit Client Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={closeModal}></div>
+          <div className="bg-bg-primary w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300 max-h-[90vh] flex flex-col border border-border-theme">
+             <div className="p-8 border-b border-border-theme flex justify-between items-center bg-bg-primary/50">
+                <h2 className="text-2xl font-bold text-text-primary">تعديل بيانات العميل</h2>
+                <button onClick={closeModal} className="p-2 hover:bg-bg-surface rounded-xl transition cursor-pointer">
+                   <X className="w-6 h-6 text-text-muted" />
+                </button>
+             </div>
+             
+             <form onSubmit={handleSubmit} className="p-8 space-y-6 overflow-y-auto">
+                <div>
+                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">الاسم الكامل</label>
+                   <input 
+                     type="text" 
+                     required
+                     value={clientForm.name}
+                     onChange={(e) => setClientForm({...clientForm, name: e.target.value})}
+                     className="w-full px-6 py-4 bg-bg-surface border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                     placeholder="مثال: محمد احمد"
+                   />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                   <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">رقم الهاتف 1</label>
+                      <input 
+                        type="text" 
+                        required
+                        value={clientForm.phone_1}
+                        onChange={(e) => setClientForm({...clientForm, phone_1: e.target.value})}
+                        className="w-full px-6 py-4 bg-bg-surface border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold italic"
+                        placeholder="01xxxxxxxxx"
+                      />
+                   </div>
+                   <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">رقم الهاتف 2</label>
+                      <input 
+                        type="text" 
+                        value={clientForm.phone_2}
+                        onChange={(e) => setClientForm({...clientForm, phone_2: e.target.value})}
+                        className="w-full px-6 py-4 bg-bg-surface border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold italic"
+                        placeholder="اختياري"
+                      />
+                   </div>
+                </div>
+
+                <div>
+                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">العنوان</label>
+                   <textarea 
+                     rows={3}
+                     value={clientForm.address}
+                     onChange={(e) => setClientForm({...clientForm, address: e.target.value})}
+                     className="w-full px-6 py-4 bg-bg-surface border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold resize-none"
+                     placeholder="عنوان العميل بالتفصيل..."
+                   />
+                </div>
+
+                <div className="pt-4">
+                   <button 
+                     type="submit"
+                     className="w-full bg-brand-secondary text-brand-third font-bold py-5 cursor-pointer rounded-2xl shadow-xl shadow-brand-main/20 hover:shadow-brand-main/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
+                   >
+                     حفظ التغييرات
+                   </button>
+                </div>
+             </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEmployees, useAttendance, useLeaves, useDeductions, Leave, Employee } from '../hooks/useEmployees';
 import { 
-  ArrowLeft, 
+  ArrowRight, 
   Calendar, 
   Clock, 
   DollarSign, 
@@ -131,7 +131,7 @@ const EmployeeProfilePage = () => {
               onClick={() => navigate('/employees')}
               className="p-3 bg-bg-surface rounded-2xl shadow-sm border border-border-theme hover:bg-bg-primary transition"
             >
-              <ArrowLeft className="w-5 h-5 text-text-secondary" />
+              <ArrowRight className="w-5 h-5 text-text-secondary" />
             </button>
             <div>
               <h1 className="text-3xl font-bold text-text-primary">{employee.name}</h1>
@@ -360,7 +360,7 @@ const EmployeeProfilePage = () => {
                     type="number" required
                     value={deductionData.amount}
                     onChange={(e) => setDeductionData({...deductionData, amount: e.target.value})}
-                    className="w-full px-6 py-4 bg-red-50/50 border-none rounded-2xl focus:ring-2 focus:ring-red-500/10 outline-none font-bold text-red-600"
+                    className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-red-500/10 outline-none font-bold text-red-600"
                     placeholder="0.00"
                   />
                 </div>
@@ -370,7 +370,7 @@ const EmployeeProfilePage = () => {
                     rows={3} required
                     value={deductionData.reason}
                     onChange={(e) => setDeductionData({...deductionData, reason: e.target.value})}
-                    className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold resize-none"
+                    className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold resize-none"
                     placeholder="مثال: غياب، إتلاف أدوات..."
                   />
                 </div>
@@ -380,11 +380,11 @@ const EmployeeProfilePage = () => {
                      type="date" required
                      value={deductionData.date}
                      onChange={(e) => setDeductionData({...deductionData, date: e.target.value})}
-                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                     className="w-full px-6 py-4 bg-bg-primary  border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                    />
                 </div>
 
-                <button type="submit" className="w-full bg-red-600 text-white font-bold py-5 rounded-2xl shadow-xl shadow-red-200 hover:bg-red-700 transition duration-300">
+                <button type="submit" className="w-full bg-red-600 text-white font-bold py-5 rounded-2xl dark:shadow-none shadow-xl shadow-red-200 hover:bg-red-700 transition duration-300">
                    تأكيد الخصم
                 </button>
              </form>
@@ -417,7 +417,7 @@ const EmployeeProfilePage = () => {
                    <select 
                      value={leaveData.type}
                      onChange={(e) => setLeaveData({...leaveData, type: e.target.value as Leave['type']})}
-                     className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-500/10 outline-none font-bold"
+                     className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-orange-500/10 outline-none font-bold"
                    >
                      <option value="Sick">مرضي</option>
                      <option value="Vacation">اعتيادي</option>
@@ -432,7 +432,7 @@ const EmployeeProfilePage = () => {
                         type="date" required
                         value={leaveData.start_date}
                         onChange={(e) => setLeaveData({...leaveData, start_date: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-500/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-orange-500/10 outline-none font-bold"
                       />
                    </div>
                    <div>
@@ -441,7 +441,7 @@ const EmployeeProfilePage = () => {
                         type="date" required
                         value={leaveData.end_date}
                         onChange={(e) => setLeaveData({...leaveData, end_date: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-500/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-orange-500/10 outline-none font-bold"
                       />
                    </div>
                 </div>
@@ -451,12 +451,12 @@ const EmployeeProfilePage = () => {
                      id="is_paid"
                      checked={leaveData.is_paid}
                      onChange={(e) => setLeaveData({...leaveData, is_paid: e.target.checked})}
-                     className="w-5 h-5 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+                     className="w-5 h-5 rounded bg-bg-primary text-orange-600 focus:ring-orange-500"
                    />
-                   <label htmlFor="is_paid" className="font-bold text-gray-700">إجازة مدفوعة الأجر</label>
+                   <label htmlFor="is_paid" className="font-bold text-text-primary">إجازة مدفوعة الأجر</label>
                 </div>
 
-                <button type="submit" className="w-full bg-orange-600 text-white font-bold py-5 rounded-2xl shadow-xl shadow-orange-200 hover:bg-orange-700 transition duration-300">
+                <button type="submit" className="w-full bg-orange-600 text-white font-bold py-5 rounded-2xl dark:shadow-none shadow-xl shadow-orange-200 hover:bg-orange-700 transition duration-300">
                    حفظ الإجازة
                 </button>
              </form>
@@ -495,7 +495,7 @@ const EmployeeProfilePage = () => {
                         type="text" required
                         value={editEmployeeData.name}
                         onChange={(e) => setEditEmployeeData({...editEmployeeData, name: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                       />
                    </div>
                    <div>
@@ -504,7 +504,7 @@ const EmployeeProfilePage = () => {
                         type="text" maxLength={14}
                         value={editEmployeeData.national_id}
                         onChange={(e) => setEditEmployeeData({...editEmployeeData, national_id: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                       />
                    </div>
                    <div>
@@ -513,7 +513,7 @@ const EmployeeProfilePage = () => {
                         type="text" required
                         value={editEmployeeData.role}
                         onChange={(e) => setEditEmployeeData({...editEmployeeData, role: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                       />
                    </div>
                    <div>
@@ -522,7 +522,7 @@ const EmployeeProfilePage = () => {
                         type="number" required
                         value={editEmployeeData.hourly_rate}
                         onChange={(e) => setEditEmployeeData({...editEmployeeData, hourly_rate: e.target.value})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                       />
                    </div>
                    <div>
@@ -530,7 +530,7 @@ const EmployeeProfilePage = () => {
                       <select 
                         value={editEmployeeData.status}
                         onChange={(e) => setEditEmployeeData({...editEmployeeData, status: e.target.value as any})}
-                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                        className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                       >
                          <option value="Active">نشط</option>
                          <option value="Inactive">غير نشط</option>

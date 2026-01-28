@@ -4,7 +4,8 @@ import { useQuotations, Quotation } from '../hooks/useQuotations';
 import { useClients } from '../hooks/useClients';
 import API_URL from '../config/api';
 import logo from '../assets/nagar-logo-removebg.png';
-import { Printer, ArrowRight, Edit, Save } from 'lucide-react';
+import whatsapp from '../assets/whatsapp.svg';
+import { Printer, ArrowRight, Edit, Save, Phone } from 'lucide-react';
 
 declare global {
   interface Window {
@@ -128,9 +129,17 @@ const QuotationPreview = () => {
            <div className="relative z-10 flex flex-col items-end text-left text-white">
              <img src={logo} alt="Nagar Logic" className="h-24 object-contain mb-4  rounded-lg p-2 backdrop-blur-sm" />
              <div className="text-sm space-y-1 opacity-95" dir="ltr">
-                <p className="font-bold text-lg">النجار للأعمال الهندسية</p>
-                <p>01000000000</p>
-                <p>123 شارع الصناعة، القاهرة</p>
+                <p className="font-bold text-lg">نجار للأعمال الهندسية</p>
+                <div className="flex gap-2">
+                <Phone className="w-4 h-4 text-brand-secondary"/>
+                <p>01117260406</p>
+                </div>
+                <div className="flex gap-2">
+                <img src={whatsapp} alt="" className="w-4 h-4" />
+                <p>01062077898</p>
+                </div>
+                <p>المحمودية، البحيرة</p>
+                
              </div>
            </div>
         </div>
@@ -199,7 +208,7 @@ const QuotationPreview = () => {
                 <li>هذا العرض ساري لمدة 15 يوم من تاريخه.</li>
                 <li>الأسعار تشمل التوريد والتركيب ما لم يذكر خلاف ذلك.</li>
                 <li>يتم دفع 50% مقدم، و 50% عند الاستلام.</li>
-                <li>لوريم إيبسوم دولار سيت أميت ،كونسيكتيتور أدايبا يسكينج أليايت ،سيت دو أيوسمود تيمبور أنكايديديونتيوت لابوري ات دولار ماجنا أليكيوا .</li>
+                <li>عند طلب بند إضافي بعد الاتفاق يتم زيادة الاجمالي بناءاً علي ثمن الإضافة بالإتفاق بين الطرفين</li>
               </ul>
             </div>
 
@@ -236,7 +245,7 @@ const QuotationPreview = () => {
         
         {/* Decorative Bottom Bar */}
         <div className="h-4 bg-brand-main w-full mt-auto print:hidden"></div>
-        <div className="h-[290mm] bg-bg-surface w-full break-inside-avoid "></div>
+        <div className="h-[140mm] bg-bg-surface w-full mt-8"></div>
       </div>
       
       <style>{`

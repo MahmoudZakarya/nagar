@@ -7,7 +7,6 @@ import {
   Package,
   DollarSign,
   Truck,
-  ArrowLeft,
   X,
   CreditCard,
   Hash,
@@ -15,7 +14,9 @@ import {
   CheckCircle2,
   Coins,
   Trash2,
-  User
+  User,
+  ArrowRight,
+  ShoppingCart
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -115,13 +116,14 @@ const Purchases = () => {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-4xl font-bold text-text-primary tracking-tight">المشتريات والخامات</h1>
+          <h1 className="text-4xl font-bold text-text-primary tracking-tight flex items-center gap-2 mb-2"
+                    ><ShoppingCart className="w-10 h-10 text-brand-secondary" />المشتريات والخامات</h1>
           <p className="text-text-secondary font-medium mt-1">إدارة فواتير الموردين ومخزون الخامات</p>
         </div>
 
         <button
           onClick={() => setShowAddModal(true)}
-          className="bg-[#5E9E54] text-white font-bold py-4 px-8 rounded-2xl shadow-green-200 hover:shadow-green-300 hover:-translate-y-1 active:translate-y-0 transition-all duration-300 flex items-center gap-3 whitespace-nowrap"
+          className="bg-[#5E9E54] text-white font-bold py-4 px-8 rounded-2xl shadow-green-200 hover:shadow-green-300 hover:-translate-y-1 active:translate-y-0 transition-all duration-300 flex items-center gap-3 whitespace-nowrap cursor-pointer"
         >
           <Plus className="w-6 h-6" />
           <span>تسجيل فاتورة شراء</span>
@@ -206,7 +208,7 @@ const Purchases = () => {
                   </div>
                   <button 
                     onClick={() => setAppliedDates({...dateFilter})}
-                    className="bg-[#5E9E54] text-white px-4 py-1 rounded-xl text-xs font-bold hover:bg-[#4D8245] mr-4 transition"
+                    className="bg-[#5E9E54] text-white px-4 py-1 rounded-xl text-xs font-bold hover:bg-[#4D8245] mr-4 transition cursor-pointer"
                   >
                     عرض
                   </button>
@@ -217,13 +219,13 @@ const Purchases = () => {
 
                <button
                 onClick={() => setActiveFilter('All')}
-                className={`px-6 py-2.5 text-xs font-bold uppercase tracking-widest transition rounded-xl ${activeFilter === 'All' ? 'text-[#5E9E54] bg-green-50 dark:bg-green-500/10' : 'text-text-secondary hover:text-text-primary'}`}
+                className={`px-6 py-2.5 text-xs font-bold uppercase tracking-widest transition rounded-xl ${activeFilter === 'All' ? 'text-[#5E9E54] bg-green-50 dark:bg-green-500/10' : 'text-text-secondary hover:text-text-primary cursor-pointer'}`}
                >
                 الكل
                </button>
                <button
                 onClick={() => setActiveFilter('Remaining')}
-                className={`px-6 py-2.5 text-xs font-bold uppercase tracking-widest transition rounded-xl ${activeFilter === 'Remaining' ? 'text-red-600 bg-red-50 dark:bg-red-500/10' : 'text-text-secondary hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10'}`}
+                className={`px-6 py-2.5 text-xs font-bold uppercase tracking-widest transition rounded-xl ${activeFilter === 'Remaining' ? 'text-red-600 bg-red-50 dark:bg-red-500/10' : 'text-text-secondary hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 cursor-pointer'}`}
                >
                 فواتير متبقية
                </button>
@@ -290,7 +292,7 @@ const Purchases = () => {
                           {p.amount_remaining > 0 && (
                              <button
                                 onClick={() => openPaymentModal(p)}
-                                className="px-4 py-2 bg-[#5E9E54] text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#4D8245] transition shadow-md shadow-green-200"
+                                className="px-4 py-2 bg-[#5E9E54] text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#4D8245] transition shadow-md shadow-green-200 cursor-pointer"
                              >
                                 سداد
                              </button>
@@ -301,7 +303,7 @@ const Purchases = () => {
                                  deletePurchase(p.id, user?.id);
                                }
                              }}
-                            className="p-2 text-gray-700 hover:text-red-500 hover:bg-red-50 rounded-lg transition"
+                            className="p-2 text-gray-700 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition cursor-pointer"
                             title="حذف الفاتورة"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -327,7 +329,7 @@ const Purchases = () => {
                 <div className="absolute -left-12 -bottom-12 opacity-10 pointer-events-none">
                    <ShoppingBag className="w-64 h-64" />
                 </div>
-                <button onClick={() => setShowAddModal(false)} className="absolute top-8 left-8 p-3 bg-white/10 hover:bg-white/20 rounded-2xl transition">
+                <button onClick={() => setShowAddModal(false)} className="absolute top-8 left-8 p-3 bg-white/10 hover:bg-white/20 rounded-2xl transition cursor-pointer">
                    <X className="w-6 h-6 text-white" />
                 </button>
              </div>
@@ -392,7 +394,7 @@ const Purchases = () => {
                          <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1">صافي التكلفة</p>
                          <p className="text-4xl font-bold text-text-primary italic tracking-tighter">{formData.total_cost.toLocaleString()}<EGP /></p>
                       </div>
-                      <ArrowLeft className="w-6 h-6 text-text-muted/30 mt-4" />
+                      <ArrowRight className="w-6 h-6 text-text-muted/30 mt-4" />
                       <div>
                          <p className="text-[10px] font-bold text-[#5E9E54] uppercase tracking-widest mb-1">المدفوع حالياً</p>
                          <input 
@@ -410,7 +412,7 @@ const Purchases = () => {
                 <div className="pt-6">
                    <button 
                      type="submit"
-                     className="w-full bg-[#5E9E54] text-white font-bold py-6 rounded-3xl shadow-2xl shadow-green-100 hover:shadow-green-300 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-4 text-xl group"
+                     className="w-full bg-[#5E9E54] text-white font-bold py-6 rounded-3xl shadow-2xl shadow-green-100 dark:shadow-green-900/50 hover:shadow-green-300 dark:hover:shadow-green-700/70 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-4 text-xl group cursor-pointer"
                    >
                      <CreditCard className="w-8 h-8 group-hover:rotate-12 transition-transform" />
                      تأكيد عملية الشراء والخصم من الخزنة
@@ -428,7 +430,7 @@ const Purchases = () => {
           <div className="bg-bg-surface border border-border-theme w-full max-w-md rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300">
              <div className="p-8 border-b border-border-theme flex justify-between items-center bg-bg-primary/50">
                 <h2 className="text-2xl font-bold text-text-primary">سداد مديونية</h2>
-                <button onClick={() => setShowPaymentModal(false)}><X className="w-6 h-6 text-text-muted" /></button>
+                <button onClick={() => setShowPaymentModal(false)}><X className="w-6 h-6 text-text-muted cursor-pointer" /></button>
              </div>
              <form onSubmit={handlePaymentSubmit} className="p-8 space-y-6">
                 <div>
@@ -444,7 +446,7 @@ const Purchases = () => {
                      placeholder="0.00"
                    />
                 </div>
-                <button type="submit" className="w-full bg-[#5E9E54] text-white font-bold py-5 rounded-2xl hover:bg-green-700 transition shadow-lg shadow-green-600/20 flex items-center justify-center gap-2">
+                <button type="submit" className="w-full bg-[#5E9E54] text-white font-bold py-5 rounded-2xl hover:bg-green-700 transition shadow-lg shadow-green-600/20 flex items-center justify-center gap-2 cursor-pointer">
                    <Coins className="w-5 h-5" />
                    تأكيد الدفع
                 </button>

@@ -117,8 +117,8 @@ const Dashboard = () => {
 
       <div className="grid lg:grid-cols-3 gap-8 pb-10">
         <div className="lg:col-span-2 space-y-8">
-           <div className="bg-bg-suface rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden">
-              <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/20">
+           <div className="bg-bg-primary rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden">
+              <div className="p-8 border-b border-gray-50 flex justify-between items-center  ">
                  <h2 className="text-xl font-bold text-text-primary flex items-center gap-3">
                     <TrendingUp className="w-6 h-6 text-brand-secondary" />
                     آخر المعاملات المالية
@@ -127,7 +127,7 @@ const Dashboard = () => {
               </div>
               <div className="divide-y divide-gray-50">
                   {history.slice(0, 5).map((tx) => (
-                    <div key={tx.id} className="p-6 flex items-center justify-between hover:bg-gray-50/50 transition duration-300">
+                    <div key={tx.id} className="p-6 flex items-center justify-between bg-bg-surface hover:bg-gray-50/50 transition duration-300">
                        <div className="flex items-center gap-5">
                           <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${tx.transaction_type === 'Income' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'} shadow-inner`}>
                              {tx.transaction_type === 'Income' ? <ArrowUpLeft className="w-6 h-6" /> : <TrendingUp className="w-6 h-6 rotate-180" />}

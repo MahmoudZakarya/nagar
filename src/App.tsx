@@ -14,9 +14,11 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import QuotationEditor from './pages/QuotationEditor';
 import QuotationPreview from './pages/QuotationPreview';
 import UserManagement from './pages/UserManagement';
+import BackupSettings from './pages/BackupSettings';
 import { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import logo from './assets/nagar-logo-removebg.png';
+
 
 
 const SplashScreen = () => {
@@ -86,6 +88,9 @@ const AppContent = () => {
           <Route path="employees/:id" element={<EmployeeProfilePage />} />
           {(user?.role === 'admin' || user?.role === 'manager') && (
             <Route path="users" element={<UserManagement />} />
+          )}
+          {user?.role === 'admin' && (
+            <Route path="backup" element={<BackupSettings />} />
           )}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

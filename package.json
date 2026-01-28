@@ -8,7 +8,7 @@
     "dev:api": "ts-node -P tsconfig.server.json server/index.ts",
     "dev:server": "vite",
     "dev:electron": "wait-on tcp:5173 && wait-on tcp:3000 && tsc -p electron && electron .",
-    "build:client": "tsc && tsc -p electron && vite build",
+    "build:client": "tsc && tsc -p tsconfig.server.json && tsc -p electron && vite build",
     "build:pack": "electron-builder",
     "build": "npm run build:client && npm run build:pack",
     "start": "node dist-server/index.js"
@@ -17,6 +17,37 @@
   "author": "",
   "license": "ISC",
   "type": "commonjs",
+  "build": {
+    "appId": "com.nagar.erp",
+    "productName": "Nagar ERP",
+    "directories": {
+      "output": "dist-installer"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*",
+      "dist-server/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Nagar ERP",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "license": "LICENSE.txt",
+      "perMachine": false
+    }
+  },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.18",
     "@types/bcryptjs": "^2.4.6",
@@ -26,6 +57,7 @@
     "@types/express": "^5.0.6",
     "@types/multer": "^2.0.0",
     "@types/node": "^20.19.30",
+    "@types/node-cron": "^3.0.11",
     "@types/react": "^19.2.9",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.2",
@@ -41,6 +73,7 @@
     "wait-on": "^9.0.3"
   },
   "dependencies": {
+    "@google-cloud/storage": "^7.18.0",
     "bcryptjs": "^3.0.3",
     "better-sqlite3-multiple-ciphers": "^12.6.2",
     "body-parser": "^2.2.2",
@@ -50,6 +83,7 @@
     "express": "^5.2.1",
     "lucide-react": "^0.562.0",
     "multer": "^2.0.2",
+    "node-cron": "^4.2.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-hot-toast": "^2.6.0",

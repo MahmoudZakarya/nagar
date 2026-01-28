@@ -13,7 +13,8 @@ import {
   CreditCard,
   PieChart,
   Coins,
-  User
+  User,
+  Landmark
 } from 'lucide-react';
 
 const EGP = () => <span className="text-[0.65em] font-normal mr-1">جنية</span>;
@@ -103,8 +104,9 @@ const Safe = () => {
       {/* Header & Balance Card */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-4xl font-bold text-text-primary tracking-tight">الخزنة والماليات</h1>
-          <p className="text-text-secondary font-medium mt-1">تتبع التدفقات النقدية والمصاريف</p>
+          <h1 className="text-3xl font-bold text-text-primary tracking-tight flex items-center gap-2 mb-2"
+                    ><Landmark className="w-10 h-10 text-brand-secondary" />الخزنة والماليات</h1>
+          <p className="text-text-secondary font-medium text-sm mt-1">تتبع التدفقات النقدية والمصاريف</p>
         </div>
         
         <div className="bg-brand-main p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl shadow-brand-main/30 flex items-center gap-4 md:gap-8 min-w-0 w-full md:min-w-[350px] relative overflow-hidden group">
@@ -125,7 +127,7 @@ const Safe = () => {
         <div className="lg:col-span-1 space-y-6">
            <button 
              onClick={() => setShowAddModal(true)}
-             className="w-full bg-brand-secondary text-brand-main font-bold py-5 rounded-[2rem] shadow-xl shadow-brand-secondary/20 hover:shadow-brand-secondary/40 hover:-translate-y-1 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3 group"
+             className="w-full bg-brand-secondary text-brand-main font-bold py-5 rounded-[2rem] shadow-xl shadow-brand-secondary/20 hover:shadow-brand-secondary/40 hover:-translate-y-1 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3 group cursor-pointer"
            >
              <div className="bg-brand-main text-brand-third p-1 rounded-lg group-hover:rotate-90 transition-transform duration-500">
                 <Plus className="w-5 h-5" />
@@ -135,15 +137,15 @@ const Safe = () => {
 
            <div className="bg-bg-surface p-8 rounded-[2.5rem] shadow-sm border border-border-theme space-y-6">
               <h3 className="text-lg font-bold text-text-primary flex items-center gap-3">
-                 <PieChart className="w-5 h-5 text-brand-main" />
+                 <PieChart className="w-5 h-5 text-brand-secondary" />
                  ملخص سريع
               </h3>
               <div className="space-y-4">
-                 <div className="p-4 bg-green-50 rounded-2xl">
+                 <div className="p-4 bg-green-200/5 rounded-2xl">
                     <p className="text-[10px] font-bold text-green-600 uppercase tracking-widest mb-1">أرباح الشهر</p>
                     <p className="text-xl font-bold text-green-700">+{monthlyIncome.toLocaleString()}<EGP /></p>
                  </div>
-                 <div className="p-4 bg-red-50 rounded-2xl">
+                 <div className="p-4 bg-red-200/5 rounded-2xl">
                     <p className="text-[10px] font-bold text-red-600 uppercase tracking-widest mb-1">مصروفات الشهر</p>
                     <p className="text-xl font-bold text-red-700">-{monthlyExpenses.toLocaleString()}<EGP /></p>
                  </div>
@@ -179,7 +181,7 @@ const Safe = () => {
                       />
                       <button 
                         onClick={() => setAppliedDates({...dateFilter})}
-                        className="bg-brand-main text-white px-4 py-1 rounded-xl text-xs font-bold hover:bg-brand-main/90 transition"
+                        className="bg-brand-main text-white px-4 py-1 rounded-xl text-xs font-bold hover:bg-brand-main/90 transition cursor-pointer"
                       >
                         عرض
                       </button>
@@ -270,10 +272,10 @@ const Safe = () => {
       {/* Manual Transaction Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setShowAddModal(false)}></div>
-          <div className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300 max-h-[90vh] flex flex-col">
-             <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
-                <h2 className="text-2xl font-bold text-brand-main">إضافة معاملة جديدة</h2>
+          <div className="absolute inset-0 bg-bg-primary/40 backdrop-blur-sm" onClick={() => setShowAddModal(false)}></div>
+          <div className="bg-bg-primary w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-300 max-h-[90vh] flex flex-col">
+             <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-bg-surface/50">
+                <h2 className="text-2xl font-bold text-text-primary">إضافة معاملة جديدة</h2>
                 <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-white rounded-xl transition">
                    <X className="w-6 h-6 text-gray-400" />
                 </button>
@@ -284,7 +286,7 @@ const Safe = () => {
                    <button 
                     type="button"
                     onClick={() => setNewTx({...newTx, transaction_type: 'Income'})}
-                    className={`flex-1 py-4 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 ${newTx.transaction_type === 'Income' ? 'bg-bg-surface text-green-600 shadow-sm scale-[1.02] border border-border-theme' : 'text-text-muted'}`}
+                    className={`flex-1 py-4 cursor-pointer rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 ${newTx.transaction_type === 'Income' ? 'bg-bg-surface text-green-600 shadow-sm scale-[1.02] border border-border-theme' : 'text-text-muted'}`}
                    >
                      <TrendingUp className="w-5 h-5" />
                      وارد / دخل
@@ -292,7 +294,7 @@ const Safe = () => {
                    <button 
                     type="button"
                     onClick={() => setNewTx({...newTx, transaction_type: 'Expense'})}
-                    className={`flex-1 py-4 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 ${newTx.transaction_type === 'Expense' ? 'bg-bg-surface text-red-600 shadow-sm scale-[1.02] border border-border-theme' : 'text-text-muted'}`}
+                    className={`flex-1 py-4 cursor-pointer rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 ${newTx.transaction_type === 'Expense' ? 'bg-bg-surface text-red-600 shadow-sm scale-[1.02] border border-border-theme' : 'text-text-muted'}`}
                    >
                      <TrendingDown className="w-5 h-5" />
                      صادر / صرف
@@ -307,7 +309,7 @@ const Safe = () => {
                         required
                         value={newTx.amount}
                         onChange={(e) => setNewTx({...newTx, amount: e.target.value})}
-                         className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold italic text-xl text-text-primary"
+                         className="w-full px-6 py-4 bg-bg-surface border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold italic text-xl text-text-primary"
                         placeholder="0.00"
                       />
                    </div>
@@ -317,7 +319,7 @@ const Safe = () => {
                         required
                         value={newTx.category}
                         onChange={(e) => setNewTx({...newTx, category: e.target.value})}
-                         className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-text-primary"
+                         className="w-full px-6 py-4 bg-bg-surface border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-text-primary"
                       >
                          <option value="">اختر الفئة...</option>
                          <option value="دفعة مقدمة">عربون عميل</option>
@@ -337,7 +339,7 @@ const Safe = () => {
                      rows={3}
                      value={newTx.description}
                      onChange={(e) => setNewTx({...newTx, description: e.target.value})}
-                     className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold resize-none text-text-primary"
+                     className="w-full px-6 py-4 bg-bg-surface border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold resize-none text-text-primary"
                      placeholder="تفاصيل المعاملة..."
                    />
                 </div>
@@ -345,7 +347,7 @@ const Safe = () => {
                 <div className="pt-4">
                    <button 
                      type="submit"
-                      className="w-full bg-brand-main text-brand-third font-bold py-5 rounded-2xl shadow-xl shadow-brand-main/20 hover:shadow-brand-main/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3"
+                      className="w-full bg-brand-secondary text-text-primary font-bold py-5 rounded-2xl shadow-xl shadow-brand-main/20 hover:shadow-brand-main/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer"
                    >
                      <CreditCard className="w-6 h-6" />
                      تسجيل المعاملة في الخزنة
