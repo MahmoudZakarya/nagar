@@ -258,39 +258,7 @@ const Employees = () => {
                         className="w-full px-6 py-4 bg-bg-surface border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
                       />
                    </div>
-                   <div className="col-span-2 border-t border-gray-100 pt-4 mt-2">
-                       <p className="text-xs font-bold text-text-primary uppercase tracking-widest mb-4">بيانات قريب الطوارئ</p>
-                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                          <div>
-                             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">اسم القريب</label>
-                             <input 
-                               type="text"
-                               value={formData.relative_name}
-                               onChange={(e) => setFormData({...formData, relative_name: e.target.value})}
-                               className="w-full px-4 py-3 bg-bg-surface border-none rounded-xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
-                             />
-                          </div>
-                          <div>
-                             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">رقم هاتف القريب</label>
-                             <input 
-                               type="text"
-                               value={formData.relative_phone}
-                               onChange={(e) => setFormData({...formData, relative_phone: e.target.value})}
-                               className="w-full px-4 py-3 bg-bg-surface border-none rounded-xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
-                             />
-                          </div>
-                          <div>
-                             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">صلة القرابة</label>
-                             <input 
-                               type="text"
-                               value={formData.relative_relation}
-                               onChange={(e) => setFormData({...formData, relative_relation: e.target.value})}
-                               className="w-full px-4 py-3 bg-bg-surface border-none rounded-xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
-                               placeholder="أخ، أب، زوجة..."
-                             />
-                          </div>
-                       </div>
-                   </div>
+                   
                    <div>
                       <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">العمر</label>
                       <input 
@@ -329,6 +297,41 @@ const Employees = () => {
                       />
                    </div>
                 </div>
+
+
+                <div className="col-span-2 border-t border-gray-100 pt-4 mt-2">
+                       <p className="text-xs font-bold text-text-primary uppercase tracking-widest mb-4">بيانات قريب الطوارئ</p>
+                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                          <div>
+                             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">اسم القريب</label>
+                             <input 
+                               type="text"
+                               value={formData.relative_name}
+                               onChange={(e) => setFormData({...formData, relative_name: e.target.value})}
+                               className="w-full px-4 py-3 bg-bg-surface border-none rounded-xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                             />
+                          </div>
+                          <div>
+                             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">رقم هاتف القريب</label>
+                             <input 
+                               type="text"
+                               value={formData.relative_phone}
+                               onChange={(e) => setFormData({...formData, relative_phone: e.target.value})}
+                               className="w-full px-4 py-3 bg-bg-surface border-none rounded-xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                             />
+                          </div>
+                          <div>
+                             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">صلة القرابة</label>
+                             <input 
+                               type="text"
+                               value={formData.relative_relation}
+                               onChange={(e) => setFormData({...formData, relative_relation: e.target.value})}
+                               className="w-full px-4 py-3 bg-bg-surface border-none rounded-xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
+                               placeholder="أخ، أب، زوجة..."
+                             />
+                          </div>
+                       </div>
+                   </div>
 
                 <button type="submit" className="w-full bg-brand-secondary text-brand-third font-bold py-5 rounded-2xl shadow-xl shadow-brand-main/20 hover:bg-brand-secondary/70 transition duration-300 cursor-pointer">
                    {selectedEmployee ? 'حفظ التعديلات' : 'إتمام التسجيل'}
