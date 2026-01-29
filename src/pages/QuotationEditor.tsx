@@ -165,7 +165,7 @@ const QuotationEditor = () => {
             <select
               value={clientId}
               onChange={(e) => setClientId(e.target.value ? Number(e.target.value) : '')}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFB22C] focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 bg-bg-surface rounded-lg focus:ring-2 focus:ring-[#FFB22C] focus:border-transparent"
             >
               <option value="">اختر العميل</option>
               {clients.map((client) => (
@@ -181,7 +181,7 @@ const QuotationEditor = () => {
               type="text"
               value={quotationNumber}
               onChange={(e) => setQuotationNumber(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFB22C] focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 text-text-primary rounded-lg focus:ring-2 focus:ring-[#FFB22C] focus:border-transparent"
             />
           </div>
           <div>
@@ -189,7 +189,7 @@ const QuotationEditor = () => {
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value as any)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFB22C] focus:border-transparent"
+              className="w-full px-4 py-2 text-text-primary bg-bg-surface border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFB22C] focus:border-transparent"
             >
               <option value="Draft">مسودة</option>
               <option value="Sent">تم الإرسال</option>

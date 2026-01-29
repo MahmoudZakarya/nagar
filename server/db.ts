@@ -11,7 +11,10 @@ dotenv.config();
 // Environment-aware database path logic
 let dbPath: string;
 
-if (
+if (process.env.DATA_DIR) {
+  // Use directory provided by Electron main process
+  dbPath = path.join(process.env.DATA_DIR, "nagar.db");
+} else if (
   process.env.RAILWAY_ENVIRONMENT ||
   (process.env.DATABASE_PATH && process.env.DATABASE_PATH.startsWith("/"))
 ) {
@@ -24,21 +27,8 @@ if (
   // Explicit relative path from .env (for local dev)
   dbPath = process.env.DATABASE_PATH;
 } else {
-  // Windows Installer Path - Use AppData for data persistence
-  dbPath = path.join(
-    os.homedir(),
-    "AppData",
-    "Roaming",
-    "NagarERP",
-    "nagar.db",
-  );
-
-  // Ensure the NagarERP directory exists
-  const dir = path.dirname(dbPath);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-    console.log(`Created NagarERP data directory at: ${dir}`);
-  }
+  // Default Local Path
+  dbPath = path.resolve(__dirname, "../nagar.db");
 }
 
 console.log(`Initializing database at: ${dbPath}`);

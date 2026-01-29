@@ -19,7 +19,8 @@ import {
   Trash2,
   Wallet,
   Coins,
-  X
+  X,
+  FileText
 } from 'lucide-react';
 
 const EGP = () => <span className="text-[0.65em] font-normal mr-1">جنية</span>;
@@ -340,6 +341,16 @@ const TaskDetails = () => {
                   ) : (
                     <div className="py-8 text-center text-text-muted italic font-bold text-sm">لا يوجد سجل مدفوعات بعد.</div>
                   )}
+               </div>
+
+               <div className="pt-4 border-t border-border-theme">
+                  <button 
+                    onClick={() => navigate(`/tasks/${id}/invoice`)}
+                    className="w-full py-4 bg-bg-primary hover:bg-bg-primary/80 border border-border-theme rounded-2xl font-black text-sm text-text-primary flex items-center justify-center gap-2 transition cursor-pointer"
+                  >
+                    <FileText className="w-5 h-5" />
+                    اصدار فاتورة
+                  </button>
                </div>
             </div>
          </div>

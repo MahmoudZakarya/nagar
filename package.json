@@ -4,13 +4,13 @@
   "description": "",
   "main": "dist-electron/main.js",
   "scripts": {
-    "dev": "concurrently --kill-others \"npm run dev:api\" \"npm run dev:server\" \"npm run dev:electron\"",
-    "dev:api": "ts-node -P tsconfig.server.json server/index.ts",
+    "dev": "concurrently --kill-others \"npm run dev:server\" \"npm run dev:electron\"",
     "dev:server": "vite",
-    "dev:electron": "wait-on tcp:5173 && wait-on tcp:3000 && tsc -p electron && electron .",
+    "dev:electron": "wait-on tcp:5173 && tsc -p electron && electron .",
     "build:client": "tsc && tsc -p tsconfig.server.json && tsc -p electron && vite build",
     "build:pack": "electron-builder",
-    "build": "npm run build:client && npm run build:pack",
+    "rebuild": "electron-rebuild -f -w better-sqlite3-multiple-ciphers",
+    "build": "npm run build:client && npm run rebuild && npm run build:pack",
     "start": "node dist-server/index.js"
   },
   "keywords": [],
@@ -23,6 +23,10 @@
     "directories": {
       "output": "dist-installer"
     },
+    "npmRebuild": true,
+    "asarUnpack": [
+      "node_modules/better-sqlite3-multiple-ciphers/**/*"
+    ],
     "files": [
       "dist/**/*",
       "dist-electron/**/*",
@@ -45,10 +49,11 @@
       "installerIcon": "build/icon.ico",
       "uninstallerIcon": "build/icon.ico",
       "license": "LICENSE.txt",
-      "perMachine": false
+      "perMachine": true
     }
   },
   "devDependencies": {
+    "@electron/rebuild": "^4.0.3",
     "@tailwindcss/vite": "^4.1.18",
     "@types/bcryptjs": "^2.4.6",
     "@types/better-sqlite3": "^7.6.13",
@@ -56,7 +61,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/multer": "^2.0.0",
-    "@types/node": "^20.19.30",
+    "@types/node": "^22.13.1",
     "@types/node-cron": "^3.0.11",
     "@types/react": "^19.2.9",
     "@types/react-dom": "^19.2.3",

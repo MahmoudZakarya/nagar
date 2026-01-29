@@ -59,5 +59,5 @@ app.get("/*splat", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`[${new Date().toISOString()}] Server running on port ${PORT}`);
 });

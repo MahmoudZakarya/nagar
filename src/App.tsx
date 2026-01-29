@@ -15,6 +15,7 @@ import QuotationEditor from './pages/QuotationEditor';
 import QuotationPreview from './pages/QuotationPreview';
 import UserManagement from './pages/UserManagement';
 import BackupSettings from './pages/BackupSettings';
+import TaskInvoice from './pages/TaskInvoice';
 import { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import logo from './assets/nagar-logo-removebg.png';
@@ -82,6 +83,7 @@ const AppContent = () => {
           <Route path="quotations/:id/preview" element={<QuotationPreview />} />
           <Route path="tasks" element={<Tasks />} />
           <Route path="tasks/:id" element={<TaskDetails />} />
+          <Route path="tasks/:id/invoice" element={<TaskInvoice />} />
           <Route path="safe" element={<Safe />} />
           <Route path="purchases" element={<Purchases />} />
           <Route path="employees" element={<Employees />} />
