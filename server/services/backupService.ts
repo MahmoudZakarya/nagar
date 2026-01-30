@@ -4,30 +4,11 @@ import os from "os";
 import { Storage } from "@google-cloud/storage";
 import db from "../db";
 import { getGCSConfigWithFallback } from "../config/gcsConfig";
+import { getDbPath as getTargetDbPath, getTempBackupDir } from "../utils/paths";
 
-// Get database path (from db.ts logic)
+// Get database path (from central utility)
 const getDbPath = (): string => {
-  if (
-    process.env.RAILWAY_ENVIRONMENT ||
-    (process.env.DATABASE_PATH && process.env.DATABASE_PATH.startsWith("/"))
-  ) {
-    return (
-      process.env.DATABASE_PATH || path.resolve(__dirname, "../../nagar.db")
-    );
-  } else if (
-    process.env.DATABASE_PATH &&
-    !process.env.DATABASE_PATH.startsWith("/")
-  ) {
-    return process.env.DATABASE_PATH;
-  } else {
-    return path.join(
-      os.homedir(),
-      "AppData",
-      "Roaming",
-      "NagarERP",
-      "nagar.db",
-    );
-  }
+  return getTargetDbPath();
 };
 
 // Initialize Google Cloud Storage (dynamic)
@@ -91,7 +72,7 @@ export const backupDatabase = async (): Promise<BackupInfo | null> => {
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
   const backupFileName = `backup-nagar-${timestamp}.db`;
   const sourcePath = getDbPath();
-  const tempPath = path.join(os.tmpdir(), backupFileName);
+  const tempPath = path.join(getTempBackupDir(), backupFileName);
 
   try {
     // 1. Check if database exists
@@ -182,7 +163,7 @@ export const downloadBackup = async (filename: string): Promise<string> => {
     throw new Error("Google Cloud Storage not configured");
   }
 
-  const tempPath = path.join(os.tmpdir(), filename);
+  const tempPath = path.join(getTempBackupDir(), filename);
 
   try {
     await storage

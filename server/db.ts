@@ -2,36 +2,50 @@ import Database from "better-sqlite3-multiple-ciphers";
 import path from "path";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
-import os from "os";
 import fs from "fs";
+import { getDbPath } from "./utils/paths";
 
 // Load environment variables
 dotenv.config();
 
-// Environment-aware database path logic
-let dbPath: string;
+// 1. Environment-aware database path logic
+const dbPath = getDbPath();
 
-if (process.env.DATA_DIR) {
-  // Use directory provided by Electron main process
-  dbPath = path.join(process.env.DATA_DIR, "nagar.db");
-} else if (
-  process.env.RAILWAY_ENVIRONMENT ||
-  (process.env.DATABASE_PATH && process.env.DATABASE_PATH.startsWith("/"))
-) {
-  // Railway Deployment Path (Linux/Cloud environment)
-  dbPath = process.env.DATABASE_PATH || path.resolve(__dirname, "../nagar.db");
-} else if (
-  process.env.DATABASE_PATH &&
-  !process.env.DATABASE_PATH.startsWith("/")
-) {
-  // Explicit relative path from .env (for local dev)
-  dbPath = process.env.DATABASE_PATH;
-} else {
-  // Default Local Path
-  dbPath = path.resolve(__dirname, "../nagar.db");
+// 2. Migration: Check for database in old location (installation dir)
+// and move to new writable location if new location is empty.
+const oldPath = path.resolve(__dirname, "../nagar.db");
+if (fs.existsSync(oldPath) && !fs.existsSync(dbPath)) {
+  try {
+    const dbDir = path.dirname(dbPath);
+    if (!fs.existsSync(dbDir)) {
+      fs.mkdirSync(dbDir, { recursive: true });
+    }
+    fs.copyFileSync(oldPath, dbPath);
+    console.log(`Migrated database from legacy path ${oldPath} to ${dbPath}`);
+    // We leave the old file as a backup for safety, but the app will now use the new one.
+  } catch (err) {
+    console.error("Failed to migrate database to new location:", err);
+  }
+}
+
+// 3. Ensure target directory exists for new installs
+const dbDir = path.dirname(dbPath);
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
 }
 
 console.log(`Initializing database at: ${dbPath}`);
+
+// Check if file status before opening
+let isNewDb = false;
+try {
+  if (!fs.existsSync(dbPath) || fs.statSync(dbPath).size === 0) {
+    isNewDb = true;
+    console.log("Database file is new or empty.");
+  }
+} catch (e) {
+  isNewDb = true;
+}
 
 const db = new Database(dbPath);
 
@@ -42,6 +56,7 @@ const DB_PASSWORD = process.env.DB_PASSWORD || DEFAULT_PASSWORD;
 function tryUnlock(password: string) {
   try {
     db.pragma(`key = '${password}'`);
+    // Try a simple query to see if we're actually unlocked
     db.prepare("SELECT count(*) FROM sqlite_master").get();
     return true;
   } catch (err) {
@@ -49,34 +64,55 @@ function tryUnlock(password: string) {
   }
 }
 
-if (tryUnlock(DB_PASSWORD)) {
-  console.log("Database opened with encryption.");
-} else if (DB_PASSWORD !== DEFAULT_PASSWORD && tryUnlock(DEFAULT_PASSWORD)) {
-  console.log("Migrating database password to the new one in .env...");
-  db.pragma(`rekey = '${DB_PASSWORD}'`);
-  console.log("Database password updated successfully.");
+// Initialization logic
+if (isNewDb) {
+  console.log("Setting up encryption for new database...");
+  db.pragma(`key = '${DB_PASSWORD}'`);
+  console.log("Database encryption initialized.");
 } else {
-  // Check if unencrypted
-  try {
-    // To check if unencrypted, we need a fresh connection or we can try to rekey a temporary one
-    const unencryptedDb = new Database(dbPath);
+  if (tryUnlock(DB_PASSWORD)) {
+    console.log("Database opened with encryption.");
+  } else if (DB_PASSWORD !== DEFAULT_PASSWORD && tryUnlock(DEFAULT_PASSWORD)) {
+    console.log("Migrating database password to the new one in .env...");
+    db.pragma(`rekey = '${DB_PASSWORD}'`);
+    console.log("Database password updated successfully.");
+  } else {
+    // Check if it's currently unencrypted
     try {
-      unencryptedDb.prepare("SELECT count(*) FROM sqlite_master").get();
-      // If this works, it IS unencrypted
-      unencryptedDb.pragma(`rekey = '${DB_PASSWORD}'`);
-      unencryptedDb.close();
-      db.pragma(`key = '${DB_PASSWORD}'`);
-      console.log("Database was unencrypted. Encrypted with new password.");
+      // Re-opening as unencrypted to check
+      const checkDb = new Database(dbPath);
+      try {
+        checkDb.prepare("SELECT count(*) FROM sqlite_master").get();
+        // It works, so it is unencrypted. Let's encrypt it now for the main 'db' instance.
+        console.log(
+          "Existing database was unencrypted. Applying encryption...",
+        );
+        checkDb.pragma(`rekey = '${DB_PASSWORD}'`);
+        checkDb.close();
+        db.pragma(`key = '${DB_PASSWORD}'`);
+        console.log("Encryption applied successfully.");
+      } catch (err) {
+        checkDb.close();
+        console.error(
+          "---------------------------------------------------------",
+        );
+        console.error("CRITICAL ERROR: DATABASE ENCRYPTION MISMATCH");
+        console.error(`Path: ${dbPath}`);
+        console.error(
+          "Reason: The database file is locked with a different password or is corrupted.",
+        );
+        console.error(
+          "If this is a fresh install, please delete the file above and restart.",
+        );
+        console.error(
+          "---------------------------------------------------------",
+        );
+        process.exit(1);
+      }
     } catch (err) {
-      unencryptedDb.close();
-      console.error(
-        "CRITICAL: Database is locked with an unknown password or is corrupted.",
-      );
+      console.error("Failed to perform deep check on database:", err);
       process.exit(1);
     }
-  } catch (err) {
-    console.error("Failed to unlock or encrypt database:", err);
-    process.exit(1);
   }
 }
 

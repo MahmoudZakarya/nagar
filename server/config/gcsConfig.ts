@@ -1,7 +1,7 @@
 import db from "../db";
 import fs from "fs";
 import path from "path";
-import os from "os";
+import { getKeysDir } from "../utils/paths";
 
 export interface GCSConfig {
   bucketName: string | null;
@@ -13,7 +13,7 @@ export interface GCSConfig {
  * Get the directory where GCS key files should be stored
  */
 const getKeysDirectory = (): string => {
-  const keysDir = path.join(__dirname, "../keys");
+  const keysDir = getKeysDir();
   if (!fs.existsSync(keysDir)) {
     fs.mkdirSync(keysDir, { recursive: true, mode: 0o700 }); // Restrict to owner only
   }

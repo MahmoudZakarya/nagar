@@ -3,11 +3,12 @@ import db from "../db";
 import path from "path";
 import multer from "multer";
 import fs from "fs";
+import { getUploadsDir } from "../utils/paths";
 
 // Configure Multer for Quotation Images
 const storage = multer.diskStorage({
   destination: (req: Request, file: Express.Multer.File, cb: any) => {
-    const dir = "uploads/quotations";
+    const dir = path.join(getUploadsDir(), "quotations");
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }

@@ -6,6 +6,7 @@ import { initData } from "./db";
 import { translateExistingData } from "./scripts/translate_data";
 import { backupDatabase, isBackupConfigured } from "./services/backupService";
 import path from "path";
+import { getUploadsDir } from "./utils/paths";
 
 import apiRoutes from "./routes";
 
@@ -42,7 +43,7 @@ if (isBackupConfigured()) {
 }
 
 app.use("/api", apiRoutes);
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+app.use("/uploads", express.static(getUploadsDir()));
 
 // app.get("/", (req, res) => {
 //   res.send("Nagar ERP API is running");

@@ -8,7 +8,7 @@ import {
 } from "../services/backupService";
 import fs from "fs";
 import path from "path";
-import os from "os";
+import { getDbPath as getTargetDbPath } from "../utils/paths";
 
 /**
  * Trigger a manual backup
@@ -104,20 +104,7 @@ export const restoreBackup = async (req: Request, res: Response) => {
     const tempBackupPath = await downloadBackup(filename);
 
     // Determine the current database path
-    const dbPath =
-      process.env.RAILWAY_ENVIRONMENT ||
-      (process.env.DATABASE_PATH && process.env.DATABASE_PATH.startsWith("/"))
-        ? process.env.DATABASE_PATH || path.resolve(__dirname, "../../nagar.db")
-        : process.env.DATABASE_PATH &&
-            !process.env.DATABASE_PATH.startsWith("/")
-          ? process.env.DATABASE_PATH
-          : path.join(
-              os.homedir(),
-              "AppData",
-              "Roaming",
-              "NagarERP",
-              "nagar.db",
-            );
+    const dbPath = getTargetDbPath();
 
     // Create a backup of the current database before overwriting
     const currentBackupPath = `${dbPath}.before-restore-${Date.now()}.bak`;
