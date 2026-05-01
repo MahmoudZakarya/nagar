@@ -16,6 +16,7 @@ import {
   BriefcaseBusiness
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { toISODateString } from '../utils/dateUtils';
 
 const Employees = () => {
   const { employees, loading, addEmployee, updateEmployee, deleteEmployee } = useEmployees();
@@ -34,7 +35,7 @@ const Employees = () => {
     age: '',
     role: '',
     hourly_rate: '',
-    start_date: new Date().toISOString().split('T')[0]
+    start_date: toISODateString(new Date())
   });
 
   const filteredEmployees = employees.filter(e => 
@@ -75,7 +76,7 @@ const Employees = () => {
         age: emp.age.toString(),
         role: emp.role,
         hourly_rate: emp.hourly_rate.toString(),
-        start_date: emp.start_date.split('T')[0]
+        start_date: toISODateString(emp.start_date)
       });
     } else {
       setSelectedEmployee(null);
@@ -91,7 +92,7 @@ const Employees = () => {
         age: '',
         role: '',
         hourly_rate: '',
-        start_date: new Date().toISOString().split('T')[0]
+        start_date: toISODateString(new Date())
       });
     }
     setIsModalOpen(true);

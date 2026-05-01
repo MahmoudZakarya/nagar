@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useTasks, Task } from '../hooks/useTasks';
 import { useClients } from '../hooks/useClients';
+import { useQuotations, Quotation } from '../hooks/useQuotations';
 import { useAuth } from '../context/AuthContext';
 import { 
   CheckCircle2, 
@@ -21,12 +22,19 @@ import {
   Trash2,
   Hammer
 } from 'lucide-react';
+import { formatDate } from '../utils/dateUtils';
+
 const Tasks = () => {
   const { tasks, loading, error, updateSubtask, addTask, deleteTask } = useTasks();
   const { clients } = useClients();
+  const { getQuotationsByClient, getQuotationById } = useQuotations();
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
+
+  const [clientQuotations, setClientQuotations] = useState<Quotation[]>([]);
+  const [selectedQuotations, setSelectedQuotations] = useState<number[]>([]);
+  const [fetchingQuotations, setFetchingQuotations] = useState(false);
 
   useEffect(() => {
     const searchParam = searchParams.get('search');
@@ -90,6 +98,47 @@ const Tasks = () => {
 
   const displayedTasks = filteredTasks.slice(0, visibleCount);
 
+  const handleClientChange = async (clientId: string) => {
+    setNewTask({ ...newTask, client_id: clientId });
+    setSelectedQuotations([]);
+    setClientQuotations([]);
+    
+    if (clientId) {
+      setFetchingQuotations(true);
+      const quotations = await getQuotationsByClient(parseInt(clientId));
+      // Only keep accepted or sent quotations perhaps? Or all.
+      // User said "choose from this clients quotations", let's show all for flexibility if not specified.
+      // But typically only accepted ones would be turned into tasks.
+      setClientQuotations(quotations);
+      setFetchingQuotations(false);
+    }
+  };
+
+  const handleQuotationToggle = async (quotationId: number) => {
+    let newSelected: number[];
+    if (selectedQuotations.includes(quotationId)) {
+      newSelected = selectedQuotations.filter(id => id !== quotationId);
+    } else {
+      newSelected = [...selectedQuotations, quotationId];
+    }
+    setSelectedQuotations(newSelected);
+
+    // Build description from selected quotations
+    let newDescription = "";
+    for (const qId of newSelected) {
+      const q = await getQuotationById(qId);
+      if (q && q.items) {
+        q.items.forEach((item, index) => {
+          newDescription += `اسم البند : ${item.item_name}\nوصف البند : ${item.description}\n\n`;
+          if (index < (q.items?.length || 0) - 1 || newSelected.indexOf(qId) < newSelected.length - 1) {
+            newDescription += "________________________________________________\n\n";
+          }
+        });
+      }
+    }
+    setNewTask(prev => ({ ...prev, description: newDescription }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await addTask({
@@ -100,6 +149,8 @@ const Tasks = () => {
     }, user?.id);
     setIsModalOpen(false);
     setNewTask({ client_id: '', title: '', description: '', delivery_due_date: '', total_agreed_price: '', deposit_paid: '' });
+    setSelectedQuotations([]);
+    setClientQuotations([]);
   };
 
   const getStatusInfo = (status: string) => {
@@ -188,7 +239,7 @@ const Tasks = () => {
                          </div>
                          <div className="flex items-center gap-2">
                             <Calendar className={`w-4 h-4 ${urgency.level >= 3 ? 'text-red-500 animate-pulse' : 'text-text-muted'}`} />
-                            {task.delivery_due_date ? `موعد التسليم: ${new Date(task.delivery_due_date).toLocaleDateString('ar-EG')}` : 'موعد غير محدد'}
+                            {task.delivery_due_date ? `موعد التسليم: ${formatDate(task.delivery_due_date)}` : 'موعد غير محدد'}
                          </div>
                       </div>
                    </div>
@@ -263,16 +314,51 @@ const Tasks = () => {
                    <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 px-1">العميل</label>
                    <select 
                      required
-                     value={newTask.client_id}
-                     onChange={(e) => setNewTask({...newTask, client_id: e.target.value})}
-                      className="w-full px-6 py-4 bg-bg-surface border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold appearance-none cursor-pointer"
+                      value={newTask.client_id}
+                      onChange={(e) => handleClientChange(e.target.value)}
+                       className="w-full px-6 py-4 bg-bg-surface border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold appearance-none cursor-pointer"
                    >
                      <option value="">اختر عميلاً...</option>
-                     {clients.map(c => (
-                       <option key={c.id} value={c.id}>{c.name} - {c.phone_1}</option>
-                     ))}
-                   </select>
-                </div>
+                      {clients.map(c => (
+                        <option key={c.id} value={c.id}>{c.name} - {c.phone_1}</option>
+                      ))}
+                    </select>
+
+                    {newTask.client_id && (
+                      <div className="mt-4 space-y-3">
+                        <label className="block text-xs font-bold text-text-muted uppercase tracking-widest px-1">اختر من مقايسات العميل (اختياري)</label>
+                        {fetchingQuotations ? (
+                          <div className="text-sm text-text-muted animate-pulse">جاري تحميل المقايسات...</div>
+                        ) : clientQuotations.length === 0 ? (
+                          <div className="text-sm text-text-muted">لا يوجد مقايسات لهذا العميل</div>
+                        ) : (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {clientQuotations.map(q => (
+                              <div 
+                                key={q.id}
+                                onClick={() => handleQuotationToggle(q.id)}
+                                className={`p-4 rounded-xl border-2 transition-all cursor-pointer flex items-center justify-between ${
+                                  selectedQuotations.includes(q.id) 
+                                    ? 'border-brand-secondary bg-brand-secondary/5' 
+                                    : 'border-transparent bg-bg-surface hover:border-gray-200'
+                                }`}
+                              >
+                                <div className="flex flex-col">
+                                  <span className="font-bold text-text-primary">مقايسة #{q.quotation_number}</span>
+                                  <span className="text-xs text-text-muted">{formatDate(q.created_at)}</span>
+                                </div>
+                                {selectedQuotations.includes(q.id) ? (
+                                  <CheckCircle2 className="w-5 h-5 text-brand-secondary" />
+                                ) : (
+                                  <Circle className="w-5 h-5 text-gray-300" />
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                 </div>
 
                 <div>
                    <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 px-1">اسم المشروع / القطعة</label>
@@ -321,13 +407,19 @@ const Tasks = () => {
                    </div>
                    <div>
                       <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 px-1">تاريخ التسليم المتوقع</label>
-                      <input 
-                        type="date" 
-                        required
-                        value={newTask.delivery_due_date}
-                        onChange={(e) => setNewTask({...newTask, delivery_due_date: e.target.value})}
-                        className="w-full px-6 py-4 bg-bg-surface border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
-                      />
+                      <div className="relative w-full">
+                         <input 
+                           type="date" 
+                           required
+                           value={newTask.delivery_due_date}
+                           onChange={(e) => setNewTask({...newTask, delivery_due_date: e.target.value})}
+                           className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                         />
+                         <div className="w-full px-6 py-4 bg-bg-surface border border-border-color/50 rounded-2xl font-bold text-text-primary">
+                           {formatDate(newTask.delivery_due_date)}
+                         </div>
+                      </div>
+
                    </div>
                 </div>
 

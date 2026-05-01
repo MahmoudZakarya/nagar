@@ -6,6 +6,8 @@ import API_URL from '../config/api';
 import logo from '../assets/nagar-logo-removebg.png';
 import whatsapp from '../assets/whatsapp.svg';
 import { Printer, ArrowRight, Edit, Save, Phone } from 'lucide-react';
+import { formatDate } from '../utils/dateUtils';
+
 
 declare global {
   interface Window {
@@ -115,13 +117,18 @@ const QuotationPreview = () => {
              <h1 className="text-4xl font-bold mb-2">عرض سعر</h1>
              <p className="text-xl font-semibold opacity-90 tracking-wider">Quotation</p>
              <div className="mt-4 space-y-1 text-base font-medium text-white/90">
+             
+               <div className="flex gap-2">
+                 <span className="opacity-75">إلى السيد / السيدة:</span>
+                 <span className="font-bold font-mono">{client?.name || '...'}</span>
+               </div>
                <div className="flex gap-2">
                  <span className="opacity-75">رقم العرض:</span>
                  <span className="font-bold font-mono">{quotation.quotation_number}</span>
                </div>
                <div className="flex gap-2">
                  <span className="opacity-75">التاريخ:</span>
-                 <span className="font-bold ">{new Date(quotation.created_at).toLocaleDateString('ar-EG')}</span>
+                 <span className="font-bold ">{formatDate(quotation.created_at)}</span>
                </div>
              </div>
            </div>
@@ -129,7 +136,7 @@ const QuotationPreview = () => {
            <div className="relative z-10 flex flex-col items-end text-left text-white">
              <img src={logo} alt="Nagar Logic" className="h-24 object-contain mb-4  rounded-lg p-2 backdrop-blur-sm" />
              <div className="text-sm space-y-1 opacity-95" dir="ltr">
-                <p className="font-bold text-lg">نجار للأعمال الهندسية</p>
+                <p className="font-bold text-lg">محمد بيومي</p>
                 <div className="flex gap-2">
                 <Phone className="w-4 h-4 text-brand-secondary"/>
                 <p>01117260406</p>
@@ -144,14 +151,6 @@ const QuotationPreview = () => {
            </div>
         </div>
 
-        {/* Client Info */}
-        <div className="px-12 py-8 print:px-8">
-          <div className="bg-bg-primary/50 border-r-4 border-brand-main p-6 rounded-lg  transition-colors duration-300 shadow-sm">
-            <h3 className="text-text-primary dark:text-brand-secondary font-bold text-sm mb-2 opacity-80">إلى السيد / السيدة:</h3>
-            <p className="text-2xl font-bold text-text-primary">{client?.name || '...'}</p>
-            {client?.address && <p className="text-base text-text-secondary mt-1">{client.address}</p>}
-          </div>
-        </div>
 
         {/* Items Table */}
         <div className="px-12 flex-1 print:flex-1 print:px-8 mb-8 overflow-visible flex flex-col gap-0">
@@ -196,7 +195,7 @@ const QuotationPreview = () => {
           </table>
           
           {/* Notes & Totals Section */}
-          <div className="mt-8 flex gap-8 break-inside-avoid ">
+          <div className="mt-6 flex gap-8 break-inside-avoid ">
             
             {/* Notes Section - 60% width */}
             <div className="flex-[1.5] bg-bg-primary/30 p-6 rounded-xl border border-border-theme">
@@ -245,7 +244,7 @@ const QuotationPreview = () => {
         
         {/* Decorative Bottom Bar */}
         <div className="h-4 bg-brand-main w-full mt-auto print:hidden"></div>
-        <div className="h-[140mm] bg-bg-surface w-full mt-8"></div>
+        <div className="h-[200mm] bg-bg-surface w-full mt-8"></div>
       </div>
       
       <style>{`

@@ -21,6 +21,7 @@ import {
   updateTaskFinancials,
   updateTask,
   deleteTask,
+  deleteSubtask,
   getTaskPayments,
   addTaskPayment,
 } from "../controllers/taskController";
@@ -110,6 +111,7 @@ router.get("/tasks/:id/payments", getTaskPayments);
 router.post("/tasks/:id/payments", addTaskPayment);
 router.delete("/tasks/:id", deleteTask);
 router.patch("/subtasks/:id", updateSubtask);
+router.delete("/subtasks/:id", deleteSubtask);
 
 // Safe / Transactions
 router.get("/safe", getSafeHistory);

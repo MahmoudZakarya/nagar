@@ -5,6 +5,126 @@ import API_URL from '../config/api';
 import { useClients } from '../hooks/useClients';
 import { Plus, Trash2, Save, Eye, Upload, ChevronUp, ChevronDown } from 'lucide-react';
 
+interface ItemRowProps {
+  index: number;
+  item: QuotationItem;
+  updateItem: (index: number, field: keyof QuotationItem, value: any) => void;
+  removeItem: (index: number) => void;
+  moveItem: (index: number, direction: 'up' | 'down') => void;
+  handleImageUpload: (index: number, file: File) => void;
+  isLast: boolean;
+}
+
+const QuotationItemRow = React.memo(({ 
+  index, 
+  item, 
+  updateItem, 
+  removeItem, 
+  moveItem, 
+  handleImageUpload, 
+  isLast 
+}: ItemRowProps) => {
+  return (
+    <tr className={index % 2 === 0 ? 'bg-bg-surface transition-colors duration-300' : 'bg-bg-primary transition-colors duration-300'}>
+      <td className="px-4 py-3">{index + 1}</td>
+      <td className="px-4 py-3">
+        <div className="relative w-16 h-16 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center overflow-hidden cursor-pointer group">
+          {item.image_path ? (
+            <img
+              src={`${API_URL}${item.image_path}`}
+              alt="preview"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <Upload className="w-6 h-6 text-gray-400" />
+          )}
+          <input
+            type="file"
+            accept="image/*"
+            className="absolute inset-0 opacity-0 cursor-pointer"
+            onChange={(e) => {
+              if (e.target.files?.[0]) {
+                handleImageUpload(index, e.target.files[0]);
+              }
+            }}
+          />
+        </div>
+      </td>
+      <td className="px-4 py-3">
+        <input
+          type="text"
+          value={item.item_name}
+          onChange={(e) => updateItem(index, 'item_name', e.target.value)}
+          className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-brand-secondary"
+          placeholder="اسم البند"
+        />
+      </td>
+      <td className="px-4 py-3">
+        <textarea
+          value={item.description}
+          onChange={(e) => updateItem(index, 'description', e.target.value)}
+          className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-brand-secondary resize-none"
+          rows={2}
+          placeholder="الوصف"
+        />
+      </td>
+      <td className="px-4 py-3">
+        <input
+          type="number"
+          value={item.meter_price === 0 ? '' : item.meter_price}
+          onChange={(e) => updateItem(index, 'meter_price', e.target.value === '' ? 0 : parseFloat(e.target.value))}
+          disabled={item.unit_price > 0 && (item.meter_price === 0 || item.meter_price === null)}
+          className={`w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-brand-secondary ${item.unit_price > 0 && (item.meter_price === 0 || item.meter_price === null) ? 'bg-gray-100 opacity-50 cursor-not-allowed' : ''}`}
+        />
+      </td>
+      <td className="px-4 py-3">
+        <input
+          type="number"
+          value={item.unit_price === 0 ? '' : item.unit_price}
+          onChange={(e) => updateItem(index, 'unit_price', e.target.value === '' ? 0 : parseFloat(e.target.value))}
+          disabled={item.meter_price > 0 && (item.unit_price === 0 || item.unit_price === null)}
+          className={`w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-brand-secondary ${item.meter_price > 0 && (item.unit_price === 0 || item.unit_price === null) ? 'bg-gray-100 opacity-50 cursor-not-allowed' : ''}`}
+        />
+      </td>
+      <td className="px-4 py-2">
+        <input
+          type="number"
+          value={item.quantity === 0 ? '' : item.quantity}
+          onChange={(e) => updateItem(index, 'quantity', e.target.value === '' ? 0 : parseFloat(e.target.value))}
+          className="w-full px-2 py-1 border border-border-theme bg-bg-primary rounded focus:ring-1 focus:ring-[#FFB22C] text-text-primary"
+        />
+      </td>
+      <td className="px-4 py-3 font-semibold text-brand-secondary">
+        {(item.row_total || 0).toLocaleString()} جنية
+      </td>
+      <td className="px-4 py-3">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => moveItem(index, 'up')}
+            disabled={index === 0}
+            className="p-1 text-gray-500 hover:text-[#854836] disabled:opacity-30 cursor-pointer"
+          >
+            <ChevronUp className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => moveItem(index, 'down')}
+            disabled={isLast}
+            className="p-1 text-gray-500 hover:text-[#854836] disabled:opacity-30 cursor-pointer"
+          >
+            <ChevronDown className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => removeItem(index)}
+            className="p-1 text-red-500 hover:bg-red-50 rounded"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      </td>
+    </tr>
+  );
+});
+
 const QuotationEditor = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -22,7 +142,7 @@ const QuotationEditor = () => {
       loadQuotation(parseInt(id));
     } else {
       // Initialize with one empty row
-      addItem();
+      if (items.length === 0) addItem();
     }
   }, [id]);
 
@@ -38,8 +158,8 @@ const QuotationEditor = () => {
   };
 
   const addItem = () => {
-    setItems([
-      ...items,
+    setItems((prev) => [
+      ...prev,
       {
         item_name: '',
         description: '',
@@ -48,43 +168,46 @@ const QuotationEditor = () => {
         unit_price: 0,
         quantity: 1,
         row_total: 0,
-        sort_order: items.length,
+        sort_order: prev.length,
       },
     ]);
   };
 
-  const removeItem = (index: number) => {
-    const newItems = items.filter((_, i) => i !== index);
-    setItems(newItems);
-  };
+  const removeItem = React.useCallback((index: number) => {
+    setItems((prev) => prev.filter((_, i) => i !== index));
+  }, []);
 
-  const moveItem = (index: number, direction: 'up' | 'down') => {
-    if (
-      (direction === 'up' && index === 0) ||
-      (direction === 'down' && index === items.length - 1)
-    ) {
-      return;
-    }
+  const moveItem = React.useCallback((index: number, direction: 'up' | 'down') => {
+    setItems((prev) => {
+      if (
+        (direction === 'up' && index === 0) ||
+        (direction === 'down' && index === prev.length - 1)
+      ) {
+        return prev;
+      }
+      const newItems = [...prev];
+      const targetIndex = direction === 'up' ? index - 1 : index + 1;
+      [newItems[index], newItems[targetIndex]] = [newItems[targetIndex], newItems[index]];
+      return newItems;
+    });
+  }, []);
 
-    const newItems = [...items];
-    const targetIndex = direction === 'up' ? index - 1 : index + 1;
-    [newItems[index], newItems[targetIndex]] = [newItems[targetIndex], newItems[index]];
-    setItems(newItems);
-  };
+  const updateItem = React.useCallback((index: number, field: keyof QuotationItem, value: any) => {
+    setItems((prev) => {
+      const newItems = [...prev];
+      newItems[index] = { ...newItems[index], [field]: value };
+      
+      // Auto-calculate row total
+      if (field === 'unit_price' || field === 'meter_price' || field === 'quantity') {
+        const price = newItems[index].meter_price > 0 ? newItems[index].meter_price : newItems[index].unit_price;
+        newItems[index].row_total = (price || 0) * (newItems[index].quantity || 0);
+      }
+      
+      return newItems;
+    });
+  }, []);
 
-  const updateItem = (index: number, field: keyof QuotationItem, value: any) => {
-    const newItems = [...items];
-    newItems[index] = { ...newItems[index], [field]: value };
-    
-    // Auto-calculate row total
-    if (field === 'unit_price' || field === 'quantity') {
-      newItems[index].row_total = newItems[index].unit_price * newItems[index].quantity;
-    }
-    
-    setItems(newItems);
-  };
-
-  const handleImageUpload = async (index: number, file: File) => {
+  const onHandleImageUpload = React.useCallback(async (index: number, file: File) => {
     try {
       const filePath = await uploadImage(file);
       updateItem(index, 'image_path', filePath);
@@ -92,7 +215,7 @@ const QuotationEditor = () => {
       console.error('Image upload failed:', error);
       alert('فشل تحميل الصورة');
     }
-  };
+  }, [uploadImage, updateItem]);
 
   const calculateTotal = () => {
     return items.reduce((sum, item) => sum + (item.row_total || 0), 0);
@@ -217,101 +340,16 @@ const QuotationEditor = () => {
           </thead>
           <tbody className="divide-y divide-border-theme">
             {items.map((item, index) => (
-              <tr key={index} className={index % 2 === 0 ? 'bg-bg-surface transition-colors duration-300' : 'bg-bg-primary transition-colors duration-300'}>
-                <td className="px-4 py-3">{index + 1}</td>
-                <td className="px-4 py-3">
-                  <div className="relative w-16 h-16 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center overflow-hidden cursor-pointer group">
-                    {item.image_path ? (
-                      <img
-                        src={`${API_URL}${item.image_path}`}
-                        alt="preview"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <Upload className="w-6 h-6 text-gray-400" />
-                    )}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="absolute inset-0 opacity-0 cursor-pointer"
-                      onChange={(e) => {
-                        if (e.target.files?.[0]) {
-                          handleImageUpload(index, e.target.files[0]);
-                        }
-                      }}
-                    />
-                  </div>
-                </td>
-                <td className="px-4 py-3">
-                  <input
-                    type="text"
-                    value={item.item_name}
-                    onChange={(e) => updateItem(index, 'item_name', e.target.value)}
-                    className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-brand-secondary"
-                    placeholder="اسم البند"
-                  />
-                </td>
-                <td className="px-4 py-3">
-                  <textarea
-                    value={item.description}
-                    onChange={(e) => updateItem(index, 'description', e.target.value)}
-                    className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-brand-secondary resize-none"
-                    rows={2}
-                    placeholder="الوصف"
-                  />
-                </td>
-                <td className="px-4 py-3">
-                  <input
-                    type="number"
-                    value={item.meter_price}
-                    onChange={(e) => updateItem(index, 'meter_price', parseFloat(e.target.value))}
-                    className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-brand-secondary"
-                  />
-                </td>
-                <td className="px-4 py-2">
-                  <input
-                    type="number"
-                    value={item.unit_price}
-                    onChange={(e) => updateItem(index, 'unit_price', parseFloat(e.target.value))}
-                    className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-brand-secondary"
-                  />
-                </td>
-                <td className="px-4 py-2">
-                  <input
-                    type="number"
-                    value={item.quantity}
-                    onChange={(e) => updateItem(index, 'quantity', parseFloat(e.target.value))}
-                    className="w-full px-2 py-1 border border-border-theme bg-bg-primary rounded focus:ring-1 focus:ring-[#FFB22C] text-text-primary"
-                  />
-                </td>
-                <td className="px-4 py-3 font-semibold text-brand-secondary">
-                  {item.row_total.toLocaleString()} جنية
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => moveItem(index, 'up')}
-                      disabled={index === 0}
-                      className="p-1 text-gray-500 hover:text-[#854836] disabled:opacity-30 cursor-pointer"
-                    >
-                      <ChevronUp className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => moveItem(index, 'down')}
-                      disabled={index === items.length - 1}
-                      className="p-1 text-gray-500 hover:text-[#854836] disabled:opacity-30 cursor-pointer"
-                    >
-                      <ChevronDown className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => removeItem(index)}
-                      className="p-1 text-red-500 hover:bg-red-50 rounded"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
+              <QuotationItemRow
+                key={index}
+                index={index}
+                item={item}
+                updateItem={updateItem}
+                removeItem={removeItem}
+                moveItem={moveItem}
+                handleImageUpload={onHandleImageUpload}
+                isLast={index === items.length - 1}
+              />
             ))}
           </tbody>
           <tfoot>

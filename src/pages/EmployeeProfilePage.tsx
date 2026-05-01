@@ -31,6 +31,8 @@ import { useQuotations, Quotation } from '../hooks/useQuotations';
 import { useAuth } from '../context/AuthContext';
 import { Payroll } from '../hooks/useEmployees';
 import toast from 'react-hot-toast';
+import { formatDate, toISODateString } from '../utils/dateUtils';
+
 
 const EmployeeProfilePage = () => {
   const { id } = useParams<{ id: string }>();
@@ -46,14 +48,14 @@ const EmployeeProfilePage = () => {
   const [showPayModal, setShowPayModal] = useState(false);
   const [payAmount, setPayAmount] = useState('');
   const [payPeriod, setPayPeriod] = useState({
-    start: new Date(new Date().setDate(1)).toISOString().split('T')[0],
-    end: new Date().toISOString().split('T')[0]
+    start: toISODateString(new Date(new Date().setDate(1))),
+    end: toISODateString(new Date())
   });
   
   // Manual Attendance State
   const [showManualModal, setShowManualModal] = useState(false);
   const [manualData, setManualData] = useState({
-    date: new Date().toISOString().split('T')[0],
+    date: toISODateString(new Date()),
     check_in_time: '08:00',
     check_out_time: '17:00',
     break_minutes: 60
@@ -66,15 +68,15 @@ const EmployeeProfilePage = () => {
     is_paid: boolean;
   }>({
     type: 'Sick',
-    start_date: new Date().toISOString().split('T')[0],
-    end_date: new Date().toISOString().split('T')[0],
+    start_date: toISODateString(new Date()),
+    end_date: toISODateString(new Date()),
     is_paid: false
   });
 
   const [deductionData, setDeductionData] = useState({
     amount: '',
     reason: '',
-    date: new Date().toISOString().split('T')[0]
+    date: toISODateString(new Date())
   });
 
   const [editEmployeeData, setEditEmployeeData] = useState<any>(null); // Keeping any for now because of potential extra fields or form handling nuances, but will ensure safety at call site
@@ -102,7 +104,7 @@ const EmployeeProfilePage = () => {
         fetchPayroll(parseInt(id));
         setEditEmployeeData({
            ...emp,
-           start_date: emp.start_date.split('T')[0]
+           start_date: toISODateString(emp.start_date)
         });
       }
     }
@@ -142,7 +144,7 @@ const EmployeeProfilePage = () => {
     }
   };
 
-  const activeAttendance = history.find(a => a.date === new Date().toISOString().split('T')[0] && !a.check_out);
+  const activeAttendance = history.find(a => toISODateString(a.date) === toISODateString(new Date()) && !a.check_out);
 
   const handleCheckIn = async () => {
     if (!id) return;
@@ -416,7 +418,7 @@ const EmployeeProfilePage = () => {
                     <tbody className="divide-y divide-border-theme">
                        {history.map((a) => (
                           <tr key={a.id} className="hover:bg-bg-primary/30 transition">
-                             <td className="p-6 text-center font-bold text-text-secondary">{new Date(a.date).toLocaleDateString('ar-EG')}</td>
+                             <td className="p-6 text-center font-bold text-text-secondary">{formatDate(a.date)}</td>
                              <td className="p-6 text-center font-medium text-text-muted">{a.check_in ? new Date(a.check_in).toLocaleTimeString('ar-EG') : '---'}</td>
                              <td className="p-6 text-center font-medium text-text-muted">{a.check_out ? new Date(a.check_out).toLocaleTimeString('ar-EG') : '---'}</td>
                              <td className="p-6 text-center font-bold text-text-primary">{a.total_hours?.toFixed(1) || '0'} س</td>
@@ -461,9 +463,9 @@ const EmployeeProfilePage = () => {
                     <tbody className="divide-y divide-border-theme">
                        {payroll.map((p) => (
                           <tr key={p.id} className="hover:bg-bg-primary/30 transition">
-                             <td className="p-6 text-center font-bold text-text-secondary">{new Date(p.payment_date).toLocaleDateString('ar-EG')}</td>
+                             <td className="p-6 text-center font-bold text-text-secondary">{formatDate(p.payment_date)}</td>
                              <td className="p-6 text-center font-medium text-text-muted text-xs">
-                                {new Date(p.period_start).toLocaleDateString('ar-EG')} - {new Date(p.period_end).toLocaleDateString('ar-EG')}
+                                {formatDate(p.period_start)} - {formatDate(p.period_end)}
                              </td>
                              <td className="p-6 text-left font-bold text-brand-main italic">{p.amount_paid.toLocaleString()} جنية</td>
                           </tr>
@@ -493,12 +495,17 @@ const EmployeeProfilePage = () => {
              <form onSubmit={handleManualSubmit} className="p-8 space-y-6 overflow-y-auto max-h-[75vh]">
                 <div>
                   <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 px-1">تاريخ اليوم</label>
-                  <input 
-                    type="date" required
-                    value={manualData.date}
-                    onChange={(e) => setManualData({...manualData, date: e.target.value})}
-                    className="w-full px-6 py-4 bg-bg-primary border border-border-theme/50 rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-text-primary"
-                  />
+                  <div className="relative">
+                    <input 
+                      type="date" required
+                      value={manualData.date}
+                      onChange={(e) => setManualData({...manualData, date: e.target.value})}
+                      className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                    />
+                    <div className="w-full px-6 py-4 bg-bg-primary border border-border-theme/50 rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-text-primary">
+                      {formatDate(manualData.date)}
+                    </div>
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -580,12 +587,17 @@ const EmployeeProfilePage = () => {
                 </div>
                 <div>
                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">التاريخ</label>
-                   <input 
-                     type="date" required
-                     value={deductionData.date}
-                     onChange={(e) => setDeductionData({...deductionData, date: e.target.value})}
-                     className="w-full px-6 py-4 bg-bg-primary  border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
-                   />
+                   <div className="relative">
+                     <input 
+                       type="date" required
+                       value={deductionData.date}
+                       onChange={(e) => setDeductionData({...deductionData, date: e.target.value})}
+                       className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                     />
+                     <div className="w-full px-6 py-4 bg-bg-primary  border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold">
+                       {formatDate(deductionData.date)}
+                     </div>
+                   </div>
                 </div>
 
                 <button type="submit" className="w-full bg-red-600 text-white font-bold py-5 rounded-2xl dark:shadow-none shadow-xl shadow-red-200 hover:bg-red-700 transition duration-300">
@@ -632,21 +644,31 @@ const EmployeeProfilePage = () => {
                 <div className="grid grid-cols-2 gap-4">
                    <div>
                       <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">تاريخ البدء</label>
-                      <input 
-                        type="date" required
-                        value={leaveData.start_date}
-                        onChange={(e) => setLeaveData({...leaveData, start_date: e.target.value})}
-                        className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-orange-500/10 outline-none font-bold"
-                      />
+                      <div className="relative">
+                        <input 
+                          type="date" required
+                          value={leaveData.start_date}
+                          onChange={(e) => setLeaveData({...leaveData, start_date: e.target.value})}
+                          className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                        />
+                        <div className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-orange-500/10 outline-none font-bold">
+                          {formatDate(leaveData.start_date)}
+                        </div>
+                      </div>
                    </div>
                    <div>
                       <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">تاريخ الانتهاء</label>
-                      <input 
-                        type="date" required
-                        value={leaveData.end_date}
-                        onChange={(e) => setLeaveData({...leaveData, end_date: e.target.value})}
-                        className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-orange-500/10 outline-none font-bold"
-                      />
+                      <div className="relative">
+                        <input 
+                          type="date" required
+                          value={leaveData.end_date}
+                          onChange={(e) => setLeaveData({...leaveData, end_date: e.target.value})}
+                          className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                        />
+                        <div className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-orange-500/10 outline-none font-bold">
+                          {formatDate(leaveData.end_date)}
+                        </div>
+                      </div>
                    </div>
                 </div>
                 <div className="flex items-center gap-3 px-1">
@@ -854,21 +876,31 @@ const EmployeeProfilePage = () => {
                 <div className="grid grid-cols-2 gap-4">
                    <div>
                       <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">من تاريخ</label>
-                      <input 
-                        type="date" required
-                        value={payPeriod.start}
-                        onChange={(e) => setPayPeriod({...payPeriod, start: e.target.value})}
-                        className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
-                      />
+                      <div className="relative">
+                        <input 
+                          type="date" required
+                          value={payPeriod.start}
+                          onChange={(e) => setPayPeriod({...payPeriod, start: e.target.value})}
+                          className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                        />
+                        <div className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold">
+                          {formatDate(payPeriod.start)}
+                        </div>
+                      </div>
                    </div>
                    <div>
                       <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">إلى تاريخ</label>
-                      <input 
-                        type="date" required
-                        value={payPeriod.end}
-                        onChange={(e) => setPayPeriod({...payPeriod, end: e.target.value})}
-                        className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold"
-                      />
+                      <div className="relative">
+                        <input 
+                          type="date" required
+                          value={payPeriod.end}
+                          onChange={(e) => setPayPeriod({...payPeriod, end: e.target.value})}
+                          className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                        />
+                        <div className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold">
+                          {formatDate(payPeriod.end)}
+                        </div>
+                      </div>
                    </div>
                 </div>
 

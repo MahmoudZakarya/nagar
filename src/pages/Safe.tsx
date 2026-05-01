@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useSafe } from '../hooks/useSafe';
+import { formatDate, toISODateString } from '../utils/dateUtils';
+
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -27,8 +29,9 @@ const Safe = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   // Date Filter State
-  const defaultEndDate = new Date().toISOString().split('T')[0];
-  const defaultStartDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  const today = new Date();
+  const defaultEndDate = toISODateString(today);
+  const defaultStartDate = toISODateString(new Date(new Date().setDate(today.getDate() - 7)));
   
   const [dateFilter, setDateFilter] = useState({
     start: defaultStartDate,
@@ -72,7 +75,7 @@ const Safe = () => {
     const matchesSearch = h.category.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           h.description?.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const txDate = h.date.split('T')[0];
+    const txDate = toISODateString(h.date);
     const matchesDate = txDate >= appliedDates.start && txDate <= appliedDates.end;
     
     return matchesSearch && matchesDate;
@@ -166,19 +169,29 @@ const Safe = () => {
                  </div>
                   <div className="flex items-center gap-2 bg-bg-surface px-4 py-2 rounded-2xl shadow-sm border border-border-theme">
                       <label className="text-[10px] font-bold text-text-muted uppercase whitespace-nowrap">من</label>
-                      <input 
-                        type="date" 
-                        value={dateFilter.start}
-                        onChange={(e) => setDateFilter({...dateFilter, start: e.target.value})}
-                        className="bg-transparent border-none outline-none font-bold text-sm text-text-secondary"
-                      />
+                      <div className="relative">
+                        <input 
+                          type="date" 
+                          value={dateFilter.start}
+                          onChange={(e) => setDateFilter({...dateFilter, start: e.target.value})}
+                          className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                        />
+                        <div className="bg-transparent border-none outline-none font-bold text-sm text-text-secondary">
+                          {formatDate(dateFilter.start)}
+                        </div>
+                      </div>
                       <label className="text-[10px] font-bold text-text-muted uppercase whitespace-nowrap">إلى</label>
-                      <input 
-                        type="date" 
-                        value={dateFilter.end}
-                        onChange={(e) => setDateFilter({...dateFilter, end: e.target.value})}
-                        className="bg-transparent border-none outline-none font-bold text-sm text-text-secondary"
-                      />
+                      <div className="relative">
+                        <input 
+                          type="date" 
+                          value={dateFilter.end}
+                          onChange={(e) => setDateFilter({...dateFilter, end: e.target.value})}
+                          className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                        />
+                        <div className="bg-transparent border-none outline-none font-bold text-sm text-text-secondary">
+                          {formatDate(dateFilter.end)}
+                        </div>
+                      </div>
                       <button 
                         onClick={() => setAppliedDates({...dateFilter})}
                         className="bg-brand-main text-white px-4 py-1 rounded-xl text-xs font-bold hover:bg-brand-main/90 transition cursor-pointer"
@@ -252,7 +265,7 @@ const Safe = () => {
                                  {tx.transaction_type === 'Income' ? '+' : '-'}{tx.amount.toLocaleString()}<EGP />
                               </p>
                               <div className="flex flex-col items-end gap-1 mt-1">
-                                 <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">{new Date(tx.date).toLocaleDateString('ar-EG')}</p>
+                                 <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">{formatDate(tx.date)}</p>
                                  {tx.performed_by_name && (
                                     <div className="flex items-center gap-1.5 px-2 py-0.5 bg-gray-50 rounded-lg border border-gray-100">
                                        <User className="w-2.5 h-2.5 text-gray-400" />

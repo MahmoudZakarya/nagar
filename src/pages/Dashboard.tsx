@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import logo from '../assets/nagar-logo-removebg.png';
+import { formatDate } from '../utils/dateUtils';
+
 
 
 const EGP = () => <span className="text-[0.65em] font-normal mr-1">جنية</span>;
@@ -54,7 +56,7 @@ const Dashboard = () => {
         </div>
         <div className="text-right md:text-left bg-bg-surface px-6 py-3 rounded-2xl shadow-sm border border-border-theme w-full md:w-auto">
            <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1">التاريخ اليوم</p>
-           <p className="font-bold text-text-primary">{today.toLocaleDateString('ar-EG', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+           <p className="font-bold text-text-primary">{formatDate(today)}</p>
         </div>
       </div>
       
@@ -153,7 +155,7 @@ const Dashboard = () => {
                                    return mapping[tx.category] || tx.category;
                                  })()}
                               </p>
-                              <p className="text-xs text-gray-400 font-medium">{new Date(tx.date).toLocaleDateString('ar-EG')}</p>
+                              <p className="text-xs text-gray-400 font-medium">{formatDate(tx.date)}</p>
                            </div>
                         </div>
                         <p className={`text-xl font-bold italic ${tx.transaction_type === 'Income' ? 'text-green-600' : 'text-red-500'}`}>
@@ -195,7 +197,7 @@ const Dashboard = () => {
                      return (
                       <Link to={`/tasks/${task.id}`} key={task.id} className="block group">
                           <div className={`relative pr-6 before:absolute before:right-0 before:top-1 before:bottom-1 before:w-1.5 ${colorClass} before:rounded-full group-hover:before:w-2 transition-all`}>
-                             <p className="text-xs font-bold text-text-muted mb-1">{dueDate.toLocaleDateString('ar-EG')}</p>
+                             <p className="text-xs font-bold text-text-muted mb-1">{formatDate(dueDate)}</p>
                              <p className="font-bold text-text-primary text-lg leading-tight group-hover:text-brand-main dark:group-hover:text-brand-secondary transition">{task.title}</p>
                              <p className="text-xs text-text-secondary mt-1 font-bold">{task.client_name}</p>
                           </div>

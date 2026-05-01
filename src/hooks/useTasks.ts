@@ -60,19 +60,39 @@ export const useTasks = () => {
     }
   };
 
-  const updateSubtask = async (subtaskId: number, isCompleted: boolean) => {
+  const updateSubtask = async (
+    subtaskId: number,
+    data: { is_completed?: boolean; description?: string },
+  ) => {
     try {
+      const body: any = {};
+      if (data.is_completed !== undefined)
+        body.is_completed = data.is_completed ? 1 : 0;
+      if (data.description !== undefined) body.description = data.description;
+
       const response = await fetch(`${API_URL}/api/subtasks/${subtaskId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ is_completed: isCompleted ? 1 : 0 }),
+        body: JSON.stringify(body),
       });
       if (!response.ok) {
         throw new Error("Failed to update subtask");
       }
       // Refetch tasks to get updated state
+      await fetchTasks();
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  const deleteSubtask = async (subtaskId: number) => {
+    try {
+      const response = await fetch(`${API_URL}/api/subtasks/${subtaskId}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error("Failed to delete subtask");
       await fetchTasks();
     } catch (err: any) {
       setError(err.message);
@@ -119,6 +139,7 @@ export const useTasks = () => {
     error,
     refetch: fetchTasks,
     updateSubtask,
+    deleteSubtask,
     addTask,
     deleteTask,
   };

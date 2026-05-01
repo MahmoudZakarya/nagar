@@ -19,6 +19,8 @@ import {
   ShoppingCart
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { formatDate, toISODateString } from '../utils/dateUtils';
+
 
 const EGP = () => <span className="text-[0.65em] font-normal mr-1">جنية</span>;
 
@@ -31,9 +33,11 @@ const Purchases = () => {
   const [paymentAmount, setPaymentAmount] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState<'All' | 'Remaining'>('All');
+  
   // Date Filter State
-  const defaultEndDate = new Date().toISOString().split('T')[0];
-  const defaultStartDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  const today = new Date();
+  const defaultEndDate = toISODateString(today);
+  const defaultStartDate = toISODateString(new Date(new Date().setDate(today.getDate() - 7)));
   
   const [dateFilter, setDateFilter] = useState({
     start: defaultStartDate,
@@ -66,7 +70,7 @@ const Purchases = () => {
                          p.supplier_name?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = activeFilter === 'All' || p.amount_remaining > 0;
     
-    const pDate = p.date.split('T')[0];
+    const pDate = toISODateString(p.date);
     const matchesDate = pDate >= appliedDates.start && pDate <= appliedDates.end;
 
     return matchesSearch && matchesFilter && matchesDate;
@@ -189,22 +193,32 @@ const Purchases = () => {
                 <div className="flex items-center gap-2 bg-bg-surface px-4 py-2 rounded-2xl shadow-sm border border-border-theme">
                   <div className='flex flex-col gap-1'>
                      <label className="text-[10px] font-bold text-text-muted uppercase whitespace-nowrap">من</label>
-                  <input 
-                    type="date" 
-                    value={dateFilter.start}
-                    onChange={(e) => setDateFilter({...dateFilter, start: e.target.value})}
-                    className="bg-transparent border-none outline-none font-bold text-sm text-text-primary"
-                  />
+                  <div className="relative">
+                    <input 
+                      type="date" 
+                      value={dateFilter.start}
+                      onChange={(e) => setDateFilter({...dateFilter, start: e.target.value})}
+                      className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                    />
+                    <div className="bg-transparent border-none outline-none font-bold text-sm text-text-primary">
+                      {formatDate(dateFilter.start)}
+                    </div>
+                  </div>
 
                   </div>
                   <div className='flex flex-col gap-1'>
                   <label className="text-[10px] font-bold text-text-muted uppercase whitespace-nowrap">إلى</label>
-                  <input 
-                    type="date" 
-                    value={dateFilter.end}
-                    onChange={(e) => setDateFilter({...dateFilter, end: e.target.value})}
-                    className="bg-transparent border-none outline-none font-bold text-sm text-text-primary"
-                  />
+                  <div className="relative">
+                    <input 
+                      type="date" 
+                      value={dateFilter.end}
+                      onChange={(e) => setDateFilter({...dateFilter, end: e.target.value})}
+                      className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                    />
+                    <div className="bg-transparent border-none outline-none font-bold text-sm text-text-primary">
+                      {formatDate(dateFilter.end)}
+                    </div>
+                  </div>
                   </div>
                   <button 
                     onClick={() => setAppliedDates({...dateFilter})}
@@ -254,7 +268,7 @@ const Purchases = () => {
                 filteredPurchases.map((p) => (
                   <tr key={p.id} className="hover:bg-bg-primary/50 transition duration-300 group transition-colors">
                     <td className="p-4 md:p-8">
-                       <p className="text-[12px] font-bold text-text-muted uppercase tracking-widest mb-1">{new Date(p.date).toLocaleDateString('ar-EG')}</p>
+                       <p className="text-[12px] font-bold text-text-muted uppercase tracking-widest mb-1">{formatDate(p.date)}</p>
                        <p className="font-bold text-text-primary flex items-center gap-3">
                           <Package className="w-5 h-5 text-text-muted group-hover:text-[#5E9E54] transition" />
                           {p.item_name}

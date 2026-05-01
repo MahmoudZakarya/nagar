@@ -22,6 +22,8 @@ import {
   X,
   FileText
 } from 'lucide-react';
+import { formatDate, toISODateString } from '../utils/dateUtils';
+
 
 const EGP = () => <span className="text-[0.65em] font-normal mr-1">جنية</span>;
 
@@ -29,8 +31,20 @@ const TaskDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { task, payments, loading, error, addSubtask, updateStatus, updateFinancials, updateTask, refetch, addPayment } = useTask(id);
-  const { updateSubtask: toggleSubtask } = useTasks();
+  const { 
+    task, 
+    payments, 
+    loading, 
+    error, 
+    addSubtask, 
+    updateStatus, 
+    updateFinancials, 
+    updateTask, 
+    updateSubtask,
+    deleteSubtask,
+    refetch, 
+    addPayment 
+  } = useTask(id);
   
   const [newSubtaskDesc, setNewSubtaskDesc] = useState('');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -38,7 +52,7 @@ const TaskDetails = () => {
   const [paymentData, setPaymentData] = useState({
     amount: '',
     note: '',
-    date: new Date().toISOString().split('T')[0]
+    date: toISODateString(new Date())
   });
   
   const [editForm, setEditForm] = useState({
@@ -49,6 +63,8 @@ const TaskDetails = () => {
     extra_costs: 0,
     middle_payment_agreed: 0
   });
+
+  const [editingSubtask, setEditingSubtask] = useState<{ id: number; description: string } | null>(null);
 
   if (loading) return (
     <div className="h-screen flex items-center justify-center">
@@ -68,7 +84,23 @@ const TaskDetails = () => {
   };
 
   const handleToggle = async (subtaskId: number, current: boolean) => {
-    await toggleSubtask(subtaskId, !current);
+    await updateSubtask(subtaskId, { is_completed: !current });
+    refetch();
+  };
+
+  const handleDeleteSubtask = async (subtaskId: number) => {
+    if (window.confirm('هل أنت متأكد من حذف هذه الخطوة؟')) {
+      await deleteSubtask(subtaskId);
+      refetch();
+    }
+  };
+
+
+  const handleEditSubtask = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingSubtask) return;
+    await updateSubtask(editingSubtask.id, { description: editingSubtask.description });
+    setEditingSubtask(null);
     refetch();
   };
 
@@ -78,7 +110,7 @@ const TaskDetails = () => {
     if (isNaN(amount) || amount <= 0) return;
     try {
       await addPayment(amount, paymentData.note, paymentData.date, user?.id);
-      setPaymentData({ amount: '', note: '', date: new Date().toISOString().split('T')[0] });
+      setPaymentData({ amount: '', note: '', date: toISODateString(new Date()) });
       setShowPaymentModal(false);
     } catch (error) {
       console.error('Payment error:', error);
@@ -106,7 +138,7 @@ const TaskDetails = () => {
     setEditForm({
       title: task.title,
       description: task.description || '',
-      delivery_due_date: task.delivery_due_date ? new Date(task.delivery_due_date).toISOString().split('T')[0] : '',
+      delivery_due_date: task.delivery_due_date ? toISODateString(task.delivery_due_date) : '',
       total_agreed_price: task.total_agreed_price,
       extra_costs: task.extra_costs || 0,
       middle_payment_agreed: task.middle_payment_agreed || 0
@@ -170,7 +202,7 @@ const TaskDetails = () => {
                   <div className="w-1.5 h-1.5 bg-gray-200 rounded-full"></div>
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-brand-secondary" />
-                    <span>أنشئ في {task?.registered_at ? new Date(task.registered_at).toLocaleDateString('ar-EG') : '-'}</span>
+                    <span>أنشئ في {formatDate(task?.registered_at)}</span>
                   </div>
                 </div>
               </div>
@@ -195,7 +227,7 @@ const TaskDetails = () => {
                   <div className="p-6 bg-bg-primary rounded-3xl group hover:bg-brand-main/5 transition duration-300">
                      <p className="text-[10px] font-bold text-text-secondary uppercase tracking-widest mb-1">موعد التسليم</p>
                      <p className="font-bold text-text-primary text-lg">
-                        {task?.delivery_due_date ? new Date(task.delivery_due_date).toLocaleDateString('ar-EG') : 'غير محدد'}
+                        {formatDate(task?.delivery_due_date)}
                      </p>
                   </div>
                   <div className="p-6 bg-bg-primary rounded-3xl border-b-4 border-green-500">
@@ -232,20 +264,55 @@ const TaskDetails = () => {
                 </form>
 
                 <div className="space-y-3">
-                   {task.subtasks?.map(st => (
+                    {task.subtasks?.map(st => (
                       <div 
                         key={st.id} 
-                        className="group flex items-center justify-between p-5 bg-bg-surface border border-border-theme rounded-3xl hover:border-brand-main/20 hover:shadow-md transition cursor-pointer"
-                        onClick={() => handleToggle(st.id, st.is_completed)}
+                        className="group flex items-center justify-between p-5 bg-bg-surface border border-border-theme rounded-3xl hover:border-brand-main/20 hover:shadow-md transition"
                       >
-                         <div className="flex items-center gap-4">
+                         <div className="flex items-center gap-4 flex-1 cursor-pointer" onClick={() => handleToggle(st.id, st.is_completed)}>
                             <div className={`p-1 rounded-full transition ${st.is_completed ? 'text-green-500' : 'text-text-muted hover:text-text-secondary'}`}>
                                {st.is_completed ? <CheckCircle2 className="w-8 h-8" /> : <Circle className="w-8 h-8" />}
                             </div>
-                            <span className={`text-lg font-bold transition ${st.is_completed ? 'text-text-muted line-through' : 'text-text-primary'}`}>
-                               {st.description}
-                            </span>
+                            {editingSubtask?.id === st.id ? (
+                               <form onSubmit={handleEditSubtask} className="flex-1 flex gap-2" onClick={(e) => e.stopPropagation()}>
+                                  <input 
+                                    autoFocus
+                                    type="text"
+                                    value={editingSubtask.description}
+                                    onChange={(e) => setEditingSubtask({...editingSubtask, description: e.target.value})}
+                                    className="flex-1 px-4 py-2 bg-bg-primary border-none rounded-xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold text-text-primary"
+                                  />
+                                  <button type="submit" className="p-2 bg-green-50 text-green-600 rounded-xl hover:bg-green-600 hover:text-white transition">
+                                     <Save className="w-5 h-5" />
+                                  </button>
+                                  <button type="button" onClick={() => setEditingSubtask(null)} className="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition">
+                                     <X className="w-5 h-5" />
+                                  </button>
+                               </form>
+                            ) : (
+                               <span className={`text-lg font-bold transition ${st.is_completed ? 'text-text-muted line-through' : 'text-text-primary'}`}>
+                                  {st.description}
+                               </span>
+                            )}
                          </div>
+                         {!editingSubtask && (
+                           <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition duration-300">
+                             <button 
+                               onClick={() => setEditingSubtask({ id: st.id, description: st.description })}
+                               className="p-2 text-text-muted hover:text-brand-main hover:bg-brand-main/5 rounded-xl transition cursor-pointer"
+                               title="تعديل الخطوة"
+                             >
+                               <Edit className="w-5 h-5" />
+                             </button>
+                             <button 
+                               onClick={() => handleDeleteSubtask(st.id)}
+                               className="p-2 text-text-muted hover:text-red-500 hover:bg-red-50 rounded-xl transition cursor-pointer"
+                               title="حذف الخطوة"
+                             >
+                               <Trash2 className="w-5 h-5" />
+                             </button>
+                           </div>
+                         )}
                       </div>
                    ))}
                    {(!task.subtasks || task.subtasks.length === 0) && (
@@ -326,7 +393,7 @@ const TaskDetails = () => {
                         <div className="flex justify-between items-start mb-1">
                           <span className="text-m font-bold text-text-primary">{p.amount.toLocaleString()} <EGP /></span>
                           <div className="flex flex-col items-end gap-1">
-                            <span className="text-[14px] font-bold text-text-secondary">{new Date(p.payment_date).toLocaleDateString('ar-EG')}</span>
+                            <span className="text-[14px] font-bold text-text-secondary">{formatDate(p.payment_date)}</span>
                             {p.performed_by_name && (
                               <div className="flex items-center gap-1 px-1.5 py-0.5 bg-bg-primary rounded-lg border border-border-theme">
                                 <User className="w-2.5 h-2.5 text-text-muted" />
@@ -389,13 +456,18 @@ const TaskDetails = () => {
                 </div>
                 <div>
                    <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 px-1">تاريخ الدفعة</label>
-                   <input 
-                     type="date" 
-                     required
-                     value={paymentData.date}
-                     onChange={(e) => setPaymentData({...paymentData, date: e.target.value})}
-                     className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold text-text-primary"
-                   />
+                   <div className="relative w-full">
+                      <input 
+                        type="date" 
+                        required
+                        value={paymentData.date}
+                        onChange={(e) => setPaymentData({...paymentData, date: e.target.value})}
+                        className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                      />
+                      <div className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-[#854836]/10 outline-none font-bold text-text-primary">
+                        {formatDate(paymentData.date)}
+                      </div>
+                   </div>
                 </div>
                 <button type="submit" className="w-full bg-green-600 text-white font-bold py-5 rounded-2xl hover:bg-green-700 transition shadow-lg shadow-green-600/20 cursor-pointer">تأكيد الدفع</button>
              </form>
@@ -453,12 +525,17 @@ const TaskDetails = () => {
                    </div>
                    <div>
                       <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 px-1">موعد التسليم</label>
-                      <input 
-                        type="date" 
-                        value={editForm.delivery_due_date}
-                        onChange={(e) => setEditForm({...editForm, delivery_due_date: e.target.value})}
-                        className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold focus:bg-bg-surface text-text-primary"
-                      />
+                      <div className="relative w-full">
+                         <input 
+                           type="date" 
+                           value={editForm.delivery_due_date}
+                           onChange={(e) => setEditForm({...editForm, delivery_due_date: e.target.value})}
+                           className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                         />
+                         <div className="w-full px-6 py-4 bg-bg-primary border-none rounded-2xl focus:ring-2 focus:ring-brand-main/10 outline-none font-bold focus:bg-bg-surface text-text-primary">
+                           {formatDate(editForm.delivery_due_date)}
+                         </div>
+                      </div>
                    </div>
                 </div>
                 <button type="submit" className="w-full bg-brand-main text-brand-third font-bold py-5 rounded-2xl hover:scale-[1.02] transition shadow-lg shadow-brand-main/20 cursor-pointer">تحديث البيانات</button>

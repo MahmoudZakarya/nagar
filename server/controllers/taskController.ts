@@ -1,6 +1,16 @@
 import { Request, Response } from "express";
 import db from "../db";
-import { RunResult } from "better-sqlite3";
+
+const DEFAULT_SUBTASKS = [
+  "وصول الخشب",
+  "مرحله التقطيع",
+  "لصق شريط",
+  "تجميع",
+  "دهانات",
+  "مرحله الجوده",
+  "التغليف",
+  "جاهز للتسليم",
+];
 
 export const createTask = (req: Request, res: Response) => {
   const {
@@ -32,7 +42,7 @@ export const createTask = (req: Request, res: Response) => {
       paymentStatus = "Settled";
     else if (deposit_paid > 0) paymentStatus = "Partial";
 
-    const info: RunResult = stmt.run(
+    const info: any = stmt.run(
       client_id,
       title,
       description,
@@ -68,6 +78,14 @@ export const createTask = (req: Request, res: Response) => {
         new Date().toISOString(),
         performed_by_id,
       );
+    }
+
+    // 4. Add default subtasks
+    const subtaskStmt = db.prepare(
+      "INSERT INTO subtasks (task_id, description) VALUES (?, ?)",
+    );
+    for (const subtask of DEFAULT_SUBTASKS) {
+      subtaskStmt.run(taskId, subtask);
     }
 
     return { id: taskId };
@@ -111,13 +129,26 @@ export const getTasks = (req: Request, res: Response) => {
 
 export const updateSubtask = (req: Request, res: Response) => {
   const { id } = req.params;
-  const { is_completed } = req.body;
+  const { is_completed, description } = req.body;
 
   try {
-    const stmt = db.prepare(
-      "UPDATE subtasks SET is_completed = ? WHERE id = ?",
-    );
-    const result = stmt.run(is_completed, id);
+    let stmt;
+    let params: any[] = [];
+
+    if (description !== undefined && is_completed !== undefined) {
+      stmt = db.prepare(
+        "UPDATE subtasks SET description = ?, is_completed = ? WHERE id = ?",
+      );
+      params = [description, is_completed, id];
+    } else if (description !== undefined) {
+      stmt = db.prepare("UPDATE subtasks SET description = ? WHERE id = ?");
+      params = [description, id];
+    } else {
+      stmt = db.prepare("UPDATE subtasks SET is_completed = ? WHERE id = ?");
+      params = [is_completed, id];
+    }
+
+    const result = stmt.run(...params);
 
     if (result.changes === 0) {
       return res.status(404).json({ error: "Subtask not found" });
@@ -206,6 +237,47 @@ export const addSubtask = (req: Request, res: Response) => {
     );
 
     res.status(201).json({ success: true });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const deleteSubtask = (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    // Get task_id before deleting to recalculate percent
+    const subtask: any = db
+      .prepare("SELECT task_id FROM subtasks WHERE id = ?")
+      .get(id);
+
+    if (!subtask) {
+      return res.status(404).json({ error: "Subtask not found" });
+    }
+
+    const taskId = subtask.task_id;
+
+    db.prepare("DELETE FROM subtasks WHERE id = ?").run(id);
+
+    // Recalculate percent
+    const allSubtasks: any[] = db
+      .prepare("SELECT is_completed FROM subtasks WHERE task_id = ?")
+      .all(taskId);
+
+    let completionPercent = 0;
+    if (allSubtasks.length > 0) {
+      const completedCount = allSubtasks.filter((st) => st.is_completed).length;
+      completionPercent = Math.round(
+        (completedCount / allSubtasks.length) * 100,
+      );
+    }
+
+    db.prepare("UPDATE tasks SET completion_percent = ? WHERE id = ?").run(
+      completionPercent,
+      taskId,
+    );
+
+    res.json({ success: true });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }

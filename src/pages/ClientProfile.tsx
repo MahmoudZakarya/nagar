@@ -23,6 +23,8 @@ import {
   X,
 } from 'lucide-react';
 import { useQuotations, Quotation } from '../hooks/useQuotations';
+import { formatDate } from '../utils/dateUtils';
+
 
 const EGP = () => <span className="text-[0.65em] font-normal mr-1">جنية</span>;
 
@@ -129,7 +131,7 @@ const ClientProfile = () => {
                     {client.name.charAt(0)}
                  </div>
                  <h1 className="text-2xl font-bold text-text-primary mb-1">{client.name}</h1>
-                 <p className="text-text-muted font-bold text-sm">عميل منذ {new Date(client.created_at).toLocaleDateString('ar-EG')}</p>
+                 <p className="text-text-muted font-bold text-sm">عميل منذ {formatDate(client.created_at)}</p>
               </div>
 
               <div className="mt-10 space-y-4 text-right">
@@ -265,12 +267,12 @@ const ClientProfile = () => {
                                   <div className="flex items-center gap-4 text-xs font-bold text-text-muted">
                                     <div className="flex items-center gap-1">
                                         <Calendar className="w-3.5 h-3.5" />
-                                        <span>تسجيل: {new Date(task.registered_at).toLocaleDateString('ar-EG')}</span>
+                                        <span>تسجيل: {formatDate(task.registered_at)}</span>
                                     </div>
                                     <div className="w-1 h-1 bg-border-theme rounded-full"></div>
                                     <div className="flex items-center gap-1 text-orange-400">
                                         <Clock className="w-3.5 h-3.5" />
-                                        <span>تسليم: {task.delivery_due_date ? new Date(task.delivery_due_date).toLocaleDateString('ar-EG') : 'بدون'}</span>
+                                        <span>تسليم: {formatDate(task.delivery_due_date)}</span>
                                     </div>
                                     <div className="w-1 h-1 bg-border-theme rounded-full"></div>
                                     <span>{task.completion_percent}% إنجاز</span>
@@ -298,7 +300,7 @@ const ClientProfile = () => {
                                </div>
                                <div>
                                   <h3 className="font-bold text-text-primary">{quotation.quotation_number}</h3>
-                                  <p className="text-sm text-text-muted">{new Date(quotation.created_at).toLocaleDateString('ar-EG')}</p>
+                                  <p className="text-sm text-text-muted">{formatDate(quotation.created_at)}</p>
                                </div>
                             </div>
                             

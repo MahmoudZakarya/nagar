@@ -43,8 +43,19 @@ export const getQuotationsByClient = (req: Request, res: Response) => {
       ORDER BY created_at DESC
     `,
       )
-      .all(clientId);
-    res.json(quotations);
+      .all(clientId) as any[];
+
+    // Add items to each quotation
+    const quotationsWithItems = quotations.map((q) => {
+      const items = db
+        .prepare(
+          "SELECT * FROM quotation_items WHERE quotation_id = ? ORDER BY sort_order ASC",
+        )
+        .all(q.id);
+      return { ...q, items };
+    });
+
+    res.json(quotationsWithItems);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
