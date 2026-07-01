@@ -23,7 +23,7 @@ if (isPostgres) {
   console.log("Database Mode: SQLite (Local)");
   // Dynamically require better-sqlite3-multiple-ciphers only when using SQLite.
   // This prevents Vercel serverless functions from failing due to missing native binary.
-  const Database = require("better-sqlite3-multiple-ciphers");
+  const Database = eval("require")("better-sqlite3-multiple-ciphers");
   
   const dbPath = getDbPath();
   
@@ -415,7 +415,7 @@ export async function initData() {
 
       await client.query(`
         CREATE TABLE IF NOT EXISTS settings (
-          key VARCHAR(255) PRIMARY KEY,
+          "key" VARCHAR(255) PRIMARY KEY,
           value TEXT NOT NULL,
           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );

@@ -31,9 +31,9 @@ export const getGCSConfig = async (): Promise<GCSConfig> => {
   };
 
   try {
-    const bucketRow: any = await db.queryOne("SELECT value FROM settings WHERE key = ?", ["gcs_bucket_name"]);
-    const projectRow: any = await db.queryOne("SELECT value FROM settings WHERE key = ?", ["gcs_project_id"]);
-    const keyPathRow: any = await db.queryOne("SELECT value FROM settings WHERE key = ?", ["gcs_key_file_path"]);
+    const bucketRow: any = await db.queryOne('SELECT value FROM settings WHERE "key" = ?', ["gcs_bucket_name"]);
+    const projectRow: any = await db.queryOne('SELECT value FROM settings WHERE "key" = ?', ["gcs_project_id"]);
+    const keyPathRow: any = await db.queryOne('SELECT value FROM settings WHERE "key" = ?', ["gcs_key_file_path"]);
 
     if (bucketRow) config.bucketName = bucketRow.value;
     if (projectRow) config.projectId = projectRow.value;
@@ -53,15 +53,15 @@ export const saveGCSSettings = async (
   projectId: string,
 ): Promise<void> => {
   await db.execute(`
-    INSERT INTO settings (key, value, updated_at) 
+    INSERT INTO settings ("key", value, updated_at) 
     VALUES ('gcs_bucket_name', ?, CURRENT_TIMESTAMP)
-    ON CONFLICT(key) DO UPDATE SET value = ?, updated_at = CURRENT_TIMESTAMP
+    ON CONFLICT("key") DO UPDATE SET value = ?, updated_at = CURRENT_TIMESTAMP
   `, [bucketName, bucketName]);
 
   await db.execute(`
-    INSERT INTO settings (key, value, updated_at) 
+    INSERT INTO settings ("key", value, updated_at) 
     VALUES ('gcs_project_id', ?, CURRENT_TIMESTAMP)
-    ON CONFLICT(key) DO UPDATE SET value = ?, updated_at = CURRENT_TIMESTAMP
+    ON CONFLICT("key") DO UPDATE SET value = ?, updated_at = CURRENT_TIMESTAMP
   `, [projectId, projectId]);
 
   console.log("GCS settings saved to database");
@@ -98,9 +98,9 @@ export const saveServiceAccountKey = async (fileBuffer: Buffer): Promise<string>
 
     // Save path to database
     await db.execute(`
-      INSERT INTO settings (key, value, updated_at) 
+      INSERT INTO settings ("key", value, updated_at) 
       VALUES ('gcs_key_file_path', ?, CURRENT_TIMESTAMP)
-      ON CONFLICT(key) DO UPDATE SET value = ?, updated_at = CURRENT_TIMESTAMP
+      ON CONFLICT("key") DO UPDATE SET value = ?, updated_at = CURRENT_TIMESTAMP
     `, [keyFilePath, keyFilePath]);
 
     console.log("Service account key saved securely");
@@ -141,14 +141,14 @@ export const getGCSConfigWithFallback = async (): Promise<GCSConfig> => {
  */
 export const clearGCSConfig = async (): Promise<void> => {
   try {
-    await db.execute("DELETE FROM settings WHERE key = ?", ["gcs_bucket_name"]);
-    await db.execute("DELETE FROM settings WHERE key = ?", ["gcs_project_id"]);
+    await db.execute('DELETE FROM settings WHERE "key" = ?', ["gcs_bucket_name"]);
+    await db.execute('DELETE FROM settings WHERE "key" = ?', ["gcs_project_id"]);
 
-    const keyPathRow: any = await db.queryOne("SELECT value FROM settings WHERE key = ?", ["gcs_key_file_path"]);
+    const keyPathRow: any = await db.queryOne('SELECT value FROM settings WHERE "key" = ?', ["gcs_key_file_path"]);
     if (keyPathRow && fs.existsSync(keyPathRow.value)) {
       fs.unlinkSync(keyPathRow.value);
     }
-    await db.execute("DELETE FROM settings WHERE key = ?", ["gcs_key_file_path"]);
+    await db.execute('DELETE FROM settings WHERE "key" = ?', ["gcs_key_file_path"]);
 
     console.log("GCS configuration cleared");
   } catch (error) {
