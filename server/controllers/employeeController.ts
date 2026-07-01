@@ -1,18 +1,18 @@
 import { Request, Response } from "express";
 import db from "../db";
 
-export const getEmployees = (req: Request, res: Response) => {
+export const getEmployees = async (req: Request, res: Response) => {
   try {
-    const employees = db
-      .prepare("SELECT * FROM employees ORDER BY name ASC")
-      .all();
+    const employees = await db.query(
+      "SELECT * FROM employees ORDER BY name ASC"
+    );
     res.json(employees);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 };
 
-export const createEmployee = (req: Request, res: Response) => {
+export const createEmployee = async (req: Request, res: Response) => {
   const {
     name,
     national_id,
@@ -33,18 +33,14 @@ export const createEmployee = (req: Request, res: Response) => {
   }
 
   try {
-    const info = db
-      .prepare(
-        `
-      INSERT INTO employees (
-        name, national_id, address, phone_1, phone_2, 
-        relative_name, relative_phone, relative_relation, 
-        age, role, hourly_rate, start_date
-      )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `,
-      )
-      .run(
+    const result = await db.execute(
+      `INSERT INTO employees (
+         name, national_id, address, phone_1, phone_2, 
+         relative_name, relative_phone, relative_relation, 
+         age, role, hourly_rate, start_date
+       )
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
         name,
         national_id,
         address,
@@ -57,15 +53,16 @@ export const createEmployee = (req: Request, res: Response) => {
         role,
         hourly_rate,
         start_date || new Date().toISOString(),
-      );
+      ]
+    );
 
-    res.status(201).json({ id: info.lastInsertRowid });
+    res.status(201).json({ id: result.lastInsertRowid });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 };
 
-export const updateEmployee = (req: Request, res: Response) => {
+export const updateEmployee = async (req: Request, res: Response) => {
   const { id } = req.params;
   const {
     name,
@@ -83,28 +80,27 @@ export const updateEmployee = (req: Request, res: Response) => {
   } = req.body;
 
   try {
-    db.prepare(
-      `
-      UPDATE employees 
-      SET name = ?, national_id = ?, address = ?, phone_1 = ?, phone_2 = ?, 
-          relative_name = ?, relative_phone = ?, relative_relation = ?, 
-          age = ?, role = ?, hourly_rate = ?, status = ?
-      WHERE id = ?
-    `,
-    ).run(
-      name,
-      national_id,
-      address,
-      phone_1,
-      phone_2,
-      relative_name,
-      relative_phone,
-      relative_relation,
-      age,
-      role,
-      hourly_rate,
-      status,
-      id,
+    await db.execute(
+      `UPDATE employees 
+       SET name = ?, national_id = ?, address = ?, phone_1 = ?, phone_2 = ?, 
+           relative_name = ?, relative_phone = ?, relative_relation = ?, 
+           age = ?, role = ?, hourly_rate = ?, status = ?
+       WHERE id = ?`,
+      [
+        name,
+        national_id,
+        address,
+        phone_1,
+        phone_2,
+        relative_name,
+        relative_phone,
+        relative_relation,
+        age,
+        role,
+        hourly_rate,
+        status,
+        id,
+      ]
     );
 
     res.json({ success: true });
@@ -113,10 +109,10 @@ export const updateEmployee = (req: Request, res: Response) => {
   }
 };
 
-export const deleteEmployee = (req: Request, res: Response) => {
+export const deleteEmployee = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    db.prepare("DELETE FROM employees WHERE id = ?").run(id);
+    await db.execute("DELETE FROM employees WHERE id = ?", [id]);
     res.json({ success: true });
   } catch (error: any) {
     res.status(500).json({ error: error.message });

@@ -1,17 +1,16 @@
 import { Request, Response } from "express";
 import db from "../db";
-import { RunResult } from "better-sqlite3";
 
-export const getClients = (req: Request, res: Response) => {
+export const getClients = async (req: Request, res: Response) => {
   try {
-    const clients = db.prepare("SELECT * FROM clients ORDER BY name ASC").all();
+    const clients = await db.query("SELECT * FROM clients ORDER BY name ASC");
     res.json(clients);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 };
 
-export const createClient = (req: Request, res: Response) => {
+export const createClient = async (req: Request, res: Response) => {
   const { name, phone_1, phone_2, address } = req.body;
 
   if (!name || !phone_1) {
@@ -19,27 +18,27 @@ export const createClient = (req: Request, res: Response) => {
   }
 
   try {
-    const stmt = db.prepare(
+    const result = await db.execute(
       "INSERT INTO clients (name, phone_1, phone_2, address) VALUES (?, ?, ?, ?)",
+      [name, phone_1, phone_2, address]
     );
-    const info: RunResult = stmt.run(name, phone_1, phone_2, address);
-    res.status(201).json({ id: info.lastInsertRowid, ...req.body });
+    res.status(201).json({ id: result.lastInsertRowid, ...req.body });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 };
 
-export const updateClient = (req: Request, res: Response) => {
+export const updateClient = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { name, phone_1, phone_2, address } = req.body;
 
   try {
-    const stmt = db.prepare(`
-      UPDATE clients 
-      SET name = ?, phone_1 = ?, phone_2 = ?, address = ? 
-      WHERE id = ?
-    `);
-    const result = stmt.run(name, phone_1, phone_2, address, id);
+    const result = await db.execute(
+      `UPDATE clients 
+       SET name = ?, phone_1 = ?, phone_2 = ?, address = ? 
+       WHERE id = ?`,
+      [name, phone_1, phone_2, address, id]
+    );
 
     if (result.changes === 0) {
       return res.status(404).json({ error: "Client not found" });

@@ -18,9 +18,9 @@ let bucketName: string | null = null;
 /**
  * Initialize or reinitialize Google Cloud Storage with current configuration
  */
-export const reinitializeStorage = (): void => {
+export const reinitializeStorage = async (): Promise<void> => {
   try {
-    const config = getGCSConfigWithFallback();
+    const config = await getGCSConfigWithFallback();
 
     if (config.keyFilePath && config.bucketName && config.projectId) {
       // Check if key file exists
@@ -52,7 +52,9 @@ export const reinitializeStorage = (): void => {
 };
 
 // Initialize on module load
-reinitializeStorage();
+reinitializeStorage().catch((err) => {
+  console.error("Failed initial GCS storage setup:", err);
+});
 
 export interface BackupInfo {
   filename: string;
@@ -65,6 +67,10 @@ export interface BackupInfo {
  * Create a backup of the database and upload to Google Cloud Storage
  */
 export const backupDatabase = async (): Promise<BackupInfo | null> => {
+  if (db.isPostgres) {
+    throw new Error("Local SQLite backup is not supported in PostgreSQL cloud environment.");
+  }
+
   if (!storage || !bucketName) {
     throw new Error("Google Cloud Storage not configured");
   }
@@ -126,6 +132,10 @@ export const backupDatabase = async (): Promise<BackupInfo | null> => {
  * List all available backups from Google Cloud Storage
  */
 export const listBackups = async (): Promise<BackupInfo[]> => {
+  if (db.isPostgres) {
+    return [];
+  }
+
   if (!storage || !bucketName) {
     throw new Error("Google Cloud Storage not configured");
   }
@@ -159,6 +169,10 @@ export const listBackups = async (): Promise<BackupInfo[]> => {
  * Download a specific backup from Google Cloud Storage
  */
 export const downloadBackup = async (filename: string): Promise<string> => {
+  if (db.isPostgres) {
+    throw new Error("Restore is not supported in PostgreSQL cloud environment.");
+  }
+
   if (!storage || !bucketName) {
     throw new Error("Google Cloud Storage not configured");
   }
@@ -196,6 +210,9 @@ export const getLastBackupInfo = async (): Promise<BackupInfo | null> => {
  * Check if backup system is configured and ready
  */
 export const isBackupConfigured = (): boolean => {
+  if (db.isPostgres) {
+    return false;
+  }
   return storage !== null && bucketName !== null;
 };
 

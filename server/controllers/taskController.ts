@@ -12,7 +12,7 @@ const DEFAULT_SUBTASKS = [
   "جاهز للتسليم",
 ];
 
-export const createTask = (req: Request, res: Response) => {
+export const createTask = async (req: Request, res: Response) => {
   const {
     client_id,
     title,
@@ -27,99 +27,96 @@ export const createTask = (req: Request, res: Response) => {
     return res.status(400).json({ error: "Client ID and Title are required" });
   }
 
-  const insertTask = db.transaction(() => {
-    // 1. Insert Task
-    const stmt = db.prepare(`
-      INSERT INTO tasks (
-        client_id, title, description, delivery_due_date, 
-        total_agreed_price, deposit_paid, final_payment_status
-      ) VALUES (?, ?, ?, ?, ?, ?, ?)
-    `);
-
-    // Determine payment status
-    let paymentStatus = "Unpaid";
-    if (deposit_paid >= total_agreed_price && total_agreed_price > 0)
-      paymentStatus = "Settled";
-    else if (deposit_paid > 0) paymentStatus = "Partial";
-
-    const info: any = stmt.run(
-      client_id,
-      title,
-      description,
-      delivery_due_date,
-      total_agreed_price,
-      deposit_paid,
-      paymentStatus,
-    );
-    const taskId = info.lastInsertRowid;
-
-    // 2. Add to Safe if deposit paid
-    if (deposit_paid > 0) {
-      const safeStmt = db.prepare(
-        "INSERT INTO safe (transaction_type, amount, category, related_id, description, performed_by_id) VALUES (?, ?, ?, ?, ?, ?)",
-      );
-      safeStmt.run(
-        "Income",
-        deposit_paid,
-        "دفعة مقدمة",
-        taskId,
-        `عربون مشروع #${taskId}: ${title}`,
-        performed_by_id,
-      );
-
-      // 3. Add to task_payments table
-      const paymentStmt = db.prepare(
-        "INSERT INTO task_payments (task_id, amount, note, payment_date, performed_by_id) VALUES (?, ?, ?, ?, ?)",
-      );
-      paymentStmt.run(
-        taskId,
-        deposit_paid,
-        "دفعة مقدمة",
-        new Date().toISOString(),
-        performed_by_id,
-      );
-    }
-
-    // 4. Add default subtasks
-    const subtaskStmt = db.prepare(
-      "INSERT INTO subtasks (task_id, description) VALUES (?, ?)",
-    );
-    for (const subtask of DEFAULT_SUBTASKS) {
-      subtaskStmt.run(taskId, subtask);
-    }
-
-    return { id: taskId };
-  });
-
   try {
-    const result = insertTask();
+    const result = await db.transaction(async (tx) => {
+      // Determine payment status
+      let paymentStatus = "Unpaid";
+      if (deposit_paid >= total_agreed_price && total_agreed_price > 0)
+        paymentStatus = "Settled";
+      else if (deposit_paid > 0) paymentStatus = "Partial";
+
+      // 1. Insert Task
+      const info = await tx.execute(
+        `INSERT INTO tasks (
+           client_id, title, description, delivery_due_date, 
+           total_agreed_price, deposit_paid, final_payment_status
+         ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [
+          client_id,
+          title,
+          description,
+          delivery_due_date,
+          total_agreed_price,
+          deposit_paid,
+          paymentStatus,
+        ]
+      );
+      const taskId = info.lastInsertRowid;
+
+      // 2. Add to Safe if deposit paid
+      if (deposit_paid > 0) {
+        await tx.execute(
+          "INSERT INTO safe (transaction_type, amount, category, related_id, description, performed_by_id) VALUES (?, ?, ?, ?, ?, ?)",
+          [
+            "Income",
+            deposit_paid,
+            "دفعة مقدمة",
+            taskId,
+            `عربون مشروع #${taskId}: ${title}`,
+            performed_by_id,
+          ]
+        );
+
+        // 3. Add to task_payments table
+        await tx.execute(
+          "INSERT INTO task_payments (task_id, amount, note, payment_date, performed_by_id) VALUES (?, ?, ?, ?, ?)",
+          [
+            taskId,
+            deposit_paid,
+            "دفعة مقدمة",
+            new Date().toISOString(),
+            performed_by_id,
+          ]
+        );
+      }
+
+      // 4. Add default subtasks
+      for (const subtask of DEFAULT_SUBTASKS) {
+        await tx.execute(
+          "INSERT INTO subtasks (task_id, description) VALUES (?, ?)",
+          [taskId, subtask]
+        );
+      }
+
+      return { id: taskId };
+    });
+
     res.status(201).json(result);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 };
 
-export const getTasks = (req: Request, res: Response) => {
+export const getTasks = async (req: Request, res: Response) => {
   try {
     // Join with clients to get client name
-    const tasks: any[] = db
-      .prepare(
-        `
-       SELECT tasks.*, clients.name as client_name, clients.phone_1, clients.phone_2 
+    const tasks: any[] = await db.query(
+      `SELECT tasks.*, clients.name as client_name, clients.phone_1, clients.phone_2 
        FROM tasks 
        JOIN clients ON tasks.client_id = clients.id
-       ORDER BY delivery_due_date ASC
-    `,
-      )
-      .all();
+       ORDER BY delivery_due_date ASC`
+    );
 
     // Fetch subtasks for each task
-    const tasksWithSubtasks = tasks.map((task) => {
-      const subtasks = db
-        .prepare("SELECT * FROM subtasks WHERE task_id = ?")
-        .all(task.id);
-      return { ...task, subtasks };
-    });
+    const tasksWithSubtasks = await Promise.all(
+      tasks.map(async (task) => {
+        const subtasks = await db.query(
+          "SELECT * FROM subtasks WHERE task_id = ?",
+          [task.id]
+        );
+        return { ...task, subtasks };
+      })
+    );
 
     res.json(tasksWithSubtasks);
   } catch (error: any) {
@@ -127,54 +124,54 @@ export const getTasks = (req: Request, res: Response) => {
   }
 };
 
-export const updateSubtask = (req: Request, res: Response) => {
+export const updateSubtask = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { is_completed, description } = req.body;
 
   try {
-    let stmt;
+    let query = "";
     let params: any[] = [];
 
     if (description !== undefined && is_completed !== undefined) {
-      stmt = db.prepare(
-        "UPDATE subtasks SET description = ?, is_completed = ? WHERE id = ?",
-      );
+      query = "UPDATE subtasks SET description = ?, is_completed = ? WHERE id = ?";
       params = [description, is_completed, id];
     } else if (description !== undefined) {
-      stmt = db.prepare("UPDATE subtasks SET description = ? WHERE id = ?");
+      query = "UPDATE subtasks SET description = ? WHERE id = ?";
       params = [description, id];
     } else {
-      stmt = db.prepare("UPDATE subtasks SET is_completed = ? WHERE id = ?");
+      query = "UPDATE subtasks SET is_completed = ? WHERE id = ?";
       params = [is_completed, id];
     }
 
-    const result = stmt.run(...params);
+    const result = await db.execute(query, params);
 
     if (result.changes === 0) {
       return res.status(404).json({ error: "Subtask not found" });
     }
 
     // After updating a subtask, we should recalculate the completion percentage of the parent task
-    const subtask: any = db
-      .prepare("SELECT task_id FROM subtasks WHERE id = ?")
-      .get(id);
+    const subtask: any = await db.queryOne(
+      "SELECT task_id FROM subtasks WHERE id = ?",
+      [id]
+    );
     if (subtask) {
       const taskId = subtask.task_id;
-      const allSubtasks: any[] = db
-        .prepare("SELECT is_completed FROM subtasks WHERE task_id = ?")
-        .all(taskId);
+      const allSubtasks: any[] = await db.query(
+        "SELECT is_completed FROM subtasks WHERE task_id = ?",
+        [taskId]
+      );
 
       if (allSubtasks.length > 0) {
         const completedCount = allSubtasks.filter(
-          (st) => st.is_completed,
+          (st) => st.is_completed
         ).length;
         const completionPercent = Math.round(
-          (completedCount / allSubtasks.length) * 100,
+          (completedCount / allSubtasks.length) * 100
         );
 
-        db.prepare("UPDATE tasks SET completion_percent = ? WHERE id = ?").run(
-          completionPercent,
-          taskId,
+        await db.execute(
+          "UPDATE tasks SET completion_percent = ? WHERE id = ?",
+          [completionPercent, taskId]
         );
       }
     }
@@ -185,32 +182,30 @@ export const updateSubtask = (req: Request, res: Response) => {
   }
 };
 
-export const getTaskById = (req: Request, res: Response) => {
+export const getTaskById = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    const task: any = db
-      .prepare(
-        `
-        SELECT tasks.*, clients.name as client_name, clients.phone_1 
-        FROM tasks 
-        JOIN clients ON tasks.client_id = clients.id
-        WHERE tasks.id = ?
-    `,
-      )
-      .get(id);
+    const task: any = await db.queryOne(
+      `SELECT tasks.*, clients.name as client_name, clients.phone_1 
+       FROM tasks 
+       JOIN clients ON tasks.client_id = clients.id
+       WHERE tasks.id = ?`,
+      [id]
+    );
 
     if (!task) return res.status(404).json({ error: "Task not found" });
 
-    const subtasks = db
-      .prepare("SELECT * FROM subtasks WHERE task_id = ?")
-      .all(id);
+    const subtasks = await db.query(
+      "SELECT * FROM subtasks WHERE task_id = ?",
+      [id]
+    );
     res.json({ ...task, subtasks });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 };
 
-export const addSubtask = (req: Request, res: Response) => {
+export const addSubtask = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { description } = req.body;
 
@@ -218,23 +213,24 @@ export const addSubtask = (req: Request, res: Response) => {
     return res.status(400).json({ error: "Description is required" });
 
   try {
-    const stmt = db.prepare(
+    await db.execute(
       "INSERT INTO subtasks (task_id, description) VALUES (?, ?)",
+      [id, description]
     );
-    stmt.run(id, description);
 
     // Recalculate percent
-    const allSubtasks: any[] = db
-      .prepare("SELECT is_completed FROM subtasks WHERE task_id = ?")
-      .all(id);
+    const allSubtasks: any[] = await db.query(
+      "SELECT is_completed FROM subtasks WHERE task_id = ?",
+      [id]
+    );
     const completedCount = allSubtasks.filter((st) => st.is_completed).length;
     const completionPercent = Math.round(
-      (completedCount / allSubtasks.length) * 100,
+      (completedCount / allSubtasks.length) * 100
     );
-    db.prepare("UPDATE tasks SET completion_percent = ? WHERE id = ?").run(
+    await db.execute("UPDATE tasks SET completion_percent = ? WHERE id = ?", [
       completionPercent,
       id,
-    );
+    ]);
 
     res.status(201).json({ success: true });
   } catch (error: any) {
@@ -242,14 +238,15 @@ export const addSubtask = (req: Request, res: Response) => {
   }
 };
 
-export const deleteSubtask = (req: Request, res: Response) => {
+export const deleteSubtask = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
     // Get task_id before deleting to recalculate percent
-    const subtask: any = db
-      .prepare("SELECT task_id FROM subtasks WHERE id = ?")
-      .get(id);
+    const subtask: any = await db.queryOne(
+      "SELECT task_id FROM subtasks WHERE id = ?",
+      [id]
+    );
 
     if (!subtask) {
       return res.status(404).json({ error: "Subtask not found" });
@@ -257,25 +254,26 @@ export const deleteSubtask = (req: Request, res: Response) => {
 
     const taskId = subtask.task_id;
 
-    db.prepare("DELETE FROM subtasks WHERE id = ?").run(id);
+    await db.execute("DELETE FROM subtasks WHERE id = ?", [id]);
 
     // Recalculate percent
-    const allSubtasks: any[] = db
-      .prepare("SELECT is_completed FROM subtasks WHERE task_id = ?")
-      .all(taskId);
+    const allSubtasks: any[] = await db.query(
+      "SELECT is_completed FROM subtasks WHERE task_id = ?",
+      [taskId]
+    );
 
     let completionPercent = 0;
     if (allSubtasks.length > 0) {
       const completedCount = allSubtasks.filter((st) => st.is_completed).length;
       completionPercent = Math.round(
-        (completedCount / allSubtasks.length) * 100,
+        (completedCount / allSubtasks.length) * 100
       );
     }
 
-    db.prepare("UPDATE tasks SET completion_percent = ? WHERE id = ?").run(
+    await db.execute("UPDATE tasks SET completion_percent = ? WHERE id = ?", [
       completionPercent,
       taskId,
-    );
+    ]);
 
     res.json({ success: true });
   } catch (error: any) {
@@ -283,19 +281,19 @@ export const deleteSubtask = (req: Request, res: Response) => {
   }
 };
 
-export const updateTaskStatus = (req: Request, res: Response) => {
+export const updateTaskStatus = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { status } = req.body;
 
   try {
-    db.prepare("UPDATE tasks SET status = ? WHERE id = ?").run(status, id);
+    await db.execute("UPDATE tasks SET status = ? WHERE id = ?", [status, id]);
     res.json({ success: true });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 };
 
-export const updateTaskFinancials = (req: Request, res: Response) => {
+export const updateTaskFinancials = async (req: Request, res: Response) => {
   const { id } = req.params;
   const {
     total_agreed_price,
@@ -307,21 +305,12 @@ export const updateTaskFinancials = (req: Request, res: Response) => {
   } = req.body;
 
   try {
-    const updateFinancials = db.transaction(() => {
+    const result = await db.transaction(async (tx) => {
       // 1. Get current task state
-      const task: any = db.prepare("SELECT * FROM tasks WHERE id = ?").get(id);
+      const task: any = await tx.queryOne("SELECT * FROM tasks WHERE id = ?", [
+        id,
+      ]);
       if (!task) throw new Error("Task not found");
-
-      // 2. Update financials
-      const stmt = db.prepare(`
-        UPDATE tasks SET 
-          total_agreed_price = ?, 
-          deposit_paid = ?, 
-          middle_payment_agreed = ?, 
-          extra_costs = ?,
-          final_payment_status = ?
-        WHERE id = ?
-      `);
 
       const total =
         total_agreed_price !== undefined
@@ -346,56 +335,65 @@ export const updateTaskFinancials = (req: Request, res: Response) => {
         paymentStatus = "Settled";
       else if (finalPaid > 0) paymentStatus = "Partial";
 
-      stmt.run(total, finalPaid, middle, extra, paymentStatus, id);
+      // 2. Update financials
+      await tx.execute(
+        `UPDATE tasks SET 
+          total_agreed_price = ?, 
+          deposit_paid = ?, 
+          middle_payment_agreed = ?, 
+          extra_costs = ?,
+          final_payment_status = ?
+        WHERE id = ?`,
+        [total, finalPaid, middle, extra, paymentStatus, id]
+      );
 
       // 3. Log to Safe if there's a new payment
       if (newPayment > 0) {
-        const safeStmt = db.prepare(
+        await tx.execute(
           "INSERT INTO safe (transaction_type, amount, category, related_id, description, performed_by_id) VALUES (?, ?, ?, ?, ?, ?)",
-        );
-        safeStmt.run(
-          "Income",
-          newPayment,
-          "دفعة عميل",
-          id,
-          `دفعة إضافية للمشروع #${id}: ${task.title}`,
-          performed_by_id,
+          [
+            "Income",
+            newPayment,
+            "دفعة عميل",
+            id,
+            `دفعة إضافية للمشروع #${id}: ${task.title}`,
+            performed_by_id,
+          ]
         );
 
         // 4. Add to task_payments table
-        const paymentStmt = db.prepare(
+        await tx.execute(
           "INSERT INTO task_payments (task_id, amount, note, payment_date, performed_by_id) VALUES (?, ?, ?, ?, ?)",
-        );
-        paymentStmt.run(
-          id,
-          newPayment,
-          "دفعة إضافية",
-          new Date().toISOString(),
-          performed_by_id,
+          [
+            id,
+            newPayment,
+            "دفعة إضافية",
+            new Date().toISOString(),
+            performed_by_id,
+          ]
         );
       }
 
       return { success: true, finalPaid };
     });
 
-    const result = updateFinancials();
     res.json(result);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 };
 
-export const updateTask = (req: Request, res: Response) => {
+export const updateTask = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { title, description, delivery_due_date } = req.body;
 
   try {
-    const stmt = db.prepare(`
-      UPDATE tasks 
-      SET title = ?, description = ?, delivery_due_date = ? 
-      WHERE id = ?
-    `);
-    const result = stmt.run(title, description, delivery_due_date, id);
+    const result = await db.execute(
+      `UPDATE tasks 
+       SET title = ?, description = ?, delivery_due_date = ? 
+       WHERE id = ?`,
+      [title, description, delivery_due_date, id]
+    );
 
     if (result.changes === 0) {
       return res.status(404).json({ error: "Task not found" });
@@ -406,41 +404,43 @@ export const updateTask = (req: Request, res: Response) => {
     res.status(500).json({ error: error.message });
   }
 };
-export const deleteTask = (req: Request, res: Response) => {
+
+export const deleteTask = async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const deleteOp = db.transaction(() => {
-    // 1. Get task info for rollback
-    const task = db.prepare("SELECT * FROM tasks WHERE id = ?").get(id) as any;
-    if (!task) throw new Error("Task not found");
-
-    // 2. Rollback payments from safe if any
-    if (task.deposit_paid > 0) {
-      const { performed_by_id } = req.body;
-      db.prepare(
-        `
-        INSERT INTO safe (transaction_type, amount, category, related_id, description, performed_by_id)
-        VALUES ('Expense', ?, 'Refund', ?, ?, ?)
-      `,
-      ).run(
-        task.deposit_paid,
-        task.id,
-        `إلغاء مشروع: ${task.title} (استرداد مقدم)`,
-        performed_by_id,
-      );
-    }
-
-    // 3. Delete subtasks
-    db.prepare("DELETE FROM subtasks WHERE task_id = ?").run(id);
-
-    // 4. Delete task
-    db.prepare("DELETE FROM tasks WHERE id = ?").run(id);
-
-    return { success: true };
-  });
-
   try {
-    const result = deleteOp();
+    const result = await db.transaction(async (tx) => {
+      // 1. Get task info for rollback
+      const task = (await tx.queryOne(
+        "SELECT * FROM tasks WHERE id = ?",
+        [id]
+      )) as any;
+      if (!task) throw new Error("Task not found");
+
+      // 2. Rollback payments from safe if any
+      if (task.deposit_paid > 0) {
+        const { performed_by_id } = req.body;
+        await tx.execute(
+          `INSERT INTO safe (transaction_type, amount, category, related_id, description, performed_by_id)
+           VALUES ('Expense', ?, 'Refund', ?, ?, ?)`,
+          [
+            task.deposit_paid,
+            task.id,
+            `إلغاء مشروع: ${task.title} (استرداد مقدم)`,
+            performed_by_id,
+          ]
+        );
+      }
+
+      // 3. Delete subtasks
+      await tx.execute("DELETE FROM subtasks WHERE task_id = ?", [id]);
+
+      // 4. Delete task
+      await tx.execute("DELETE FROM tasks WHERE id = ?", [id]);
+
+      return { success: true };
+    });
+
     res.json(result);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
@@ -448,21 +448,18 @@ export const deleteTask = (req: Request, res: Response) => {
 };
 
 // Get payment history for a task
-export const getTaskPayments = (req: Request, res: Response) => {
+export const getTaskPayments = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    const payments = db
-      .prepare(
-        `
-        SELECT task_payments.*, users.username as performed_by_name 
-        FROM task_payments 
-        LEFT JOIN users ON task_payments.performed_by_id = users.id 
-        WHERE task_id = ? 
-        ORDER BY payment_date DESC
-      `,
-      )
-      .all(id);
+    const payments = await db.query(
+      `SELECT task_payments.*, users.username as performed_by_name 
+       FROM task_payments 
+       LEFT JOIN users ON task_payments.performed_by_id = users.id 
+       WHERE task_id = ? 
+       ORDER BY payment_date DESC`,
+      [id]
+    );
     res.json(payments);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
@@ -470,7 +467,7 @@ export const getTaskPayments = (req: Request, res: Response) => {
 };
 
 // Add a new payment for a task
-export const addTaskPayment = (req: Request, res: Response) => {
+export const addTaskPayment = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { amount, note, payment_date, performed_by_id } = req.body;
 
@@ -478,52 +475,52 @@ export const addTaskPayment = (req: Request, res: Response) => {
     return res.status(400).json({ error: "Valid amount is required" });
   }
 
-  const addPayment = db.transaction(() => {
-    // 1. Get task info
-    const task: any = db.prepare("SELECT * FROM tasks WHERE id = ?").get(id);
-    if (!task) throw new Error("Task not found");
-
-    // 2. Insert payment record
-    const paymentStmt = db.prepare(
-      "INSERT INTO task_payments (task_id, amount, note, payment_date, performed_by_id) VALUES (?, ?, ?, ?, ?)",
-    );
-    const paymentDate = payment_date || new Date().toISOString();
-    paymentStmt.run(id, amount, note || "", paymentDate, performed_by_id);
-
-    // 3. Update task deposit_paid
-    const newTotal = task.deposit_paid + parseFloat(amount);
-    const totalCost = task.total_agreed_price + (task.extra_costs || 0);
-
-    let paymentStatus = "Unpaid";
-    if (newTotal >= totalCost && totalCost > 0) paymentStatus = "Settled";
-    else if (newTotal > 0) paymentStatus = "Partial";
-
-    db.prepare(
-      "UPDATE tasks SET deposit_paid = ?, final_payment_status = ? WHERE id = ?",
-    ).run(newTotal, paymentStatus, id);
-
-    // 4. Add to safe
-    const safeStmt = db.prepare(
-      "INSERT INTO safe (transaction_type, amount, category, related_id, description, date, performed_by_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
-    );
-    safeStmt.run(
-      "Income",
-      amount,
-      "دفعة عميل",
-      id,
-      note || `دفعة للمشروع #${id}: ${task.title}`,
-      paymentDate,
-      performed_by_id,
-    );
-
-    // 5. Explicitly add performed_by_id to task_payments (already handled in step 2 but let's be sure the logic is clear)
-    // Actually the statement in step 2 (line 401-405) needs to be updated to include performed_by_id
-    // I'll redo the addTaskPayment chunk properly
-    return { success: true };
-  });
-
   try {
-    const result = addPayment();
+    const result = await db.transaction(async (tx) => {
+      // 1. Get task info
+      const task: any = await tx.queryOne(
+        "SELECT * FROM tasks WHERE id = ?",
+        [id]
+      );
+      if (!task) throw new Error("Task not found");
+
+      // 2. Insert payment record
+      const paymentDate = payment_date || new Date().toISOString();
+      await tx.execute(
+        "INSERT INTO task_payments (task_id, amount, note, payment_date, performed_by_id) VALUES (?, ?, ?, ?, ?)",
+        [id, amount, note || "", paymentDate, performed_by_id]
+      );
+
+      // 3. Update task deposit_paid
+      const newTotal = task.deposit_paid + parseFloat(amount);
+      const totalCost = task.total_agreed_price + (task.extra_costs || 0);
+
+      let paymentStatus = "Unpaid";
+      if (newTotal >= totalCost && totalCost > 0) paymentStatus = "Settled";
+      else if (newTotal > 0) paymentStatus = "Partial";
+
+      await tx.execute(
+        "UPDATE tasks SET deposit_paid = ?, final_payment_status = ? WHERE id = ?",
+        [newTotal, paymentStatus, id]
+      );
+
+      // 4. Add to safe
+      await tx.execute(
+        "INSERT INTO safe (transaction_type, amount, category, related_id, description, date, performed_by_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        [
+          "Income",
+          amount,
+          "دفعة عميل",
+          id,
+          note || `دفعة للمشروع #${id}: ${task.title}`,
+          paymentDate,
+          performed_by_id,
+        ]
+      );
+
+      return { success: true };
+    });
+
     res.status(201).json(result);
   } catch (error: any) {
     res.status(500).json({ error: error.message });

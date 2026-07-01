@@ -23,7 +23,7 @@ const getKeysDirectory = (): string => {
 /**
  * Get GCS configuration from database
  */
-export const getGCSConfig = (): GCSConfig => {
+export const getGCSConfig = async (): Promise<GCSConfig> => {
   const config: GCSConfig = {
     bucketName: null,
     projectId: null,
@@ -31,15 +31,9 @@ export const getGCSConfig = (): GCSConfig => {
   };
 
   try {
-    const bucketRow: any = db
-      .prepare("SELECT value FROM settings WHERE key = ?")
-      .get("gcs_bucket_name");
-    const projectRow: any = db
-      .prepare("SELECT value FROM settings WHERE key = ?")
-      .get("gcs_project_id");
-    const keyPathRow: any = db
-      .prepare("SELECT value FROM settings WHERE key = ?")
-      .get("gcs_key_file_path");
+    const bucketRow: any = await db.queryOne("SELECT value FROM settings WHERE key = ?", ["gcs_bucket_name"]);
+    const projectRow: any = await db.queryOne("SELECT value FROM settings WHERE key = ?", ["gcs_project_id"]);
+    const keyPathRow: any = await db.queryOne("SELECT value FROM settings WHERE key = ?", ["gcs_key_file_path"]);
 
     if (bucketRow) config.bucketName = bucketRow.value;
     if (projectRow) config.projectId = projectRow.value;
@@ -54,24 +48,21 @@ export const getGCSConfig = (): GCSConfig => {
 /**
  * Save GCS bucket name and project ID to database
  */
-export const saveGCSSettings = (
+export const saveGCSSettings = async (
   bucketName: string,
   projectId: string,
-): void => {
-  const upsertBucket = db.prepare(`
+): Promise<void> => {
+  await db.execute(`
     INSERT INTO settings (key, value, updated_at) 
     VALUES ('gcs_bucket_name', ?, CURRENT_TIMESTAMP)
     ON CONFLICT(key) DO UPDATE SET value = ?, updated_at = CURRENT_TIMESTAMP
-  `);
+  `, [bucketName, bucketName]);
 
-  const upsertProject = db.prepare(`
+  await db.execute(`
     INSERT INTO settings (key, value, updated_at) 
     VALUES ('gcs_project_id', ?, CURRENT_TIMESTAMP)
     ON CONFLICT(key) DO UPDATE SET value = ?, updated_at = CURRENT_TIMESTAMP
-  `);
-
-  upsertBucket.run(bucketName, bucketName);
-  upsertProject.run(projectId, projectId);
+  `, [projectId, projectId]);
 
   console.log("GCS settings saved to database");
 };
@@ -80,7 +71,7 @@ export const saveGCSSettings = (
  * Save service account key file to secure location
  * @returns The path where the key file was saved
  */
-export const saveServiceAccountKey = (fileBuffer: Buffer): string => {
+export const saveServiceAccountKey = async (fileBuffer: Buffer): Promise<string> => {
   const keysDir = getKeysDirectory();
   const keyFilePath = path.join(keysDir, "gcs-service-account.json");
 
@@ -106,12 +97,11 @@ export const saveServiceAccountKey = (fileBuffer: Buffer): string => {
     fs.writeFileSync(keyFilePath, fileBuffer, { mode: 0o600 }); // Owner read/write only
 
     // Save path to database
-    const upsertKeyPath = db.prepare(`
+    await db.execute(`
       INSERT INTO settings (key, value, updated_at) 
       VALUES ('gcs_key_file_path', ?, CURRENT_TIMESTAMP)
       ON CONFLICT(key) DO UPDATE SET value = ?, updated_at = CURRENT_TIMESTAMP
-    `);
-    upsertKeyPath.run(keyFilePath, keyFilePath);
+    `, [keyFilePath, keyFilePath]);
 
     console.log("Service account key saved securely");
     return keyFilePath;
@@ -123,8 +113,8 @@ export const saveServiceAccountKey = (fileBuffer: Buffer): string => {
 /**
  * Check if GCS is configured (has all required settings)
  */
-export const isGCSConfigured = (): boolean => {
-  const config = getGCSConfig();
+export const isGCSConfigured = async (): Promise<boolean> => {
+  const config = await getGCSConfig();
   return !!(
     config.bucketName &&
     config.projectId &&
@@ -136,8 +126,8 @@ export const isGCSConfigured = (): boolean => {
 /**
  * Get GCS configuration with fallback to environment variables
  */
-export const getGCSConfigWithFallback = (): GCSConfig => {
-  const dbConfig = getGCSConfig();
+export const getGCSConfigWithFallback = async (): Promise<GCSConfig> => {
+  const dbConfig = await getGCSConfig();
 
   return {
     bucketName: dbConfig.bucketName || process.env.GCS_BUCKET_NAME || null,
@@ -149,18 +139,16 @@ export const getGCSConfigWithFallback = (): GCSConfig => {
 /**
  * Clear GCS configuration (for testing or reconfiguration)
  */
-export const clearGCSConfig = (): void => {
+export const clearGCSConfig = async (): Promise<void> => {
   try {
-    db.prepare("DELETE FROM settings WHERE key = ?").run("gcs_bucket_name");
-    db.prepare("DELETE FROM settings WHERE key = ?").run("gcs_project_id");
+    await db.execute("DELETE FROM settings WHERE key = ?", ["gcs_bucket_name"]);
+    await db.execute("DELETE FROM settings WHERE key = ?", ["gcs_project_id"]);
 
-    const keyPathRow: any = db
-      .prepare("SELECT value FROM settings WHERE key = ?")
-      .get("gcs_key_file_path");
+    const keyPathRow: any = await db.queryOne("SELECT value FROM settings WHERE key = ?", ["gcs_key_file_path"]);
     if (keyPathRow && fs.existsSync(keyPathRow.value)) {
       fs.unlinkSync(keyPathRow.value);
     }
-    db.prepare("DELETE FROM settings WHERE key = ?").run("gcs_key_file_path");
+    await db.execute("DELETE FROM settings WHERE key = ?", ["gcs_key_file_path"]);
 
     console.log("GCS configuration cleared");
   } catch (error) {

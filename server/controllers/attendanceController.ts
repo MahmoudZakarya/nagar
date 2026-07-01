@@ -1,27 +1,25 @@
 import { Request, Response } from "express";
 import db from "../db";
 
-export const checkIn = (req: Request, res: Response) => {
+export const checkIn = async (req: Request, res: Response) => {
   const { employee_id, date, check_in } = req.body;
 
   try {
     // Check if already checked in today
-    const existing = db
-      .prepare("SELECT * FROM attendance WHERE employee_id = ? AND date = ?")
-      .get(employee_id, date);
+    const existing = await db.queryOne(
+      "SELECT * FROM attendance WHERE employee_id = ? AND date = ?",
+      [employee_id, date]
+    );
 
     if (existing) {
       return res.status(400).json({ error: "Already checked in for today" });
     }
 
-    const info = db
-      .prepare(
-        `
-      INSERT INTO attendance (employee_id, date, check_in)
-      VALUES (?, ?, ?)
-    `,
-      )
-      .run(employee_id, date, check_in);
+    const info = await db.execute(
+      `INSERT INTO attendance (employee_id, date, check_in)
+       VALUES (?, ?, ?)`,
+      [employee_id, date, check_in]
+    );
 
     res.status(201).json({ id: info.lastInsertRowid });
   } catch (error: any) {
@@ -29,19 +27,21 @@ export const checkIn = (req: Request, res: Response) => {
   }
 };
 
-export const checkOut = (req: Request, res: Response) => {
+export const checkOut = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { check_out, unpaid_break_minutes } = req.body;
 
   try {
-    const attendance: any = db
-      .prepare("SELECT * FROM attendance WHERE id = ?")
-      .get(id);
+    const attendance: any = await db.queryOne(
+      "SELECT * FROM attendance WHERE id = ?",
+      [id]
+    );
     if (!attendance) throw new Error("Attendance record not found");
 
-    const employee: any = db
-      .prepare("SELECT hourly_rate FROM employees WHERE id = ?")
-      .get(attendance.employee_id);
+    const employee: any = await db.queryOne(
+      "SELECT hourly_rate FROM employees WHERE id = ?",
+      [attendance.employee_id]
+    );
 
     const start = new Date(attendance.check_in).getTime();
     const end = new Date(check_out).getTime();
@@ -64,13 +64,12 @@ export const checkOut = (req: Request, res: Response) => {
     const totalHours = Math.max(0, totalMs / (1000 * 60 * 60));
     const calculatedPay = totalHours * (employee?.hourly_rate || 0);
 
-    db.prepare(
-      `
-      UPDATE attendance 
-      SET check_out = ?, unpaid_break_minutes = ?, total_hours = ?, calculated_pay = ?, current_break_start = NULL
-      WHERE id = ?
-    `,
-    ).run(check_out, finalUnpaidBreakMinutes, totalHours, calculatedPay, id);
+    await db.execute(
+      `UPDATE attendance 
+       SET check_out = ?, unpaid_break_minutes = ?, total_hours = ?, calculated_pay = ?, current_break_start = NULL
+       WHERE id = ?`,
+      [check_out, finalUnpaidBreakMinutes, totalHours, calculatedPay, id]
+    );
 
     res.json({ success: true, totalHours, calculatedPay });
   } catch (error: any) {
@@ -78,28 +77,30 @@ export const checkOut = (req: Request, res: Response) => {
   }
 };
 
-export const startBreak = (req: Request, res: Response) => {
+export const startBreak = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { break_start } = req.body;
 
   try {
-    db.prepare(
+    await db.execute(
       "UPDATE attendance SET current_break_start = ? WHERE id = ?",
-    ).run(break_start, id);
+      [break_start, id]
+    );
     res.json({ success: true });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 };
 
-export const endBreak = (req: Request, res: Response) => {
+export const endBreak = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { break_end } = req.body;
 
   try {
-    const attendance: any = db
-      .prepare("SELECT * FROM attendance WHERE id = ?")
-      .get(id);
+    const attendance: any = await db.queryOne(
+      "SELECT * FROM attendance WHERE id = ?",
+      [id]
+    );
     if (!attendance || !attendance.current_break_start) {
       return res.status(400).json({ error: "No active break found" });
     }
@@ -108,13 +109,12 @@ export const endBreak = (req: Request, res: Response) => {
     const end = new Date(break_end).getTime();
     const durationMinutes = Math.max(0, (end - start) / (1000 * 60));
 
-    db.prepare(
-      `
-      UPDATE attendance 
-      SET unpaid_break_minutes = unpaid_break_minutes + ?, current_break_start = NULL
-      WHERE id = ?
-    `,
-    ).run(durationMinutes, id);
+    await db.execute(
+      `UPDATE attendance 
+       SET unpaid_break_minutes = unpaid_break_minutes + ?, current_break_start = NULL
+       WHERE id = ?`,
+      [durationMinutes, id]
+    );
 
     res.json({ success: true, durationMinutes });
   } catch (error: any) {
@@ -122,79 +122,75 @@ export const endBreak = (req: Request, res: Response) => {
   }
 };
 
-export const getAttendanceByEmployee = (req: Request, res: Response) => {
+export const getAttendanceByEmployee = async (req: Request, res: Response) => {
   const { employee_id } = req.params;
   try {
-    const history = db
-      .prepare(
-        "SELECT * FROM attendance WHERE employee_id = ? ORDER BY date DESC",
-      )
-      .all(employee_id);
+    const history = await db.query(
+      "SELECT * FROM attendance WHERE employee_id = ? ORDER BY date DESC",
+      [employee_id]
+    );
     res.json(history);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 };
 
-export const paySalary = (req: Request, res: Response) => {
+export const paySalary = async (req: Request, res: Response) => {
   const { employee_id, amount, period_start, period_end, performed_by_id } =
     req.body;
 
-  const payOp = db.transaction(() => {
-    // 1. Log Payroll
-    db.prepare(
-      `
-      INSERT INTO payroll (employee_id, amount_paid, period_start, period_end, performed_by_id)
-      VALUES (?, ?, ?, ?, ?)
-    `,
-    ).run(employee_id, amount, period_start, period_end, performed_by_id);
-
-    // 2. Log to Safe as Expense
-    db.prepare(
-      `
-      INSERT INTO safe (transaction_type, amount, category, related_id, description, performed_by_id)
-      VALUES ('Expense', ?, 'رواتب', ?, ?, ?)
-    `,
-    ).run(
-      amount,
-      employee_id,
-      `صرف راتب موظف رقم: ${employee_id}`,
-      performed_by_id,
-    );
-
-    return { success: true };
-  });
-
   try {
-    const result = payOp();
+    const result = await db.transaction(async (tx) => {
+      // 1. Log Payroll
+      await tx.execute(
+        `INSERT INTO payroll (employee_id, amount_paid, period_start, period_end, performed_by_id)
+         VALUES (?, ?, ?, ?, ?)`,
+        [employee_id, amount, period_start, period_end, performed_by_id]
+      );
+
+      // 2. Log to Safe as Expense
+      await tx.execute(
+        `INSERT INTO safe (transaction_type, amount, category, related_id, description, performed_by_id)
+         VALUES ('Expense', ?, 'رواتب', ?, ?, ?)`,
+        [
+          amount,
+          employee_id,
+          `صرف راتب موظف رقم: ${employee_id}`,
+          performed_by_id,
+        ]
+      );
+
+      return { success: true };
+    });
+
     res.json(result);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 };
 
-export const getPayrollByEmployee = (req: Request, res: Response) => {
+export const getPayrollByEmployee = async (req: Request, res: Response) => {
   const { employee_id } = req.params;
   try {
-    const payroll = db
-      .prepare(
-        "SELECT * FROM payroll WHERE employee_id = ? ORDER BY payment_date DESC",
-      )
-      .all(employee_id);
+    const payroll = await db.query(
+      "SELECT * FROM payroll WHERE employee_id = ? ORDER BY payment_date DESC",
+      [employee_id]
+    );
     res.json(payroll);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 };
 
-export const logManualAttendance = (req: Request, res: Response) => {
+export const logManualAttendance = async (req: Request, res: Response) => {
   const { employee_id, date, check_in, check_out, unpaid_break_minutes } =
     req.body;
 
   try {
-    const employee: any = db
-      .prepare("SELECT hourly_rate FROM employees WHERE id = ?")
-      .get(employee_id);
+    const employee: any = await db.queryOne(
+      "SELECT hourly_rate FROM employees WHERE id = ?",
+      [employee_id]
+    );
 
     const start = new Date(check_in).getTime();
     const end = new Date(check_out).getTime();
@@ -205,14 +201,10 @@ export const logManualAttendance = (req: Request, res: Response) => {
     const totalHours = Math.max(0, totalMs / (1000 * 60 * 60));
     const calculatedPay = totalHours * (employee?.hourly_rate || 0);
 
-    const info = db
-      .prepare(
-        `
-      INSERT INTO attendance (employee_id, date, check_in, check_out, unpaid_break_minutes, total_hours, calculated_pay)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `,
-      )
-      .run(
+    const info = await db.execute(
+      `INSERT INTO attendance (employee_id, date, check_in, check_out, unpaid_break_minutes, total_hours, calculated_pay)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [
         employee_id,
         date,
         check_in,
@@ -220,7 +212,8 @@ export const logManualAttendance = (req: Request, res: Response) => {
         unpaid_break_minutes,
         totalHours,
         calculatedPay,
-      );
+      ]
+    );
 
     res
       .status(201)
@@ -230,19 +223,21 @@ export const logManualAttendance = (req: Request, res: Response) => {
   }
 };
 
-export const updateAttendance = (req: Request, res: Response) => {
+export const updateAttendance = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { check_in, check_out, unpaid_break_minutes } = req.body;
 
   try {
-    const attendance: any = db
-      .prepare("SELECT * FROM attendance WHERE id = ?")
-      .get(id);
+    const attendance: any = await db.queryOne(
+      "SELECT * FROM attendance WHERE id = ?",
+      [id]
+    );
     if (!attendance) throw new Error("Attendance record not found");
 
-    const employee: any = db
-      .prepare("SELECT hourly_rate FROM employees WHERE id = ?")
-      .get(attendance.employee_id);
+    const employee: any = await db.queryOne(
+      "SELECT hourly_rate FROM employees WHERE id = ?",
+      [attendance.employee_id]
+    );
 
     const start = new Date(check_in).getTime();
     const end = new Date(check_out).getTime();
@@ -253,19 +248,18 @@ export const updateAttendance = (req: Request, res: Response) => {
     const totalHours = Math.max(0, totalMs / (1000 * 60 * 60));
     const calculatedPay = totalHours * (employee?.hourly_rate || 0);
 
-    db.prepare(
-      `
-      UPDATE attendance 
-      SET check_in = ?, check_out = ?, unpaid_break_minutes = ?, total_hours = ?, calculated_pay = ?
-      WHERE id = ?
-    `,
-    ).run(
-      check_in,
-      check_out,
-      unpaid_break_minutes,
-      totalHours,
-      calculatedPay,
-      id,
+    await db.execute(
+      `UPDATE attendance 
+       SET check_in = ?, check_out = ?, unpaid_break_minutes = ?, total_hours = ?, calculated_pay = ?
+       WHERE id = ?`,
+      [
+        check_in,
+        check_out,
+        unpaid_break_minutes,
+        totalHours,
+        calculatedPay,
+        id,
+      ]
     );
 
     res.json({ success: true, totalHours, calculatedPay });

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import db from "../db";
 import bcrypt from "bcryptjs";
 
-export const login = (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
@@ -12,9 +12,10 @@ export const login = (req: Request, res: Response) => {
   }
 
   try {
-    const user: any = db
-      .prepare("SELECT * FROM users WHERE username = ?")
-      .get(username);
+    const user: any = await db.queryOne(
+      "SELECT * FROM users WHERE username = ?",
+      [username]
+    );
 
     if (!user) {
       return res.status(401).json({ error: "Invalid credentials" });
@@ -25,8 +26,6 @@ export const login = (req: Request, res: Response) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    // Since it's a local app, we can just return the user info
-    // In a real web app, we'd use JWT
     const { password_hash, ...userInfo } = user;
     res.json(userInfo);
   } catch (error: any) {
@@ -34,7 +33,7 @@ export const login = (req: Request, res: Response) => {
   }
 };
 
-export const register = (req: Request, res: Response) => {
+export const register = async (req: Request, res: Response) => {
   const { username, password, role } = req.body;
 
   if (!username || !password) {
@@ -45,33 +44,31 @@ export const register = (req: Request, res: Response) => {
 
   try {
     const hashedPassword = bcrypt.hashSync(password, 10);
-    const stmt = db.prepare(
+    const result = await db.execute(
       "INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)",
+      [username, hashedPassword, role || "user"]
     );
-    const result = stmt.run(username, hashedPassword, role || "user");
     res
       .status(201)
       .json({ id: result.lastInsertRowid, username, role: role || "user" });
   } catch (error: any) {
-    if (error.message.includes("UNIQUE constraint failed")) {
+    if (error.message.includes("UNIQUE constraint failed") || error.message.includes("unique constraint")) {
       return res.status(400).json({ error: "Username already exists" });
     }
     res.status(500).json({ error: error.message });
   }
 };
 
-export const getAllUsers = (req: Request, res: Response) => {
+export const getAllUsers = async (req: Request, res: Response) => {
   try {
-    const users = db
-      .prepare("SELECT id, username, role, status FROM users")
-      .all();
+    const users = await db.query("SELECT id, username, role, status FROM users");
     res.json(users);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 };
 
-export const changePassword = (req: Request, res: Response) => {
+export const changePassword = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { oldPassword, newPassword } = req.body;
 
@@ -82,7 +79,7 @@ export const changePassword = (req: Request, res: Response) => {
   }
 
   try {
-    const user: any = db.prepare("SELECT * FROM users WHERE id = ?").get(id);
+    const user: any = await db.queryOne("SELECT * FROM users WHERE id = ?", [id]);
 
     if (!user) {
       return res.status(404).json({ error: "المستخدم غير موجود" });
@@ -94,8 +91,10 @@ export const changePassword = (req: Request, res: Response) => {
     }
 
     const hashedPassword = bcrypt.hashSync(newPassword, 10);
-    const stmt = db.prepare("UPDATE users SET password_hash = ? WHERE id = ?");
-    stmt.run(hashedPassword, id);
+    await db.execute("UPDATE users SET password_hash = ? WHERE id = ?", [
+      hashedPassword,
+      id,
+    ]);
 
     res.json({ success: true });
   } catch (error: any) {
@@ -103,7 +102,7 @@ export const changePassword = (req: Request, res: Response) => {
   }
 };
 
-export const updateUser = (req: Request, res: Response) => {
+export const updateUser = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { password, role, status } = req.body;
 
@@ -133,8 +132,7 @@ export const updateUser = (req: Request, res: Response) => {
     values.push(id);
     const query = `UPDATE users SET ${updates.join(", ")} WHERE id = ?`;
 
-    const stmt = db.prepare(query);
-    const result = stmt.run(...values);
+    const result = await db.execute(query, values);
 
     if (result.changes === 0) {
       return res.status(404).json({ error: "المستخدم غير موجود" });
@@ -142,6 +140,6 @@ export const updateUser = (req: Request, res: Response) => {
 
     res.json({ success: true });
   } catch (error: any) {
-    res.status(500).json({ error: error.message }); // In production, don't expose error directly
+    res.status(500).json({ error: error.message });
   }
 };

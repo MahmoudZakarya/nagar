@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import db from "../db";
-import { RunResult } from "better-sqlite3";
 
-export const addTransaction = (req: Request, res: Response) => {
+export const addTransaction = async (req: Request, res: Response) => {
   const {
     transaction_type,
     amount,
@@ -19,48 +18,40 @@ export const addTransaction = (req: Request, res: Response) => {
   }
 
   try {
-    const stmt = db.prepare(
+    const result = await db.execute(
       "INSERT INTO safe (transaction_type, amount, category, related_id, description, performed_by_id) VALUES (?, ?, ?, ?, ?, ?)",
+      [
+        transaction_type,
+        amount,
+        category,
+        related_id,
+        description,
+        performed_by_id,
+      ]
     );
-    const info: RunResult = stmt.run(
-      transaction_type,
-      amount,
-      category,
-      related_id,
-      description,
-      performed_by_id,
-    );
-    res.status(201).json({ id: info.lastInsertRowid, ...req.body });
+    res.status(201).json({ id: result.lastInsertRowid, ...req.body });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 };
 
-export const getSafeHistory = (req: Request, res: Response) => {
+export const getSafeHistory = async (req: Request, res: Response) => {
   try {
-    const history = db
-      .prepare(
-        `
-      SELECT safe.*, users.username as performed_by_name 
-      FROM safe 
-      LEFT JOIN users ON safe.performed_by_id = users.id 
-      ORDER BY safe.date DESC
-    `,
-      )
-      .all();
+    const history = await db.query(
+      `SELECT safe.*, users.username as performed_by_name 
+       FROM safe 
+       LEFT JOIN users ON safe.performed_by_id = users.id 
+       ORDER BY safe.date DESC`
+    );
 
     // Calculate Balance
-    const income = db
-      .prepare(
-        "SELECT SUM(amount) as total FROM safe WHERE transaction_type = 'Income'",
-      )
-      .get() as { total: number };
-    const expense = db
-      .prepare(
-        "SELECT SUM(amount) as total FROM safe WHERE transaction_type = 'Expense'",
-      )
-      .get() as { total: number };
-    const balance = (income.total || 0) - (expense.total || 0);
+    const income: any = await db.queryOne(
+      "SELECT SUM(amount) as total FROM safe WHERE transaction_type = 'Income'"
+    );
+    const expense: any = await db.queryOne(
+      "SELECT SUM(amount) as total FROM safe WHERE transaction_type = 'Expense'"
+    );
+    const balance = (income?.total || 0) - (expense?.total || 0);
 
     res.json({ balance, history });
   } catch (error: any) {

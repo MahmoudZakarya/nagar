@@ -12,12 +12,13 @@ import { reinitializeStorage, testConnection } from "../services/backupService";
  * Get current GCS configuration (without exposing key file content)
  * GET /api/admin/settings/gcs
  */
-export const getGCSSettings = (req: Request, res: Response) => {
+export const getGCSSettings = async (req: Request, res: Response) => {
   try {
-    const config = getGCSConfig();
+    const config = await getGCSConfig();
+    const configured = await isGCSConfigured();
 
     res.json({
-      configured: isGCSConfigured(),
+      configured: configured,
       bucketName: config.bucketName,
       projectId: config.projectId,
       hasKeyFile: !!config.keyFilePath,
@@ -31,7 +32,7 @@ export const getGCSSettings = (req: Request, res: Response) => {
  * Update GCS bucket name and project ID
  * POST /api/admin/settings/gcs
  */
-export const updateGCSSettings = (req: Request, res: Response) => {
+export const updateGCSSettings = async (req: Request, res: Response) => {
   try {
     const { bucketName, projectId } = req.body;
 
@@ -41,11 +42,12 @@ export const updateGCSSettings = (req: Request, res: Response) => {
         .json({ error: "اسم الحاوية ومعرف المشروع مطلوبان" });
     }
 
-    saveGCSSettings(bucketName, projectId);
+    await saveGCSSettings(bucketName, projectId);
 
+    const configured = await isGCSConfigured();
     // Reinitialize storage with new settings if key file exists
-    if (isGCSConfigured()) {
-      reinitializeStorage();
+    if (configured) {
+      await reinitializeStorage();
     }
 
     res.json({
@@ -61,7 +63,7 @@ export const updateGCSSettings = (req: Request, res: Response) => {
  * Upload service account key file
  * POST /api/admin/settings/gcs/key
  */
-export const uploadServiceAccountKey = (req: Request, res: Response) => {
+export const uploadServiceAccountKey = async (req: Request, res: Response) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: "ملف المفتاح مطلوب" });
@@ -76,11 +78,12 @@ export const uploadServiceAccountKey = (req: Request, res: Response) => {
     }
 
     // Save the service account key
-    const keyPath = saveServiceAccountKey(req.file.buffer);
+    const keyPath = await saveServiceAccountKey(req.file.buffer);
 
+    const configured = await isGCSConfigured();
     // Reinitialize storage with new key
-    if (isGCSConfigured()) {
-      reinitializeStorage();
+    if (configured) {
+      await reinitializeStorage();
     }
 
     res.json({
@@ -99,7 +102,8 @@ export const uploadServiceAccountKey = (req: Request, res: Response) => {
  */
 export const testGCSConnection = async (req: Request, res: Response) => {
   try {
-    if (!isGCSConfigured()) {
+    const configured = await isGCSConfigured();
+    if (!configured) {
       return res.status(400).json({
         error: "إعدادات التخزين السحابي غير مكتملة",
         details: "يرجى التأكد من إدخال جميع البيانات المطلوبة",
@@ -107,7 +111,7 @@ export const testGCSConnection = async (req: Request, res: Response) => {
     }
 
     // Reinitialize storage before testing
-    reinitializeStorage();
+    await reinitializeStorage();
 
     // Test connection
     const result = await testConnection();
@@ -136,10 +140,10 @@ export const testGCSConnection = async (req: Request, res: Response) => {
  * Clear GCS configuration
  * DELETE /api/admin/settings/gcs
  */
-export const clearGCSSettings = (req: Request, res: Response) => {
+export const clearGCSSettings = async (req: Request, res: Response) => {
   try {
-    clearGCSConfig();
-    reinitializeStorage();
+    await clearGCSConfig();
+    await reinitializeStorage();
 
     res.json({
       success: true,

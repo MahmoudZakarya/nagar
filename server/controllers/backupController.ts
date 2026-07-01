@@ -8,6 +8,7 @@ import {
 } from "../services/backupService";
 import fs from "fs";
 import path from "path";
+import db from "../db";
 import { getDbPath as getTargetDbPath } from "../utils/paths";
 
 /**
@@ -15,6 +16,12 @@ import { getDbPath as getTargetDbPath } from "../utils/paths";
  * POST /api/admin/backup
  */
 export const triggerBackup = async (req: Request, res: Response) => {
+  if (db.isPostgres) {
+    return res.status(501).json({
+      error: "النسخ الاحتياطي السحابي يتم إدارته تلقائياً بواسطة Neon PostgreSQL.",
+    });
+  }
+
   try {
     if (!isBackupConfigured()) {
       return res.status(503).json({
@@ -38,6 +45,14 @@ export const triggerBackup = async (req: Request, res: Response) => {
  * GET /api/admin/backup/status
  */
 export const getBackupStatus = async (req: Request, res: Response) => {
+  if (db.isPostgres) {
+    return res.json({
+      configured: true,
+      message: "النسخ الاحتياطي السحابي نشط وتلقائي عن طريق Neon PostgreSQL",
+      lastBackup: null,
+    });
+  }
+
   try {
     const configured = isBackupConfigured();
 
@@ -71,6 +86,10 @@ export const getBackupStatus = async (req: Request, res: Response) => {
  * GET /api/admin/backup/list
  */
 export const getBackupList = async (req: Request, res: Response) => {
+  if (db.isPostgres) {
+    return res.json({ backups: [] });
+  }
+
   try {
     if (!isBackupConfigured()) {
       return res.status(503).json({ error: "نظام النسخ الاحتياطي غير مُعد" });
@@ -89,6 +108,12 @@ export const getBackupList = async (req: Request, res: Response) => {
  * POST /api/admin/backup/restore
  */
 export const restoreBackup = async (req: Request, res: Response) => {
+  if (db.isPostgres) {
+    return res.status(501).json({
+      error: "استعادة قاعدة البيانات غير مدعومة في بيئة PostgreSQL السحابية.",
+    });
+  }
+
   try {
     const { filename } = req.body;
 
@@ -113,10 +138,6 @@ export const restoreBackup = async (req: Request, res: Response) => {
       console.log(`Current database backed up to: ${currentBackupPath}`);
     }
 
-    // Close the database connection (if possible)
-    // Note: better-sqlite3 requires explicit close, but we need to restart the app
-    // For now, we'll just copy the file and let the app restart handle reconnection
-
     // Overwrite the current database with the restored backup
     fs.copyFileSync(tempBackupPath, dbPath);
 
@@ -130,9 +151,6 @@ export const restoreBackup = async (req: Request, res: Response) => {
       message: "تم استعادة قاعدة البيانات بنجاح. يُنصح بإعادة تشغيل التطبيق.",
       backupLocation: currentBackupPath,
     });
-
-    // Note: In production, you might want to trigger an app restart here
-    // For Electron apps, you can use app.relaunch() and app.exit()
   } catch (error: any) {
     console.error("Restore failed:", error);
     res

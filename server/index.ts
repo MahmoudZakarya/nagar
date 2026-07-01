@@ -18,12 +18,13 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Initialize Database & Run Migrations
-try {
-  initData();
-  translateExistingData();
-} catch (error) {
-  console.error("Failed to initialize database:", error);
-}
+initData()
+  .then(() => {
+    translateExistingData();
+  })
+  .catch((error) => {
+    console.error("Failed to initialize database:", error);
+  });
 
 // Initialize automated backup scheduler (daily at 3 AM)
 const backupSchedule = process.env.BACKUP_SCHEDULE || "0 3 * * *";
@@ -59,6 +60,10 @@ app.get("/*splat", (req, res) => {
   res.sendFile(path.join(buildPath, "index.html"));
 });
 
-app.listen(PORT, () => {
-  console.log(`[${new Date().toISOString()}] Server running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== "production" && !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`[${new Date().toISOString()}] Server running on port ${PORT}`);
+  });
+}
+
+export default app;
